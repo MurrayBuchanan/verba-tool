@@ -47,15 +47,16 @@ export const RecordButton = () => {
       await recorder.stop();
       console.log("Ended recording!");
 
-      if (recorder.uri) {
-        setIsProcessing(true);
-        await uploadRecording(recorder.uri);
-        setIsProcessing(false);
-      } else {
-        console.error("Failed to retrieve recording URI");
+      if (!recorder.uri) {
+        throw new Error("Failed to retrieve recording URI");
       }
+
+      setIsProcessing(true);
+      await uploadRecording(recorder.uri);
     } catch (error) {
       console.error('Failed to stop recording:', error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 

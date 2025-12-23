@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     fontWeight: '400'
   },
   caption: {
-    fontSize: 18,
+    fontSize: 16,
     lineHeight: 16,
     fontWeight: '400'
   },
