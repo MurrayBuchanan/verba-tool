@@ -6,6 +6,7 @@ import { BlockButton as Button } from "@/components/block-button";
 import { ThemedText as Text } from "@/components/themed-text";
 import { TextField } from "@/components/textfield";
 import { signIn } from "@/services/authenticationService";
+import { router } from "expo-router";
 
 export default function LoginScreen() {
 	const [email, setEmail] = useState("");
@@ -13,16 +14,14 @@ export default function LoginScreen() {
 	const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-		Alert.alert("Login Unsuccessful", "Please enter both email and password");
-		return;
-    }
     setLoading(true);
     try {
-		const result = await signIn();
-		if (!result) {
-			Alert.alert("Login Unsuccessful", "Please try again.");
-		}
+        const result = await signIn();
+        if (result) {
+        	router.replace("/");
+        } else {
+            Alert.alert("Login Unsuccessful", "Please try again.");
+        }
 	} catch (error) {
 		Alert.alert("Login Unsuccessful", "An error occurred during login");
 		console.error(error);
