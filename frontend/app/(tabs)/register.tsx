@@ -6,12 +6,12 @@ import { BlockButton as Button } from "@/components/block-button";
 import { ThemedText as Text } from "@/components/themed-text";
 import { TextField } from "@/components/textfield";
 
-export function RegisterScreen() {
+export default function RegisterScreen() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
-    console.log("Login button pressed");
+  const handleRegister = async () => {
+    console.log("Register button pressed");
   };
 
   return (
@@ -35,7 +35,7 @@ export function RegisterScreen() {
           />
           <Button
             title="Login"
-            onPress={handleLogin}
+            onPress={handleRegister}
           />
 
       </KeyboardAvoidingView>
