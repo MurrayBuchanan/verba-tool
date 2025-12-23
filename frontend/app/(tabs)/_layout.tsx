@@ -17,17 +17,24 @@ export default function TabLayout() {
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen
-        name="login"
+        name="metricsScreen"
         options={{
-          title: 'Login',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+          title: 'Overview',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.bar.fill" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="register"
+        name="recordAudioScreen"
         options={{
-          title: 'Register',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.badge.plus.fill" color={color} />,
+          title: 'Record',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="record.circle" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="conversationHistoryScreen"
+        options={{
+          title: 'All Conversations',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="clock.fill" color={color} />,
         }}
       />
     </Tabs>

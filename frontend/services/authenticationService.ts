@@ -1,6 +1,6 @@
-import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 import * as SecureStore from "expo-secure-store";
+import * as WebBrowser from "expo-web-browser";
 
 // Ensures the in-app browser is properly completed/closed
 WebBrowser.maybeCompleteAuthSession();
