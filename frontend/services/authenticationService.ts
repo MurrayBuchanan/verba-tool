@@ -6,10 +6,10 @@ import * as SecureStore from "expo-secure-store";
 WebBrowser.maybeCompleteAuthSession();
 
 // App registration identifiers from Microsoft Entra 
-const CLIENT_ID = process.env.FRONTEND_CLIENT_ID || "";
-const TENANT_ID = process.env.FRONTEND_TENANT_ID || "";
-const TENANT_DOMAIN = process.env.FRONTEND_TENANT_DOMAIN || "";
-const SCHEME = process.env.FRONTEND_SCHEME || "";
+const CLIENT_ID = process.env.EXPO_PUBLIC_CLIENT_ID || "";
+const TENANT_ID = process.env.EXPO_PUBLIC_TENANT_ID || "";
+const TENANT_DOMAIN = process.env.EXPO_PUBLIC_TENANT_DOMAIN || "";
+const SCHEME = process.env.EXPO_PUBLIC_SCHEME || "";
 
 // Authority URL for Microsoft Entra
 const ISSUER = `https://${TENANT_DOMAIN}/${TENANT_ID}/v2.0`;
@@ -17,7 +17,7 @@ const ISSUER = `https://${TENANT_DOMAIN}/${TENANT_ID}/v2.0`;
 // Starts the sign-in process via the hosted Entra External ID user flow UI using Authorisation codes + PKCE 
 export async function signIn() {
   const discovery = await AuthSession.fetchDiscoveryAsync(ISSUER);
-  const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME });
+  const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "auth" });
 
   // Create the authentication request
   const req = new AuthSession.AuthRequest({
