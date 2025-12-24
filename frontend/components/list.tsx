@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
+// TODO: Optional ScrollView wrapper and grid layout support
 export function List({ children }: { children: React.ReactNode }) {
   	const items = React.Children.toArray(children);
 

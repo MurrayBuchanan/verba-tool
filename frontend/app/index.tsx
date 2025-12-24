@@ -1,16 +1,15 @@
 
 import React, { useEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet } from "react-native";
+import { Image } from "expo-image";
 
 import { BlockButton as Button } from "@/components/block-button";
 import { ThemedText as Text } from "@/components/themed-text";
+import { ThemedView as View } from "@/components/themed-view";
 import { getIdToken, signIn } from "@/services/authenticationService";
 import { router } from "expo-router";
 
 export default function LoginScreen() {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [loading, setLoading] = useState(false);
 	const [checkingAuth, setCheckingAuth] = useState(true);
 
 	// Check if the user is authenticated
@@ -19,8 +18,8 @@ export default function LoginScreen() {
 			try {
 				const token = await getIdToken();
 				if (token) {
-          // If token exists, user is authenticated
-					router.replace("/homeScreen");
+          			// If token exists, user is authenticated
+					router.replace("/userListScreen");
 					return;
 				}
 			} catch (error) {
@@ -33,19 +32,16 @@ export default function LoginScreen() {
 	}, []);
 
   const handleLogin = async () => {
-    setLoading(true);
     try {
         const result = await signIn();
         if (result) {
-        	router.replace("/homeScreen");
+        	router.replace("/userListScreen");
         } else {
             Alert.alert("Login Unsuccessful", "Please try again.");
         }
 	} catch (error) {
 		Alert.alert("Login Unsuccessful", "An error occurred during login");
 		console.error(error);
-    } finally {
-		setLoading(false);
     }
   };
 
@@ -53,23 +49,33 @@ export default function LoginScreen() {
     <View style={styles.container}>
 		{/* Avoid flashing login UI while checking auth */}
 		{checkingAuth ? null : (
-		<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-
-		<Text type='title'>Sign In</Text>
-      <Button title="Secure Sign In" onPress={handleLogin} />
-      
-      </KeyboardAvoidingView>
+			<View lightColor="#AEAFF7" darkColor="#8F90DF">
+				<Text type='title'>Here to help you monitor conversation!</Text>
+				<Image
+					source={require('../assets/images/conversation-placeholder.png')}
+					style={styles.image}
+					contentFit="contain"
+					transition={1000}
+				  />
+				<Button title="Secure Sign In" onPress={handleLogin} />
+			</View>
 		)}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-	padding: 20,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
+  	container: {
+    	flex: 1,
+		padding: 20,
+  	},
+  	scrollContent: {
+    	flexGrow: 1,
+  	},
+	image: {
+		width: 220,
+		height: 220,
+		alignSelf: 'center',
+		marginVertical: 20,
+	},
 });

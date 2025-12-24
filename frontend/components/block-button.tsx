@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Animated, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { ThemedText as Text } from '@/components/themed-text';
 import { usePressedAnimation } from '@/hooks/use-pressed-animation';
@@ -28,7 +28,7 @@ export function BlockButton({
     const { scaleAnim, opacityAnim, handlePressIn, handlePressOut } = usePressedAnimation();
 
     return (
-        <TouchableOpacity onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} activeOpacity={1}>
+        <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
             <Animated.View
                 style={[
                     styles.container,
@@ -51,7 +51,7 @@ export function BlockButton({
                     </Text>
                 </View>
             </Animated.View>
-        </TouchableOpacity>
+        </Pressable>
     );
 }
 
