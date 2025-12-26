@@ -20,7 +20,7 @@ export async function signIn() {
   const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "auth" });
 
   // Create the authentication request
-  const req = new AuthSession.AuthRequest({
+  const request = new AuthSession.AuthRequest({
     clientId: CLIENT_ID,
     redirectUri,
     responseType: AuthSession.ResponseType.Code,
@@ -29,7 +29,7 @@ export async function signIn() {
   });
 
   // Launch system browser
-  const result = await req.promptAsync(discovery);
+  const result = await request.promptAsync(discovery);
   // Handle user cancellation
   if (result.type !== "success") {
     return null;
@@ -40,7 +40,7 @@ export async function signIn() {
     clientId: CLIENT_ID,
     code: result.params.code, // Authorisation code
     redirectUri,
-    extraParams: req.codeVerifier ? { code_verifier: req.codeVerifier } : undefined,
+    extraParams: request.codeVerifier ? { code_verifier: request.codeVerifier } : undefined,
   }).performAsync({ tokenEndpoint: discovery.tokenEndpoint });
 
   // Store ID token securely for future authenticated requests

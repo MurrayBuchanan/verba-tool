@@ -3,21 +3,17 @@ import { StyleSheet } from "react-native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { List } from "@/components/list";
-import { ConversationItem as Item} from "@/components/conversation-item";
 
-export default function ConversationHistoryScreen() {
+export default function ConversationScreen(id: string, date: string) {
   	return (
 		<View style={styles.container}>
-			<Text type="subtitle">Conversation History</Text>
+			<Text type="subtitle">Conversation #{id}</Text>
+			<Text type="heading">{date}{id}</Text>
+			{/* Retrieve conversation and display segments */}
 			<List>
-				<Item
-					onPress={() => console.log('hello')}
-					date="2025-12-01"
-					conversationId="12345"
-					snippet="Discussed symptoms and treatment options..."
-				/>
-			
+				<Text type="default">Placeholder</Text>
 			</List>
+		
 		</View>
 	);
 }

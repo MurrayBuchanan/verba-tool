@@ -13,7 +13,7 @@ export type ProfileButtonProps = {
   	style?: StyleProp<ViewStyle>;
 };
 
-export function ProfileButton({ onPress, firstName, lastName, lastUpdated, style }: ProfileButtonProps) {
+export function ProfileItem({ onPress, firstName, lastName, lastUpdated, style }: ProfileButtonProps) {
   	const { scaleAnim, opacityAnim, handlePressIn, handlePressOut } = usePressedAnimation();
 
   	return (

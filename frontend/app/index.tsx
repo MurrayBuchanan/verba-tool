@@ -6,7 +6,7 @@ import { Image } from "expo-image";
 import { BlockButton as Button } from "@/components/block-button";
 import { ThemedText as Text } from "@/components/themed-text";
 import { ThemedView as View } from "@/components/themed-view";
-import { getIdToken, signIn } from "@/services/authenticationService";
+import { getIdToken, signIn } from "@/services/authentication-service";
 import { router } from "expo-router";
 
 export default function LoginScreen() {

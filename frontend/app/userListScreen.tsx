@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { StyleSheet } from "react-native";
 
 import { List } from "@/components/list";
-import { ProfileButton } from "@/components/profile-button";
+import { ProfileItem as Item } from "@/components/profile-item";
 import { ThemedText as Text } from "@/components/themed-text";
 import { ThemedView as View } from "@/components/themed-view";
 import { BlockButton } from "@/components/block-button";
@@ -17,7 +17,7 @@ export default function HomeScreen() {
       		<Text type="subtitle">List of Profiles</Text>
 
         	<List>
-          		<ProfileButton
+          		<Item
             		firstName="Bob"
             		lastName="Marley"
             		lastUpdated="2025-12-01"

@@ -6,6 +6,10 @@ import { ThemedView as View } from "@/components/themed-view";
 import { TextField } from "@/components/textfield";
 import { BlockButton } from "@/components/block-button";
 
+const addUser = () => {
+	
+}
+
 export default function AddUserModal() {
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -17,9 +21,7 @@ export default function AddUserModal() {
 			<TextField label="First Name" placeholder="Enter first name" value={firstName} onChangeText={setFirstName} />
 			<TextField label="Last Name" placeholder="Enter last name" value={lastName} onChangeText={setLastName} />
 			<TextField label="Email" placeholder="Enter email address" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
-			<BlockButton title="Add User" onPress={() => {
-				console.log("TODO: Add user functionality");
-			}} />
+			<BlockButton title="Add User" onPress={() => { addUser() }} />
 		</View>
 	);
 }
