@@ -16,7 +16,9 @@ export async function uploadRecording(audioUri: string) {
   } as any);
 
   try {
-    const response = await axios.post(API_URL, formData, {
+    // Ensure no trailing slash in API_URL
+    const endpoint = API_URL.replace(/\/$/, '') + '/upload-audio';
+    const response = await axios.post(endpoint, formData, {
       timeout: 1000 * 60 * 10, // Response can take up to 10 minutes
       headers: {
         Authorization: `Bearer ${API_TOKEN}`,
