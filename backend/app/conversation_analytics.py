@@ -1,9 +1,5 @@
-import re
 from collections import defaultdict
 from typing import List, Dict, Any
-# TODO: Include more from the 48 (12) feature paper (Repetition Detection, hesitations, and long pauses)
-# TODO: Create RAG model for conversation analytics
-# TODO: Run RAG model on segments and in parallel
 # TODO: Storage of previous conversations for context from backend not frontend for security
 # TODO: Add tests for this module
 
