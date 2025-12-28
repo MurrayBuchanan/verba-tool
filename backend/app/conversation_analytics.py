@@ -95,24 +95,18 @@ class ConversationAnalytics:
     # - Type-token ratio: Unique word types / total words (on a fixed window size)
     # - Disfluency/repair rate: Number of self-repairs
 
-    # AI-based features
-    # - Coherance score (rubic)
-    # - Information
-    # - Topic maintenance
-
-
     """ Main analysis function """
     def analyse(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
         # Prepare transcript payload by wrapping segments
         transcript_payload = {"raw_segments": segments}
         
         return {
+            "raw_segments": segments,
             "turns": {
                 "total": self.count_turns_total(segments),
                 "per_speaker": self.count_turns_per_speaker(segments),
             },
+            "AI_features": extract_features(transcript_payload).model_dump(),
             "wpm_per_speaker": self.wpm_per_speaker(segments),
             "mean_utterance_length_per_speaker": self.mul_per_speaker(segments),
-            "raw_segments": segments,
-            "AI_features": extract_features(transcript_payload).model_dump(),
         }

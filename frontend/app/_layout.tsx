@@ -17,6 +17,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="conversationScreen" options={{ headerShown: true, title: 'Conversation' }} />
         <Stack.Screen name="addUserModal" options={{ presentation: 'modal', headerShown: true }} />
         
       </Stack>

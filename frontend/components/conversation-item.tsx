@@ -7,19 +7,24 @@ import { IconSymbol } from "@/components//ui/icon-symbol";
 
 export type ConversationItemProps = {
     onPress: () => void;
-	date: string;
+	dateNumber: string;
+	dateString: string;
 	conversationId: string;
 	snippet: string;
   	style?: StyleProp<ViewStyle>;
 };
 
-export function ConversationItem({ onPress, date, conversationId, snippet, style }: ConversationItemProps) {
+export function ConversationItem({ onPress, dateNumber, dateString, conversationId, snippet, style }: ConversationItemProps) {
   	const { scaleAnim, opacityAnim, handlePressIn, handlePressOut } = usePressedAnimation();
 
   	return (
     	<Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} hitSlop={8}>
       	<Animated.View style={[ styles.container, { transform: [{ scale: scaleAnim }], opacity: opacityAnim }, style as any ]}>
 			<View style={styles.row}>
+				<View style={styles.date}>
+					<Text type="heading" style={styles.updated} numberOfLines={1}>{dateNumber}</Text>
+					<Text type="caption" style={styles.updated} numberOfLines={1}>{dateString}</Text>
+				</View>
 				<View>
 					<Text type="heading" style={styles.name} numberOfLines={1}>{conversationId}</Text>
 					<Text type="default" style={styles.updated} numberOfLines={1}>{snippet}</Text>
@@ -49,5 +54,8 @@ const styles = StyleSheet.create({
   	},
   	updated: {
    		opacity: 0.75,
+  	},
+  	date: {
+    	alignItems: "center",
   	},
 });
