@@ -1,47 +1,97 @@
-from collections import defaultdict
 from typing import List, Dict, Any
+
 # TODO: Storage of previous conversations for context from backend not frontend for security
 # TODO: Add tests for this module
+# TODO: Add typing 
+# TODO: Synchronised calculations with speaker roles
+# TODO: Implement quality gate for short segments
 
 class ConversationAnalytics:
-    def map_speakers(self, segments: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        if not segments:
-            return segments
+    # Group segments by speaker before applying per-speaker calculations
+    def group_by_speaker(self, segments: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+        groups: Dict[str, List[Dict[str, Any]]] = {}
+        for seg in segments:
+            speaker = seg.get("speaker")
+            groups.setdefault(speaker, []).append(seg)
+        return groups
+    
+    # Count words in text segment by splitting on whitespace
+    def count_words(self, text: str) -> int:
+        return len((text or "").split())
 
-        mapping: Dict[str, str] = {}
-        guest_number = 1
-
-        for segment in segments:
-            speaker = segment["speaker"]
-            if speaker not in mapping:
-                if not mapping:
-                    # First speaker is the carer
-                    mapping[speaker] = "Carer"
-                else:
-                    # Next speakers are guests (more than 10 reduces accuracy)
-                    mapping[speaker] = f"Guest-{guest_number}"
-                    guest_number += 1
-
-        # Map roles to segments
-        for segment in segments:
-            segment["role"] = mapping.get(segment["speaker"], "Unknown")
-
-        return segments
-
-    # Count the number of turns each speaker has taken
-    def count_turns(self, segments: List[Dict[str, Any]]) -> int:
-        turns = 0
-        last = None
-        for segment in segments:
-            if segment["speaker"] != last:
+    # Count the total number of turns in the conversation
+    def count_turns_total(self, segments: List[Dict[str, Any]]) -> int:
+        turns = 0 
+        last_speaker = None
+        for seg in segments:
+            speaker = seg.get("speaker")
+            if speaker != last_speaker:
                 turns += 1
-                last = segment["speaker"]
+                last_speaker = speaker
         return turns
 
+    # Count turns per speaker
+    def count_turns_per_speaker(self, segments: List[Dict[str, Any]]) -> Dict[str, int]:
+        counts: Dict[str, int] = {}
+        last_speaker = None
+
+        for seg in segments:
+            speaker = seg.get("speaker")
+            if speaker != last_speaker:
+                counts[speaker] = counts.get(speaker, 0) + 1
+                last_speaker = speaker
+        return counts
+
+    """ Features calculations """
+
+    # Calculate words per minute
+    # Formula: (total words) / (total seconds / 60)
+    def wpm_for_segments(self, segments: List[Dict[str, Any]]) -> float:
+        total_words = 0
+        total_seconds = 0.0
+
+        for seg in segments:
+            total_words += self.count_words(seg.get("text", ""))
+            total_seconds += float(seg.get("duration", 0.0) or 0.0)
+
+        if total_seconds <= 0:
+            return 0.0
+
+        return total_words / (total_seconds / 60.0)
+    
+    # WPM per speaker
+    def wpm_per_speaker(self, segments: List[Dict[str, Any]]) -> Dict[str, float]:
+        groups = self.group_by_speaker(segments)
+        return { speaker: round(self.wpm_for_segments(segs), 2) for speaker, segs in groups.items() }
+
+    # Calculate mean utterance length
+    # Formula: (total words) / (number of utterances)
+    def mul_for_segments(self, segments: List[Dict[str, Any]]) -> float:
+        if not segments:
+            return 0.0
+
+        total_words = 0
+        for seg in segments:
+            total_words += self.count_words(seg.get("text", ""))
+
+        return total_words / len(segments)
+
+    # MUL per speaker 
+    def mul_per_speaker(self, segments: List[Dict[str, Any]]) -> Dict[str, float]:
+        groups = self.group_by_speaker(segments)
+        return {
+            speaker: round(self.mul_for_segments(segs), 2)
+            for speaker, segs in groups.items()
+        }
+
+    """ Main analysis function """
     def analyse(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
-        segments = self.map_speakers(segments)
-        analytics: Dict[str, Any] = {
-            "number_of_turns": self.count_turns(segments),
+        return {
+            "turns": {
+                "total": self.count_turns_total(segments),
+                "per_speaker": self.count_turns_per_speaker(segments),
+            },
+            "wpm_per_speaker": self.wpm_per_speaker(segments),
+            "mean_utterance_length_per_speaker": self.mul_per_speaker(segments),
             "raw_segments": segments,
         }
-        return analytics

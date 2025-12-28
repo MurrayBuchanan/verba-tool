@@ -2,13 +2,21 @@
 
 ## How to run
 
-## Virtual Environment
+Create (once): ```python3 -m venv .venv```
 Activate: ```source .venv/bin/activate```
 Deactivate: ```deactivate```
 
 
-uvicorn app.main:app --reload
 
+### Install dependancies
+python -m pip install -r requirements.txt
+
+```uvicorn app.main:app --reload```
+
+**MUST REMEMBER TO CHANGE TEMP TOKEN**
+curl -X POST "http://127.0.0.1:8001/upload-audio" \
+  -H "Authorization: Bearer CS408_SECRET_API_TOKEN" \
+  -F "file=@app/tests/sample-data.m4a;type=audio/mp4"
 
 ## How to deploy
 
@@ -28,7 +36,7 @@ Filter to determine if the transcript session should be scorted or not.
 - Type-token ratio: Unique word types / total words (on a fixed window size)
 - Content word ratio: (nouns + verbs + adjectives + adverbs) / total words
 - Pronoun ratio: Pronouns / (pronouns + nouns)
-- Repetition rate: ...
+- Repetition rate: Count of duplicate words / ...
 
 ### AI
 - Coherance score (rubic)
