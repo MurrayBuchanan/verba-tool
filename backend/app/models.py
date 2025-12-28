@@ -6,7 +6,6 @@ class Segment(BaseModel):
     offset: float
     speaker: str
     text: str
-    role: str = "" # Add role when mapping speakers
 
 class TranscriptAnalysis(BaseModel):
     number_of_turns: int

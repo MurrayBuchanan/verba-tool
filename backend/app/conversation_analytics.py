@@ -1,4 +1,5 @@
 from typing import List, Dict, Any
+from .ai_feature_extraction import extract_features
 
 # TODO: Storage of previous conversations for context from backend not frontend for security
 # TODO: Add tests for this module
@@ -83,9 +84,28 @@ class ConversationAnalytics:
             speaker: round(self.mul_for_segments(segs), 2)
             for speaker, segs in groups.items()
         }
+    
+    # - Repetition rate: Number of repeated words / total words
+    
+    # Spacy-based features 
+    # - Content word ratio: (nouns + verbs + adjectives + adverbs) / total words
+    # - Pronoun ratio: Pronouns / (pronouns + nouns)
+
+    # Dictionary-based features
+    # - Type-token ratio: Unique word types / total words (on a fixed window size)
+    # - Disfluency/repair rate: Number of self-repairs
+
+    # AI-based features
+    # - Coherance score (rubic)
+    # - Information
+    # - Topic maintenance
+
 
     """ Main analysis function """
     def analyse(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+        # Prepare transcript payload by wrapping segments
+        transcript_payload = {"raw_segments": segments}
+        
         return {
             "turns": {
                 "total": self.count_turns_total(segments),
@@ -94,4 +114,5 @@ class ConversationAnalytics:
             "wpm_per_speaker": self.wpm_per_speaker(segments),
             "mean_utterance_length_per_speaker": self.mul_per_speaker(segments),
             "raw_segments": segments,
+            "AI_features": extract_features(transcript_payload).model_dump(),
         }
