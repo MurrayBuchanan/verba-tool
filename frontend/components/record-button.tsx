@@ -1,14 +1,10 @@
 import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder, useAudioRecorderState } from 'expo-audio';
 import React, { useEffect, useState } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
 
-import { HapticTab } from '@/components/haptic-feedback';
-import { ThemedText as Text } from '@/components/themed-text';
-import { usePressedAnimation } from '@/hooks/use-pressed-animation';
+import { BlockButton } from '@/components/block-button';
 import { uploadRecording } from '@/services/upload-service';
 
 export const RecordButton = () => {
-  const { scaleAnim, opacityAnim, handlePressIn, handlePressOut } = usePressedAnimation();
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(recorder);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -71,42 +67,12 @@ export const RecordButton = () => {
   };
 
   return (
-    <HapticTab
+    <BlockButton
       onPress={onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-    >
-      <Animated.View
-        style={[
-          styles.container,
-          { transform: [{ scale: scaleAnim }], opacity: opacityAnim },
-        ]}
-      >
-        <View style={styles.content}>
-          <Text style={styles.label}>{getLabel()}</Text>
-        </View>
-      </Animated.View>
-    </HapticTab>
+      title={getLabel()}
+      backgroundColor="#371B34"
+      color="#FFF"
+      fullWidth={true}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#371B34',
-    alignItems: 'center',
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    width: '100%',
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFF',
-  },
-});

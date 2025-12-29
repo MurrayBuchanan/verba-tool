@@ -2,6 +2,8 @@ import { StyleSheet, Text, type TextProps } from 'react-native';
 
 import { useThemeColor } from '@/hooks/use-theme-color';
 
+// TODO: Change font to inter
+
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;

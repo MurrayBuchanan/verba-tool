@@ -8,17 +8,15 @@ import { router } from "expo-router";
 
 export default function Index() {
   return (
-    <View style={styles.container}>
-		<View lightColor="#AEAFF7" darkColor="#8F90DF">
-			<Text type='title'>Here to help you monitor conversation!</Text>
-			<Image
-				source={require('../assets/images/conversation-placeholder.png')}
-				style={styles.image}
-				contentFit="contain"
-				transition={1000}
-			  />
-			<Button title="Secure Sign In" onPress={() => router.replace("/(tabs)/metricsScreen")} />
-		</View>
+    <View lightColor="#AEAFF7" darkColor="#8F90DF" style={styles.container}>
+		<Text type='title' align='center'>Here to help you monitor conversation!</Text>
+		<Image
+			source={require('../assets/images/conversation-placeholder.png')}
+			style={styles.image}
+			contentFit="contain"
+			transition={1000}
+		/>
+		<Button color="white" backgroundColor="#371B34" title="Secure Sign In" onPress={() => router.replace("/(tabs)/metricsScreen")} />
     </View>
   );
 };
@@ -27,14 +25,14 @@ const styles = StyleSheet.create({
   	container: {
     	flex: 1,
 		padding: 20,
-  	},
-  	scrollContent: {
-    	flexGrow: 1,
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		paddingVertical: 40,
   	},
 	image: {
-		width: 220,
-		height: 220,
+		width: 320,
+		height: 320,
+		objectFit: 'contain',
 		alignSelf: 'center',
-		marginVertical: 20,
 	},
 });

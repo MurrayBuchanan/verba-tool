@@ -19,7 +19,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="metricsScreen"
         options={{
-          title: 'Overview',
+          title: 'Metrics',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.bar.fill" color={color} />,
         }}
       />
@@ -33,7 +33,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="conversationHistoryScreen"
         options={{
-          title: 'All Conversations',
+          title: 'Chat History',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="clock.fill" color={color} />,
         }}
       />

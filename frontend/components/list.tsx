@@ -1,8 +1,12 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
-// TODO: Optional ScrollView wrapper and grid layout support
-export function List({ children }: { children: React.ReactNode }) {
+export type ListProps = {
+	children: React.ReactNode;
+	divider?: boolean;
+};
+
+export function List({ children, divider = false }: ListProps) {
   	const items = React.Children.toArray(children);
 
   	return (
@@ -10,6 +14,9 @@ export function List({ children }: { children: React.ReactNode }) {
      		{items.map((child, index) => (
         		<View key={index}>
           			<View style={styles.item}>{child}</View>
+          			{divider && index < items.length - 1 && (
+            			<View style={styles.divider} />
+          			)}
         		</View>
       		))}
     	</View>
@@ -22,5 +29,9 @@ const styles = StyleSheet.create({
   	},
   	item: {
     	paddingVertical: 4,
+  	},
+  	divider: {
+    	height: StyleSheet.hairlineWidth,
+    	backgroundColor: "lightgray",
   	},
 });
