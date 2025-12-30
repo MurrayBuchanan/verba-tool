@@ -1,10 +1,11 @@
 import { StyleSheet } from "react-native";
+import { useEffect } from "react";
 
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { BlockButton } from "@/components/block-button";
 import { BarGraph } from "@/components/bar-graph";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 
 const data = Array.from({ length: 6 }, (_, index) => ({
     month: index + 1,
@@ -13,10 +14,18 @@ const data = Array.from({ length: 6 }, (_, index) => ({
 
 export default function MetricScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
+	const navigation = useNavigation();
+
+	useEffect(() => {
+		navigation.setOptions({
+			title: "Coherence Score",
+		});
+	}, [navigation]);
+
 	return (
 		<View style={styles.container}>
 			<View>
-				<Text type="subtitle">Coherence Score</Text>
+				<Text type="subtitle">Change over time</Text>
 				<BarGraph data={data} />
 				<View style={styles.section}>
 					<Text type="subtitle">What does this show?</Text>

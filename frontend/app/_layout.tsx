@@ -18,6 +18,8 @@ export default function RootLayout() {
 				<Stack.Screen name="index" options={{ headerShown: false }} />
 				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 				<Stack.Screen name="addUserModal" options={{ presentation: 'modal', headerShown: true }} />
+				<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerBackTitle: "back" }} />
+				<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerBackTitle: "back" }} />
 			</Stack>
 			<StatusBar style="auto" />
 		</ThemeProvider>

@@ -3,8 +3,8 @@ import { ThemedView as View } from "@/components/themed-view";
 import { CartesianChart, Bar } from "victory-native";
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
 import { useThemeColor, } from "@/hooks/use-theme-color";
-import { Fonts } from "@/constants/theme";
 
+// TODO: Map the font to existing one to avoid loading issues
 // Example from: https://nearform.com/open-source/victory-native/docs/cartesian/guides/basic-bar-chart
 
 type DataPoint = {

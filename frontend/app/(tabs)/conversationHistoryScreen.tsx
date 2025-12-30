@@ -1,9 +1,9 @@
-import { StyleSheet, ScrollView } from "react-native";
-
+import { StyleSheet } from "react-native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { List } from "@/components/list";
 import { ConversationItem as Item} from "@/components/conversation-item";
+import { FadedScrollView as ScrollView } from "@/components/faded-scroll-view";
 import { useRouter } from "expo-router";
 
 export default function ConversationHistoryScreen() {
@@ -12,11 +12,7 @@ export default function ConversationHistoryScreen() {
   	return (
 		<View style={styles.container}>
 		<Text type="title">Chat History</Text>
-			<ScrollView 
-				style={styles.scrollView}
-				contentContainerStyle={styles.scrollContent}
-				showsVerticalScrollIndicator={true}
-			>
+			<ScrollView>
 				<List divider={true}>
 					<Item
 						onPress={() => router.push(`/conversationScreen/${conversationId}`)}
@@ -51,12 +47,4 @@ const styles = StyleSheet.create({
     	flex: 1,
 		padding: 20,
   	},
-	scrollView: {
-		flex: 1,
-	},
-	scrollContent: {
-		flexGrow: 1,
-		paddingTop: 12,
-		paddingBottom: 20,
-	},
 });

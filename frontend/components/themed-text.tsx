@@ -57,7 +57,8 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 		fontWeight: '800',
 		lineHeight: 32,
-		marginTop: 40,
+		marginTop: 50,
+		marginBottom: 20,
 	},
 	button: {
 		fontSize: 18,

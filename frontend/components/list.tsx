@@ -1,5 +1,6 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { ThemedView as View } from "@/components/themed-view";
 
 export type ListProps = {
 	children: React.ReactNode;
@@ -15,7 +16,7 @@ export function List({ children, divider = false }: ListProps) {
         		<View key={index}>
           			<View style={styles.item}>{child}</View>
           			{divider && index < items.length - 1 && (
-            			<View style={styles.divider} />
+            			<View lightColor="#E0E0E0" darkColor="#424242" style={styles.divider} />
           			)}
         		</View>
       		))}
@@ -32,6 +33,5 @@ const styles = StyleSheet.create({
   	},
   	divider: {
     	height: StyleSheet.hairlineWidth,
-    	backgroundColor: "lightgray",
   	},
 });
