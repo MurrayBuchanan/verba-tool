@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
 
 import { ThemedText as Text } from '@/components/themed-text';
 import { usePressedAnimation } from '@/hooks/use-pressed-animation';
@@ -7,48 +7,20 @@ import { usePressedAnimation } from '@/hooks/use-pressed-animation';
 export type BlockButtonProps = {
     onPress: () => void;
     title?: string;
-    icon?: React.ReactNode;
     color?: string;
     backgroundColor?: string;
     borderColor?: string;
-    fullWidth?: boolean;
-    style?: StyleProp<ViewStyle>;
 };
 
-export function BlockButton({
-    onPress,
-    title,
-    icon,
-    color='white',
-    backgroundColor='black',
-    borderColor,
-    fullWidth = true,
-    style,
-}: BlockButtonProps) {
+export function BlockButton({ onPress, title, color='white', backgroundColor='black', borderColor='black' }: BlockButtonProps) {
     const { scaleAnim, opacityAnim, handlePressIn, handlePressOut } = usePressedAnimation();
 
     return (
         <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
             <Animated.View
-                style={[
-                    styles.container,
-                    {
-                        width: fullWidth ? '100%' : 'auto',
-                        marginVertical: fullWidth ? 5 : 0,
-                        backgroundColor,
-                        borderColor,
-                        transform: [{ scale: scaleAnim }],
-                        opacity: opacityAnim,
-                    },
-                    style as any,
-                ]}
-            >
+                style={[ styles.container, { backgroundColor, borderColor, transform: [{ scale: scaleAnim }], opacity: opacityAnim } ]}>
                 <View style={styles.content}>
-                    {icon}
-                    {icon && title && <View style={styles.conditionalGap} />}
-                    <Text type="button" lightColor={color} darkColor={color}>
-                        {title}
-                    </Text>
+                    <Text type="button" lightColor={color} darkColor={color}>{title}</Text>
                 </View>
             </Animated.View>
         </Pressable>
@@ -67,8 +39,5 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    conditionalGap: {
-        marginRight: 8,
     },
 });

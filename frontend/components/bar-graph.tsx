@@ -2,7 +2,8 @@ import { StyleSheet } from "react-native";
 import { ThemedView as View } from "@/components/themed-view";
 import { CartesianChart, Bar } from "victory-native";
 import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
-import { useThemeColor } from "@/hooks/use-theme-color";
+import { useThemeColor, } from "@/hooks/use-theme-color";
+import { Fonts } from "@/constants/theme";
 
 // Example from: https://nearform.com/open-source/victory-native/docs/cartesian/guides/basic-bar-chart
 
@@ -17,6 +18,7 @@ type BarGraphProps = {
 
 export function BarGraph({ data }: BarGraphProps) {
     const font = useFont(require("@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf"), 12);
+
     const textColor = useThemeColor({}, 'text');
 
     return (
@@ -39,7 +41,7 @@ export function BarGraph({ data }: BarGraphProps) {
                         chartBounds={chartBounds}
                         points={points.score}
                         roundedCorners={{ topLeft: 5, topRight: 5 }}>
-                        <LinearGradient start={vec(0, 0)} end={vec(0, 400)} colors={["#371B34", "#a78bfa00"]}
+                        <LinearGradient start={vec(0, 0)} end={vec(0, 400)} colors={["#538BFA", "#B8CDF7"]}
                         />
                     </Bar>
                 )}

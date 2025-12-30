@@ -8,10 +8,9 @@ type Props = {
     onChangeText: (text: string) => void; 
     secureTextEntry?: boolean; 
     keyboardType?: KeyboardTypeOptions; 
-    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'; 
 }; 
 
-export const TextField = ({ label, placeholder, value, onChangeText, secureTextEntry = false, keyboardType = 'default', autoCapitalize = 'words' }: Props) => { 
+export const TextField = ({ label, placeholder, value, onChangeText, secureTextEntry = false, keyboardType = 'default' }: Props) => { 
     return ( 
         <View style={styles.container}> 
             {label && <Text style={styles.label}>{label}</Text>} 
@@ -22,7 +21,6 @@ export const TextField = ({ label, placeholder, value, onChangeText, secureTextE
                 value={value} 
                 onChangeText={onChangeText} 
                 secureTextEntry={secureTextEntry} 
-                autoCapitalize={autoCapitalize} 
                 autoCorrect={true} 
                 keyboardType={keyboardType} 
             /> 
