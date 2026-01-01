@@ -1,24 +1,72 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
+import { useEffect, useState } from "react";
 
 import { BlockButton as Button } from "@/components/block-button";
 import { ThemedText as Text } from "@/components/themed-text";
 import { ThemedView as View } from "@/components/themed-view";
 import { router } from "expo-router";
+import { signIn, isAuthenticated } from "@/services/authentication-service";
 
 export default function Index() {
-  return (
-    <View lightColor="#AEAFF7" darkColor="#8F90DF" style={styles.container}>
-		<Text type='title' align='center'>Here to help you monitor conversation!</Text>
-		<Image
-			source={require('../assets/images/conversation-placeholder.png')}
-			style={styles.image}
-			contentFit="contain"
-			transition={1000}
-		/>
-		<Button color="white" backgroundColor="#371B34" title="Secure Sign In" onPress={() => router.replace("/(tabs)/metricsScreen")} />
-    </View>
-  );
+	const [isAuthenticating, setIsAuthenticating] = useState(true);
+	const [isSigningIn, setIsSigningIn] = useState(false);
+
+	useEffect(() => { checkAuthentication(); }, []);
+
+	const checkAuthentication = async () => {
+		try {
+			const authenticated = await isAuthenticated();
+			if (authenticated) {
+				router.replace("/(tabs)/metricsScreen");
+			} else {
+				setIsAuthenticating(false);
+			}
+		} catch (error) {
+			console.error("Error checking authentication:", error);
+			setIsAuthenticating(false);
+		}
+	};
+
+	const handleSignIn = async () => {
+		setIsSigningIn(true);
+		try {
+			const result = await signIn();
+			if (result) {
+				router.replace("/(tabs)/metricsScreen");
+			} else {
+				setIsSigningIn(false);
+			}
+		} catch (error) {
+			console.error("Error during sign in:", error);
+			setIsSigningIn(false);
+		}
+	};
+
+	return (
+		isAuthenticating ? (
+			<View lightColor="#AEAFF7" darkColor="#8F90DF" style={styles.container}>
+				<ActivityIndicator size="large" color="#371B34" />
+			</View>
+		) : (
+			<View lightColor="#AEAFF7" darkColor="#8F90DF" style={styles.container}>
+				<Text type='title' align='center'>Here to help you monitor conversation!</Text>
+				<Image
+					source={require('../assets/images/conversation-placeholder.png')}
+					style={styles.image}
+					contentFit="contain"
+					transition={1000}
+				/>
+				<Button 
+					color="white" 
+					backgroundColor="#371B34" 
+					title={isSigningIn ? "Signing In" : "Secure Sign In"} 
+					onPress={handleSignIn}
+					disabled={isSigningIn}
+				/>
+			</View>
+		)
+	);
 };
 
 const styles = StyleSheet.create({

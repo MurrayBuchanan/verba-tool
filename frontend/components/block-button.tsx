@@ -10,15 +10,23 @@ export type BlockButtonProps = {
     color?: string;
     backgroundColor?: string;
     borderColor?: string;
+    disabled?: boolean;
 };
 
-export function BlockButton({ onPress, title, color='white', backgroundColor='black', borderColor='black' }: BlockButtonProps) {
+export function BlockButton({ onPress, title, color='white', backgroundColor='black', borderColor='black', disabled=false }: BlockButtonProps) {
     const { scaleAnim, opacityAnim, handlePressIn, handlePressOut } = usePressedAnimation();
 
     return (
-        <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+        <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} disabled={disabled}>
             <Animated.View
-                style={[ styles.container, { backgroundColor, borderColor, transform: [{ scale: scaleAnim }], opacity: opacityAnim } ]}>
+                style={[ styles.container, 
+                    { 
+                        backgroundColor, 
+                        borderColor, 
+                        transform: [{ scale: scaleAnim }], 
+                        opacity: disabled ? 0.5 : opacityAnim 
+                    } 
+                ]}>
                 <View style={styles.content}>
                     <Text type="button" lightColor={color} darkColor={color}>{title}</Text>
                 </View>
