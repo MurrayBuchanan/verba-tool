@@ -12,10 +12,9 @@ Install PostgreSQL (once) ```brew install postgresql@14```
 
 Create database ```createdb CS408_postgres```
 
-### Install dependancies
-python -m pip install -r requirements.txt
+Install dependancies ```python -m pip install -r requirements.txt```
 
-```uvicorn app.main:app --reload```
+Run backend ```uvicorn app.main:app --reload --host 0.0.0.0 --port 8001```
 
 **MUST REMEMBER TO CHANGE TEMP TOKEN**
 curl -X POST "http://127.0.0.1:8001/upload-audio" \

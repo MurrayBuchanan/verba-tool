@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, Header, HTTPException, Depends
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 import os
 import json
@@ -14,6 +15,15 @@ from .database import get_db, engine
 from .models import Base, Transcript, TranscriptSegment, User
 
 app = FastAPI()
+
+# CORS to allow requests from Expo Go/Dev
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Create database tables
 @app.on_event("startup")

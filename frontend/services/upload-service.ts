@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+// TODO: Change user id to authenticated oid's
+
 export async function uploadRecording(audioUri: string) {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN;
@@ -23,6 +25,7 @@ export async function uploadRecording(audioUri: string) {
       headers: {
         Authorization: `Bearer ${API_TOKEN}`,
         'Content-Type': 'multipart/form-data',
+        'User-ID': '1',
       },
     });
     console.log('Upload successful:', response.data);
