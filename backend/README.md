@@ -6,7 +6,11 @@ Create (once): ```python3 -m venv .venv```
 Activate: ```source .venv/bin/activate```
 Deactivate: ```deactivate```
 
+### Database Setup
 
+Install PostgreSQL (once) ```brew install postgresql@14```
+
+Create database ```createdb CS408_postgres```
 
 ### Install dependancies
 python -m pip install -r requirements.txt
@@ -16,6 +20,7 @@ python -m pip install -r requirements.txt
 **MUST REMEMBER TO CHANGE TEMP TOKEN**
 curl -X POST "http://127.0.0.1:8001/upload-audio" \
   -H "Authorization: Bearer CS408_SECRET_API_TOKEN" \
+  -H "User-ID: 1" \
   -F "file=@app/tests/sample-data.m4a;type=audio/mp4"
 
 ## How to deploy

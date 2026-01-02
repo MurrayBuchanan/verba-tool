@@ -1,14 +1,14 @@
 from typing import Dict, Any, List
 from pydantic import BaseModel, conint
 from openai import AzureOpenAI
-from .config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_API_VERSION
+from .config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
 
 # TODO: Write more about deployment from Foundry -> Models+endpoints -> This one
 # TODO: Add more features
 
 # Create client with the OpenAI SDK for Azure
 client = AzureOpenAI(
-    api_version = OPENAI_API_VERSION,
+    api_version = OPENAI_VERSION,
     azure_endpoint = OPENAI_ENDPOINT,
     api_key = OPENAI_API_KEY,
 )
