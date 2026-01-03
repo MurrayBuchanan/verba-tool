@@ -35,7 +35,7 @@ export function ThemedText({style, lightColor, darkColor, type = 'default', alig
 
 const styles = StyleSheet.create({
 	default: {
-		fontSize: 20,
+		fontSize: 18,
 		lineHeight: 24,
 		fontWeight: '400'
 	},

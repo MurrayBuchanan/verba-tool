@@ -140,3 +140,96 @@ async def upload_audio(
                     os.remove(path)
             except Exception:
                 pass
+
+# TODO: Maybe use azure double auth for endpoint security and better model handling
+
+# Endpoint to get all transcripts for a user 
+# For chat history listing
+@app.get("/transcripts/{user_id}")
+async def get_transcripts(
+    user_id: int,
+    authorization: str = Header(..., alias="Authorization"),
+    db: AsyncSession = Depends(get_db)
+) -> JSONResponse:
+    expected = f"Bearer {API_TOKEN}"
+    if authorization != expected:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    try:
+        result = await db.execute(
+            select(Transcript)
+            .filter(Transcript.user_id == user_id) # Filter by user (TODO: change later for multi-user and less reads)
+            .order_by(desc(Transcript.transcript_id)) # Latest first
+        )
+        transcripts = result.scalars().all()
+        
+        transcript_list = []
+        for transcript in transcripts:
+            transcript_list.append({
+                "transcript_id": transcript.transcript_id,
+                "user_id": transcript.user_id,
+                "number_of_turns": transcript.number_of_turns,
+                "total_duration": transcript.total_duration,
+                "wpm_per_speaker": json.loads(transcript.wpm_per_speaker) if transcript.wpm_per_speaker else {},
+                "mean_utterance_length": json.loads(transcript.mean_utterance_length) if transcript.mean_utterance_length else {},
+                "db_id": transcript.id
+            })
+        
+        return JSONResponse(content={"transcripts": transcript_list})
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Error while fetching transcripts: {str(error)}")
+
+# Endpoint to get a specific transcript with segments
+# For chat view for a specific transcript and user
+@app.get("/transcripts/{user_id}/{transcript_id}")
+async def get_transcript(
+    user_id: int,
+    transcript_id: int,
+    authorization: str = Header(..., alias="Authorization"),
+    db: AsyncSession = Depends(get_db)
+) -> JSONResponse:
+    expected = f"Bearer {API_TOKEN}"
+    if authorization != expected:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    try:
+        # Get the transcript
+        transcript_result = await db.execute(
+            select(Transcript)
+            .filter(Transcript.user_id == user_id, Transcript.transcript_id == transcript_id)
+        )
+        transcript = transcript_result.scalar_one_or_none()
+        
+        if transcript is None:
+            raise HTTPException(status_code=404, detail="Transcript not found")
+        
+        # Get all segments for transcript
+        segments_result = await db.execute(
+            select(TranscriptSegment)
+            .filter(TranscriptSegment.transcript_feature_id == transcript.id)
+            .order_by(TranscriptSegment.offset)
+        )
+        segments = segments_result.scalars().all()
+        
+        segment_list = []
+        for segment in segments:
+            segment_list.append({
+                "duration": segment.duration,
+                "offset": segment.offset,
+                "speaker": segment.speaker,
+                "text": segment.text
+            })
+        
+        return JSONResponse(content={
+            "transcript_id": transcript.transcript_id,
+            "user_id": transcript.user_id,
+            "number_of_turns": transcript.number_of_turns,
+            "total_duration": transcript.total_duration,
+            "wpm_per_speaker": json.loads(transcript.wpm_per_speaker) if transcript.wpm_per_speaker else {},
+            "mean_utterance_length": json.loads(transcript.mean_utterance_length) if transcript.mean_utterance_length else {},
+            "segments": segment_list
+        })
+    except HTTPException:
+        raise
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Error while fetching transcript: {str(error)}")

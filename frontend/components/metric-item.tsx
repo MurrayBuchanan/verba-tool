@@ -21,7 +21,7 @@ export function MetricItem({ metricId, metricName }: MetricItemProps) {
     	<Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} hitSlop={8}>
 			<Animated.View style={[ styles.container, { transform: [{ scale: scaleAnim }], opacity: opacityAnim } ]}>
 				<View style={styles.row}>
-					<Text type="heading" style={styles.updated} numberOfLines={1}>{metricName}</Text>
+					<Text type="heading" numberOfLines={1}>{metricName}</Text>
 					<IconSymbol name="chevron.right" size={18} color="#666" />
 				</View>
 			</Animated.View>
@@ -32,27 +32,14 @@ export function MetricItem({ metricId, metricName }: MetricItemProps) {
 const styles = StyleSheet.create({
   	container: {
     	borderRadius: 12,
-    	paddingVertical: 14,
+    	paddingVertical: 12,
     	paddingHorizontal: 16,
+		borderColor: "#ccc",
+		borderWidth: 1,
   	},
   	row: {
     	flexDirection: "row",
     	alignItems: "center",
     	justifyContent: "space-between",
-  	},
-  	leftContent: {
-    	flexDirection: "row",
-    	alignItems: "center",
-    	gap: 18,
-    	flex: 1,
-  	},
-  	updated: {
-   		opacity: 0.75,
-  	},
-  	date: {
-    	alignItems: "center",
-		width: 50,
-		height: 50,
-		borderRadius: 10,
   	},
 });

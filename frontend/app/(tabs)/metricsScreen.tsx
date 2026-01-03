@@ -11,7 +11,10 @@ export default function MetricsScreen() {
 			<Text type="title">Metrics</Text>
 			<ScrollView>
 				<List>
-					<MetricItem metricId="1" metricName="Coherence Score" />
+					<MetricItem metricId="1" metricName="Coherence" />
+					<MetricItem metricId="1" metricName="Word Choice" />
+					<MetricItem metricId="1" metricName="Engagement" />
+					<MetricItem metricId="1" metricName="Tone" />
 				</List>
 			</ScrollView>
 		</View>

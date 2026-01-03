@@ -39,8 +39,7 @@ export function ConversationItem({ onPress, dateNumber, dateString, conversation
 const styles = StyleSheet.create({
   	container: {
     	borderRadius: 12,
-    	paddingVertical: 14,
-    	paddingHorizontal: 16,
+    	paddingVertical: 10,
   	},
   	row: {
     	flexDirection: "row",

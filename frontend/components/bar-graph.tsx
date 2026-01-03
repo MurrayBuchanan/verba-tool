@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 import { ThemedView as View } from "@/components/themed-view";
 import { CartesianChart, Bar } from "victory-native";
-import { LinearGradient, useFont, vec } from "@shopify/react-native-skia";
-import { useThemeColor, } from "@/hooks/use-theme-color";
+import { LinearGradient, vec } from "@shopify/react-native-skia";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { useCustomFont } from "@/hooks/use-custom-font";
 
-// TODO: Map the font to existing one to avoid loading issues
 // Example from: https://nearform.com/open-source/victory-native/docs/cartesian/guides/basic-bar-chart
 
 type DataPoint = {
@@ -17,8 +17,7 @@ type BarGraphProps = {
 };
 
 export function BarGraph({ data }: BarGraphProps) {
-    const font = useFont(require("@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf"), 12);
-
+    const font = useCustomFont('600', 12);
     const textColor = useThemeColor({}, 'text');
 
     return (

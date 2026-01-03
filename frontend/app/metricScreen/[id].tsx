@@ -1,11 +1,11 @@
-import { StyleSheet } from "react-native";
 import { useEffect } from "react";
+import { StyleSheet } from "react-native";
+import { useLocalSearchParams, useNavigation, router } from "expo-router";
 
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { BlockButton } from "@/components/block-button";
 import { BarGraph } from "@/components/bar-graph";
-import { useLocalSearchParams, useNavigation, router } from "expo-router";
 import { signOut } from "@/services/authentication-service";
 
 const handleSignOut = () => {
@@ -48,7 +48,7 @@ export default function MetricScreen() {
 					<Text type="default">The audio is transcribed and labelled then passed into a model to extract.. with a rubic</Text>
 				</View>
 			</View>
-			<BlockButton title="Export data" backgroundColor="#371B34" color="#FFF" onPress={ handleSignOut() } />
+			<BlockButton title="Export data" onPress={ handleSignOut() }/>
 			</View>
 	);
 }

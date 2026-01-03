@@ -18,8 +18,7 @@ export default function RecordAudioScreen() {
 				source={require('../../assets/images/conversation-placeholder.png')}
 				style={styles.image}
 				contentFit="contain"
-				transition={1000}
-			/>
+				/>
 			<View style={styles.tutorialTextContainer}>
 				<Text type='subtitle' align='center'>How to Use</Text>
 				<Text type='default' align='center'>Click start recording and we will listen for language patterns for your clinician.</Text>

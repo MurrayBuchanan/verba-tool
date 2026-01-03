@@ -63,15 +63,10 @@ export const RecordButton = () => {
 
 	const getLabel = () => {
 		if (isProcessing) return 'Processing';
-		return recorderState.isRecording ? 'Tap to stop' : 'Tap to start';
+		return recorderState.isRecording ? 'Stop Recording' : 'Start Recording';
 	};
 
 	return (
-		<BlockButton
-			onPress={onPress}
-			title={getLabel()}
-			backgroundColor="#371B34"
-			color="#FFF"
-		/>
+		<BlockButton onPress={onPress} title={getLabel()} disabled={isProcessing} />
 	);
 };

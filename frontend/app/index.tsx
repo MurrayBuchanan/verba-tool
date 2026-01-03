@@ -1,11 +1,11 @@
+import { useEffect, useState } from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
-import { useEffect, useState } from "react";
+import { router } from "expo-router";
 
 import { BlockButton as Button } from "@/components/block-button";
 import { ThemedText as Text } from "@/components/themed-text";
 import { ThemedView as View } from "@/components/themed-view";
-import { router } from "expo-router";
 import { signIn, isAuthenticated } from "@/services/authentication-service";
 
 export default function Index() {
@@ -42,28 +42,21 @@ export default function Index() {
 			setIsSigningIn(false);
 		}
 	};
-
+	
 	return (
 		isAuthenticating ? (
-			<View lightColor="#AEAFF7" darkColor="#8F90DF" style={styles.container}>
+			<View style={styles.container}>
 				<ActivityIndicator size="large" color="#371B34" />
 			</View>
 		) : (
-			<View lightColor="#AEAFF7" darkColor="#8F90DF" style={styles.container}>
+			<View style={styles.container}>
 				<Text type='title' align='center'>Here to help you monitor conversation!</Text>
 				<Image
 					source={require('../assets/images/conversation-placeholder.png')}
 					style={styles.image}
 					contentFit="contain"
-					transition={1000}
 				/>
-				<Button 
-					color="white" 
-					backgroundColor="#371B34" 
-					title={isSigningIn ? "Signing In" : "Secure Sign In"} 
-					onPress={handleSignIn}
-					disabled={isSigningIn}
-				/>
+				<Button title={isSigningIn ? "Signing In" : "Secure Sign In"} onPress={handleSignIn} disabled={isSigningIn} />
 			</View>
 		)
 	);

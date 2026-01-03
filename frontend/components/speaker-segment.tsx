@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     messageContainer: {
         flexDirection: "row",
         marginVertical: 10,
+        paddingHorizontal: 10,
     },
     leftMessage: {
         justifyContent: "flex-start",
