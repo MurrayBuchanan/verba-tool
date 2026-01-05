@@ -2,6 +2,13 @@
 
 ## Description
 
+## Setup
+
+1. Create ```.env file``` to store the environment variables
+
+2. View IP ```ipconfig getifaddr en0```
+
+
 ## How to run
 1. Install dependencies (once)
 

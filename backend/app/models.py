@@ -1,5 +1,3 @@
-from pydantic import BaseModel
-from typing import List
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from .database import Base
 
@@ -28,22 +26,3 @@ class TranscriptSegment(Base):
     speaker = Column(String, nullable=False)
     text = Column(String, nullable=False)
 
-class Users(BaseModel):
-    id: int
-    username: str
-    email: str
-
-class Segment(BaseModel):
-    duration: float
-    offset: float
-    speaker: str
-    text: str
-
-class TranscriptAnalysis(BaseModel):
-    user_id: int
-    transcript_id: int
-    raw_segments: List[Segment]
-    number_of_turns: int
-    total_duration: float
-    wpm_per_speaker: dict = {}
-    mean_utterance_length: dict = {}

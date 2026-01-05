@@ -1,10 +1,10 @@
-from typing import Dict, Any, List
-from pydantic import BaseModel, conint
+from typing import List, cast
+import json
 from openai import AzureOpenAI
 from .config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
+from .schemas import RawSegments, AIFeatures
 
 # TODO: Write more about deployment from Foundry -> Models+endpoints -> This one
-# TODO: Add more features
 
 # Create client with the OpenAI SDK for Azure
 client = AzureOpenAI(
@@ -13,42 +13,34 @@ client = AzureOpenAI(
     api_key = OPENAI_API_KEY,
 )
 
-rubic_score = conint(ge=1, le=5)
-
-class TranscriptAIFeatures(BaseModel):
-    # Per-speaker scores
-    coherance_score_per_speaker: Dict[str, rubic_score]
-    topic_maintenance_score_per_speaker: Dict[str, rubic_score]
-
-def format_transcript(payload: Dict[str, Any]) -> str:
+def format_transcript(payload: RawSegments) -> str:
     # Format transcript segments into a readable string
     lines: List[str] = []
     
-    for segment in payload.get("raw_segments", []):
-        offset = float(segment.get("offset", 0))
-        duration = float(segment.get("duration", 0))
-        speaker = segment.get("speaker")
-        role = segment.get("role", "Unknown")
-        text = segment.get("text")
+    for segment in payload["raw_segments"]:
+        offset = segment["offset"]
+        duration = segment["duration"]
+        speaker = segment["speaker"]
+        text = segment["text"]
         
         line = (
             f"[{offset:.2f}s +{duration:.2f}s] "
-            f"{speaker} ({role}): {text}"
+            f"{speaker}: {text}"
         )
         lines.append(line)
     
     return "\n".join(lines)
 
-def extract_features(transcript: Dict[str, Any]) -> TranscriptAIFeatures:
+def extract_features(transcript: RawSegments) -> AIFeatures:
     # Extract and validate speakers from transcript
-    segments = transcript.get("raw_segments", [])
+    segments = transcript["raw_segments"]
     if not segments:
         raise ValueError("Extraction error: No segments found")
     
     # Extract unique speakers
     speaker_set = set()
-    for seg in segments:
-        speaker = seg.get("speaker")
+    for segment in segments:
+        speaker = segment["speaker"]
         if speaker:
             speaker_set.add(speaker)
 
@@ -57,22 +49,31 @@ def extract_features(transcript: Dict[str, Any]) -> TranscriptAIFeatures:
         raise ValueError("Extraction error: No speakers identified in transcript segments")
 
     system_prompt = """
-    Task: Extract rubric scores (1-5) from a transcript per speaker.
+    You are a experienced doctor studying patients with dementia. You understand how the disease affects language abilities.
+    Task: 
+    - Extract linguistic impairment features from a transcript per speaker.
+    - Rate each feature on a scale from 0.0 (no impairment) to 1.0 (severe impairment).
 
     Output: Return only a JSON object with these keys:
     {
-        "coherance_score_per_speaker": { "<speaker>": 1-5, ... },
-        "topic_maintenance_score_per_speaker": { "<speaker>": 1-5, ... }
+        "impoverished_vocabulary": { "<speaker>": 0.0-1.0, ... },
+        "word_finding_difficulties": { "<speaker>": 0.0-1.0, ... },
+        "semantic_paraphasias": { "<speaker>": 0.0-1.0, ... },
+        "syntactic_simplification": { "<speaker>": 0.0-1.0, ... },
+        "discourse_impairment": { "<speaker>": 0.0-1.0, ... }
     }
     
-    Rubrics:
-    - Coherence: 5 clear/consistent, 3 mostly understandable, 1 often incoherent. 
-    - Topic maintenance: 5 stays on topic, 3 some drift, 1 frequent topic jumps.
+    Feature Definitions:
+    - Word-Finding Difficulties (Anomia): Difficulty retrieving words, hesitations, frequent pauses, use of non-specific and filler words. 0.0 = fluent word retrieval, 1.0 = frequent word-finding problems.
+    - Impoverished Vocabulary: Limited range of vocabulary, repetitive word choice, overuse of generic terms. 0.0 = rich vocabulary, 1.0 = very limited vocabulary.
+    - Semantic Paraphasias: Substitution of words with semantically related but incorrect words. 0.0 = no paraphasias, 1.0 = frequent semantic errors.
+    - Syntactic Simplification: Overuse of simple, short sentence structures, reduced complexity, increased grammatical errors. 0.0 = complex syntax, 1.0 = very simplified syntax.
+    - Discourse Impairment: Poor coherence, topic maintenance issues, difficulty organizing thoughts, tangential speech. 0.0 = coherent discourse, 1.0 = severely impaired discourse.
 
     Rules:
     - Include every speaker from the provided speaker list.
-    - Scores must be integers between 1 to 5.
-    - Do not include extra keys.
+    - Scores must be floating point numbers between 0.0 and 1.0.
+    - Do not include extra keys or explanations.
     """
 
     user_prompt = (
@@ -94,6 +95,20 @@ def extract_features(transcript: Dict[str, Any]) -> TranscriptAIFeatures:
         temperature=0, # More deterministic output
     )
 
-    # Extract the raw JSON
+    # Extract and parse the JSON response
     raw = response.choices[0].message.content
-    return TranscriptAIFeatures.model_validate_json(raw)
+        
+    parsed: dict = json.loads(raw)
+    # Validate that all required fields are present
+    required_fields = [
+        "word_finding_difficulties",
+        "impoverished_vocabulary",
+        "semantic_paraphasias",
+        "syntactic_simplification",
+        "discourse_impairment"
+    ]
+    for field in required_fields:
+        if field not in parsed:
+            parsed[field] = {}
+    
+    return cast(AIFeatures, parsed)
