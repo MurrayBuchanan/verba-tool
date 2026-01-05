@@ -17,6 +17,20 @@ class Transcript(Base):
     wpm_per_speaker = Column(String, nullable=True)
     mean_utterance_length = Column(String, nullable=True)
 
+    # Established features
+    avg_word_length = Column(String, nullable=True)
+    adverb_ratio = Column(String, nullable=True)
+    flesch_kincaid = Column(String, nullable=True)
+    prp_ratio = Column(String, nullable=True)
+    num_unique_words = Column(String, nullable=True)
+    
+    # AI features
+    impoverished_vocabulary = Column(String, nullable=True)
+    word_finding_difficulties = Column(String, nullable=True)
+    semantic_paraphasias = Column(String, nullable=True)
+    syntactic_simplification = Column(String, nullable=True)
+    discourse_impairment = Column(String, nullable=True)
+
 class TranscriptSegment(Base):
     __tablename__ = "transcript_segments"
     id = Column(Integer, primary_key=True, index=True)

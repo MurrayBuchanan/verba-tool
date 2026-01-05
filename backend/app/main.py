@@ -96,7 +96,10 @@ async def upload_audio(
             .order_by(desc(Transcript.transcript_id))
             .limit(1)
         )
-        transcript_id = (result.scalars().first() + 1) or 0
+
+        # Get the next transcript (avoid duplicate crash)
+        max_transcript_id = result.scalars().first()
+        transcript_id = (max_transcript_id + 1) if max_transcript_id is not None else 0
 
         # Calculate total duration
         total_duration = sum(float(seg.get("duration", 0.0)) for seg in segments)
@@ -108,7 +111,19 @@ async def upload_audio(
             number_of_turns=analytics.get("turns", {}).get("total", 0),
             total_duration=total_duration,
             wpm_per_speaker=json.dumps(analytics.get("wpm_per_speaker", {})),
-            mean_utterance_length=json.dumps(analytics.get("mean_utterance_length_per_speaker", {}))
+            mean_utterance_length=json.dumps(analytics.get("mean_utterance_length_per_speaker", {})),
+            # Established features
+            avg_word_length=json.dumps(analytics.get("avg_word_length", {})),
+            adverb_ratio=json.dumps(analytics.get("adverb_ratio", {})),
+            flesch_kincaid=json.dumps(analytics.get("flesch_kincaid", {})),
+            prp_ratio=json.dumps(analytics.get("prp_ratio", {})),
+            num_unique_words=json.dumps(analytics.get("num_unique_words", {})),
+            # AI features
+            impoverished_vocabulary=json.dumps(analytics.get("impoverished_vocabulary", {})),
+            word_finding_difficulties=json.dumps(analytics.get("word_finding_difficulties", {})),
+            semantic_paraphasias=json.dumps(analytics.get("semantic_paraphasias", {})),
+            syntactic_simplification=json.dumps(analytics.get("syntactic_simplification", {})),
+            discourse_impairment=json.dumps(analytics.get("discourse_impairment", {}))
         )
         db.add(transcript_record)
         await db.flush()
@@ -165,13 +180,28 @@ async def get_transcripts(
         
         transcript_list = []
         for transcript in transcripts:
+            # Safely get metric values, defaulting to None if column doesn't exist
+            def get_metric(attr_name):
+                value = getattr(transcript, attr_name, None)
+                return json.loads(value) if value else {}
+            
             transcript_list.append({
                 "transcript_id": transcript.transcript_id,
                 "user_id": transcript.user_id,
                 "number_of_turns": transcript.number_of_turns,
                 "total_duration": transcript.total_duration,
-                "wpm_per_speaker": json.loads(transcript.wpm_per_speaker) if transcript.wpm_per_speaker else {},
-                "mean_utterance_length": json.loads(transcript.mean_utterance_length) if transcript.mean_utterance_length else {},
+                "wpm_per_speaker": get_metric("wpm_per_speaker"),
+                "mean_utterance_length": get_metric("mean_utterance_length"),
+                "avg_word_length": get_metric("avg_word_length"),
+                "adverb_ratio": get_metric("adverb_ratio"),
+                "flesch_kincaid": get_metric("flesch_kincaid"),
+                "prp_ratio": get_metric("prp_ratio"),
+                "num_unique_words": get_metric("num_unique_words"),
+                "impoverished_vocabulary": get_metric("impoverished_vocabulary"),
+                "word_finding_difficulties": get_metric("word_finding_difficulties"),
+                "semantic_paraphasias": get_metric("semantic_paraphasias"),
+                "syntactic_simplification": get_metric("syntactic_simplification"),
+                "discourse_impairment": get_metric("discourse_impairment"),
                 "db_id": transcript.id
             })
         
@@ -220,13 +250,28 @@ async def get_transcript(
                 "text": segment.text
             })
         
+        # Safely get metric values
+        def get_metric(attr_name):
+            value = getattr(transcript, attr_name, None)
+            return json.loads(value) if value else {}
+        
         return JSONResponse(content={
             "transcript_id": transcript.transcript_id,
             "user_id": transcript.user_id,
             "number_of_turns": transcript.number_of_turns,
             "total_duration": transcript.total_duration,
-            "wpm_per_speaker": json.loads(transcript.wpm_per_speaker) if transcript.wpm_per_speaker else {},
-            "mean_utterance_length": json.loads(transcript.mean_utterance_length) if transcript.mean_utterance_length else {},
+            "wpm_per_speaker": get_metric("wpm_per_speaker"),
+            "mean_utterance_length": get_metric("mean_utterance_length"),
+            "avg_word_length": get_metric("avg_word_length"),
+            "adverb_ratio": get_metric("adverb_ratio"),
+            "flesch_kincaid": get_metric("flesch_kincaid"),
+            "prp_ratio": get_metric("prp_ratio"),
+            "num_unique_words": get_metric("num_unique_words"),
+            "impoverished_vocabulary": get_metric("impoverished_vocabulary"),
+            "word_finding_difficulties": get_metric("word_finding_difficulties"),
+            "semantic_paraphasias": get_metric("semantic_paraphasias"),
+            "syntactic_simplification": get_metric("syntactic_simplification"),
+            "discourse_impairment": get_metric("discourse_impairment"),
             "segments": segment_list
         })
     except HTTPException:

@@ -39,16 +39,9 @@ export default function MetricScreen() {
 			<View>
 				<Text type="subtitle">Change over time</Text>
 				<BarGraph data={data} />
-				<View style={styles.section}>
-					<Text type="subtitle">What does this show?</Text>
-					<Text type="default">Bob coherance score is slowly increasing, this means x</Text>
-				</View>
-				<View style={styles.section}>
-					<Text type="subtitle">How is this calculated?</Text>
-					<Text type="default">The audio is transcribed and labelled then passed into a model to extract.. with a rubic</Text>
-				</View>
+		
 			</View>
-			<BlockButton title="Export data" onPress={ handleSignOut() }/>
+			<BlockButton title="Export data / Signout" onPress={ handleSignOut() }/>
 			</View>
 	);
 }
