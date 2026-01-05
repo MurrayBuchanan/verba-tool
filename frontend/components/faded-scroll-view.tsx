@@ -11,7 +11,7 @@ interface FadedScrollViewProps extends ScrollViewProps {
 export function FadedScrollView({ children, style, contentContainerStyle, showGradient = true, ...props }: FadedScrollViewProps) {
 	const colorScheme = useColorScheme() ?? 'light';
 	const backgroundColor = Colors[colorScheme].background;
-	const shadowColor = colorScheme === 'light' ? 'rgba(255, 255, 255, 0)' : 'rgba(21, 23, 24, 0)';
+	const shadowColor = colorScheme === 'light' ? 'rgba(250, 250, 250, 0)' : 'rgba(21, 23, 24, 0)';
 
 	return (
 		<View style={[styles.container, style]}>

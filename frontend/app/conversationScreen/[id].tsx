@@ -108,4 +108,3 @@ const styles = StyleSheet.create({
 		color: "#DD2C00",
 	},
 });
-
