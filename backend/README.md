@@ -45,7 +45,7 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 		- `app/services/ai_feature_extraction.py`: AI feature extraction
 		- `app/services/conversation_analytics.py`: Combines features
 	- `app/schemas`
-		- `app/schemas/__ini1. Run the applicationt__.py`
+		- `app/services/__init__.py`
 		- `app/schemas/models.py`: SQLAlchemy database models
 		- `app/schemas/schemas.py`: Pydantic schemas
 	- `app/tests`
@@ -58,10 +58,10 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 
 ## Configuration
 
-1. Create `.env file` in the backend directory to store environment variables:
+> [!NOTE]
+> If you do not own an Azure account, I can send you my environment variable configurations.
 
-	> [!NOTE]  
-	> I can privately share these with you via email on request.
+1. Create `.env file` in the backend directory to store environment variables:
 
 	**API Configuration**
 	<br>API_TOKEN=

@@ -37,10 +37,10 @@ Content coming soon...
 
 ## Configuration
 
-1. Create `.env file` to store the environment variables
+> [!NOTE]
+> If you do not own a developer or Azure account, I can send you my environment variable configurations and add your device to my developer account.
 
-   > [!NOTE]  
-   > I can privately share these with you via email on request.
+1. Create `.env file` to store the environment variables
 
    **Authentication environment variables**
    <br>EXPO_PUBLIC_CLIENT_ID=
@@ -64,8 +64,6 @@ Content coming soon...
       ```bash
       eas login
       ```
-      > [!NOTE]  
-      > You will need a developer account, otherwise if you contact me I will add your device to my dev account.
    2. Configure the project
       ```bash
       eas build:configure
