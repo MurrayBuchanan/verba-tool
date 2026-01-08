@@ -1,7 +1,7 @@
 from typing import List, Dict
-from .ai_feature_extraction import extract_features
-from .nlp_feature_extraction import NLPFeatureExtraction
-from .schemas import SpeakerMetric, Segment, RawSegments, ConversationAnalysisResult, EstablishedFeatures
+from app.services.ai_feature_extraction import extract_features
+from app.services.nlp_feature_extraction import NLPFeatureExtraction
+from app.schemas.schemas import SpeakerMetric, Segment, RawSegments, ConversationAnalysisResult, EstablishedFeatures
 
 class ConversationAnalytics:
     def __init__(self):

@@ -1,8 +1,8 @@
 from typing import List, cast
 import json
 from openai import AzureOpenAI
-from .config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
-from .schemas import RawSegments, AIFeatures
+from app.core.config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
+from app.schemas.schemas import RawSegments, AIFeatures
 
 # TODO: Write more about deployment from Foundry -> Models+endpoints -> This one
 

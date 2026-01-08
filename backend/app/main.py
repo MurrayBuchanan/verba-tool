@@ -7,12 +7,12 @@ import json
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc, text
 
-from .config import API_TOKEN, SPEECH_KEY, SPEECH_REGION
-from .audio_converter import AudioConverter
-from .speech_service import SpeechService
-from .conversation_analytics import ConversationAnalytics
-from .database import get_db, engine
-from .models import Base, Transcript, TranscriptSegment, User
+from app.core.config import API_TOKEN, SPEECH_KEY, SPEECH_REGION
+from app.services.audio_converter import AudioConverter
+from app.services.speech_service import SpeechService
+from app.services.conversation_analytics import ConversationAnalytics
+from app.core.database import get_db, engine
+from app.schemas.models import Base, Transcript, TranscriptSegment, User
 
 app = FastAPI()
 

@@ -1,7 +1,7 @@
 from typing import List, Dict
 import spacy
 import textstat
-from .schemas import SpeakerMetric, Segment
+from app.schemas.schemas import SpeakerMetric, Segment
 
 try:
     nlp = spacy.load("en_core_web_sm")

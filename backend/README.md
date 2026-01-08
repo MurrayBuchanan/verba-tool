@@ -29,23 +29,19 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 ## Project Structure
 
 - `app`
-	- `app/__init__.py`
 	- `app/main.py`: Entry point
 	- `app/api`
 		- `...`: TODO: Separate endpoints
 	- `app/core`
-		- `app/core/__init__.py`
 		- `app/core/config.py`: Configuration and environment variables
 		- `app/core/database.py`: Database connection and session management
 	- `app/services`
-		- `app/services/__init__.py`
 		- `app/services/audio_converter.py`: Convert .mp3 to .wav
 		- `app/services/speech_service.py`: Azure Speech Service
 		- `app/services/nlp_feature_extraction.py`: NLP feature extraction
 		- `app/services/ai_feature_extraction.py`: AI feature extraction
 		- `app/services/conversation_analytics.py`: Combines features
 	- `app/schemas`
-		- `app/services/__init__.py`
 		- `app/schemas/models.py`: SQLAlchemy database models
 		- `app/schemas/schemas.py`: Pydantic schemas
 	- `app/tests`
