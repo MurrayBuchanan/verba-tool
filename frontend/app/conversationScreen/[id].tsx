@@ -1,11 +1,10 @@
-import { StyleSheet, ActivityIndicator } from "react-native";
+import { StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { FadedScrollView as ScrollView} from "@/components/faded-scroll-view";
 import { SpeakerSegment } from "@/components/speaker-segment";
 import { getTranscript } from "@/services/transcript-service";
 import { TranscriptSegment } from "@/constants/transcript";
@@ -49,9 +48,8 @@ export default function ConversationScreen() {
 					setSegments(data.segments || []);
 					setError(null);
 					loadedId.current = id;
-				} catch (error: any) {
-					console.error("Failed to load transcript:", error);
-					setError("Failed to load transcript");
+				} catch (error) {
+					setError("Unable to load transcript");
 				} finally {
 					setLoading(false);
 				}
@@ -68,7 +66,7 @@ export default function ConversationScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text style={styles.error}>{error}</Text>
+					<Text lightColor="#B00020" darkColor="#CF6679">{error}</Text>
 				</View>
 			) : segments.length === 0 ? (
 				<View style={styles.center}>
@@ -76,7 +74,11 @@ export default function ConversationScreen() {
 					{/* Maybe go back */}
 				</View>
 			) : (
-				<ScrollView showGradient={false}>
+				<ScrollView 
+					style={styles.scrollView} 
+					contentContainerStyle={styles.scrollContent}
+					showsVerticalScrollIndicator={false}
+				>
 					{segments.map((segment, index) => (
 						<SpeakerSegment
 							key={index}
@@ -94,6 +96,13 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
+	scrollView: {
+		flex: 1,
+	},
+	scrollContent: {
+		flexGrow: 1,
+		paddingVertical: 20,
+	},
 	header: {
 		padding: 20,
 		paddingBottom: 12,
@@ -103,8 +112,5 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
-	},
-	error: {
-		color: "#DD2C00",
 	},
 });

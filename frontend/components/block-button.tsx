@@ -1,65 +1,47 @@
 import React from 'react';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 
 import { ThemedText as Text } from '@/components/themed-text';
-import { usePressedAnimation } from '@/hooks/use-pressed-animation';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 export type BlockButtonProps = {
     onPress: () => void;
     title?: string;
-    disabled?: boolean;
-    lightTextColor?: string;
-    darkTextColor?: string;
     lightBackgroundColor?: string;
     darkBackgroundColor?: string;
-    lightBorderColor?: string;
-    darkBorderColor?: string;
 };
 
 export function BlockButton({
     onPress,
     title,
-    disabled=false,
-    lightTextColor = '#FFF',
-    darkTextColor = '#FFF',
     lightBackgroundColor='#7F4178',
     darkBackgroundColor='#371B34',
-    lightBorderColor='#371B34',
-    darkBorderColor='#7F4178',
 }: BlockButtonProps) {
-    const { scaleAnim, opacityAnim, handlePressIn, handlePressOut } = usePressedAnimation();
-
     const background = useThemeColor({ light: lightBackgroundColor, dark: darkBackgroundColor, }, 'tint');
-    const border = useThemeColor({ light: lightBorderColor, dark: darkBorderColor }, 'tint');
-    const text = useThemeColor({ light: lightTextColor, dark: darkTextColor }, 'text');
+    const text = useThemeColor({ light: '#FFF', dark: '#0B1220' }, 'text');
 
     return (
-        <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} disabled={disabled}>
-            <Animated.View
-                style={[ styles.container, 
-                    { 
-                        backgroundColor: background, 
-                        borderColor: border, 
-                        transform: [{ scale: scaleAnim }], 
-                        opacity: disabled ? 0.5 : opacityAnim 
-                    } 
-                ]}>
+        < TouchableOpacity onPress={onPress}>
+            <View
+                style={[ styles.container, { backgroundColor: background } ]}>
                 <View style={styles.content}>
-                    <Text type="button" lightColor={text} darkColor={text}>{title}</Text>
+                    <Text type="button">{title}</Text>
                 </View>
-            </Animated.View>
-        </Pressable>
+            </View>
+        </ TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        borderRadius: 30,
+        borderRadius: 14,
         paddingVertical: 16,
         paddingHorizontal: 20,
-        borderWidth: 1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
     content: {
         flexDirection: 'row',

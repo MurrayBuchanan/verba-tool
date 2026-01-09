@@ -1,46 +1,41 @@
-import { StyleSheet, ActivityIndicator } from "react-native";
-import { useState, useCallback } from "react";
+import { StyleSheet, ActivityIndicator, ScrollView } from "react-native";
+import { useState, useCallback, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { MetricItem } from "@/components/metric-item";
+import { MetricItem as Item } from "@/components/metric-item";
 import { List } from "@/components/list";
-import { FadedScrollView as ScrollView} from "@/components/faded-scroll-view";
 import { getTranscripts } from "@/services/transcript-service";
 
 // TODO: Change to authenticated user's id
 const USER_ID = 1;
 
-const all_metrics = [
-	{ id: "wpm_per_speaker" },
-	{ id: "mean_utterance_length" },
-	{ id: "avg_word_length" },
-	{ id: "adverb_ratio" },
-	{ id: "flesch_kincaid" },
-	{ id: "prp_ratio" },
-	{ id: "num_unique_words" },
-	{ id: "impoverished_vocabulary" },
-	{ id: "word_finding_difficulties" },
-	{ id: "semantic_paraphasias" },
-	{ id: "syntactic_simplification" },
-	{ id: "discourse_impairment" },
-];
-
 export default function MetricsScreen() {
+	const router = useRouter();
 	const [loading, setLoading] = useState(true);
 	const [hasConversations, setHasConversations] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const hasLoaded = useRef(false);
 
 	useFocusEffect(
 		useCallback(() => {
 			async function checkConversations() {
 				try {
+					// Only show loading on initial load
+					if (hasLoaded.current) {
+						return;
+					}
+					setLoading(true);
 					const transcripts = await getTranscripts(USER_ID);
 					setHasConversations(transcripts.length > 0);
-				} catch (error) {
-					console.error("Failed to check transcripts:", error);
+					setError(null);
+				} catch (error: any) {
+					setError("Unable to load metrics");
 					setHasConversations(false);
 				} finally {
 					setLoading(false);
+					hasLoaded.current = true;
 				}
 			}
 			checkConversations();
@@ -49,21 +44,66 @@ export default function MetricsScreen() {
 
   	return (
 		<View style={styles.container}>
-			<Text type="title">Metrics</Text>
-			<ScrollView>
+			<ScrollView 
+				style={styles.scrollView} 
+				contentContainerStyle={styles.scrollContent}
+				showsVerticalScrollIndicator={false}
+			>
 				{loading ? (
 					<View style={styles.center}>
 						<ActivityIndicator size="large" color="#B8CDF7" />
 					</View>
-				) : (!hasConversations || all_metrics.length === 0) ? (
+				) : error ? (
+					<View style={styles.center}>
+						<Text lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					</View>
+				) : (!hasConversations) ? (
 					<View style={styles.center}>
 						<Text>No metrics exist, record a conversation to see metrics!</Text>
 					</View>
 				) : (
 					<List>
-						{all_metrics.map((metric) => (
-							<MetricItem key={metric.id} metricId={metric.id} />
-						))}
+						<View style={styles.categorySection}>
+							<Text type="heading" style={styles.categoryHeader}>Speech Rate & Fluency</Text>
+							<View style={styles.metricsRow}>
+								<Item metricId="wpm_per_speaker" onPress={() => router.push(`/metricScreen/wpm_per_speaker`)} />
+								<Item metricId="mean_utterance_length" onPress={() => router.push(`/metricScreen/mean_utterance_length`)} />
+							</View>
+						</View>
+						
+						<View style={styles.categorySection}>
+							<Text type="heading" style={styles.categoryHeader}>Lexical & Vocabulary Measures</Text>
+							<View style={styles.metricsRow}>
+								<Item metricId="num_unique_words" onPress={() => router.push(`/metricScreen/num_unique_words`)} />
+								<Item metricId="avg_word_length" onPress={() => router.push(`/metricScreen/avg_word_length`)} />
+								<Item metricId="impoverished_vocabulary" onPress={() => router.push(`/metricScreen/impoverished_vocabulary`)} />
+								<Item metricId="word_finding_difficulties" onPress={() => router.push(`/metricScreen/word_finding_difficulties`)} />
+							</View>
+						</View>
+						
+						<View style={styles.categorySection}>
+							<Text type="heading" style={styles.categoryHeader}>Grammatical & Syntactic Measures</Text>
+							<View style={styles.metricsRow}>
+								<Item metricId="prp_ratio" onPress={() => router.push(`/metricScreen/prp_ratio`)} />
+								<Item metricId="adverb_ratio" onPress={() => router.push(`/metricScreen/adverb_ratio`)} />
+								<Item metricId="syntactic_simplification" onPress={() => router.push(`/metricScreen/syntactic_simplification`)} />
+							</View>
+						</View>
+						
+						<View style={styles.categorySection}>
+							<Text type="heading" style={styles.categoryHeader}>Semantic Integrity</Text>
+							<View style={styles.metricsRow}>
+								<Item metricId="semantic_paraphasias" onPress={() => router.push(`/metricScreen/semantic_paraphasias`)} />
+							</View>
+						</View>
+						
+						<View style={styles.categorySection}>
+							<Text type="heading" style={styles.categoryHeader}>Discourse & Cognitive Load</Text>
+							<View style={styles.metricsRow}>
+								<Item metricId="flesch_kincaid" onPress={() => router.push(`/metricScreen/flesch_kincaid`)} />
+								<Item metricId="discourse_impairment" onPress={() => router.push(`/metricScreen/discourse_impairment`)} />
+							</View>
+						</View>
 					</List>
 				)}
 			</ScrollView>
@@ -75,12 +115,31 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingHorizontal: 20,
-		paddingTop: 20,
+	},
+	scrollView: {
+		flex: 1,
+	},
+	scrollContent: {
+		flexGrow: 1,
+		paddingVertical: 20,
 	},
 	center: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
+	},
+	categorySection: {
+		marginBottom: 24,
+	},
+	categoryHeader: {
+		marginBottom: 12,
+		marginTop: 8,
+		fontWeight: "600",
+	},
+	metricsRow: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "space-between",
 	},
 });

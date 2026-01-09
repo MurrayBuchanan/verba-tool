@@ -17,7 +17,7 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 - prp ratio
 - number of unique words
 
-**Established Features**
+**AI Features**
 
 - impoverished vocabulary
 - word finding difficulty

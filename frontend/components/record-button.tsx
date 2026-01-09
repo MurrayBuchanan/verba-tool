@@ -33,7 +33,7 @@ export const RecordButton = () => {
 			recorder.record();
 			console.log("Started recording!");
 		} catch (error) {
-			console.error("Failed to start recording:", error);
+			console.error("Error: Failed to start recording", error);
 		}
 	};
 
@@ -50,7 +50,7 @@ export const RecordButton = () => {
 			setIsProcessing(true);
 			await uploadRecording(recorder.uri);
 		} catch (error) {
-			console.error('Failed to stop recording:', error);
+			console.error("Error: Failed to stop recording", error);
 		} finally {
 			setIsProcessing(false);
 		}
@@ -66,7 +66,14 @@ export const RecordButton = () => {
 		return recorderState.isRecording ? 'Stop Recording' : 'Start Recording';
 	};
 
+	const isActive = recorderState.isRecording || isProcessing;
+
 	return (
-		<BlockButton onPress={onPress} title={getLabel()} disabled={isProcessing} />
+		<BlockButton 
+			onPress={onPress} 
+			title={getLabel()}
+			lightBackgroundColor={isActive ? '#2458B8' : '#2F6FE4'}
+			darkBackgroundColor={isActive ? '#3F6FE0' : '#5A8DFF'}
+		/>
 	);
 };

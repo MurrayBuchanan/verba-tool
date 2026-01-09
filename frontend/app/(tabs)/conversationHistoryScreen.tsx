@@ -1,11 +1,10 @@
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet, ScrollView } from "react-native";
 import { useState, useCallback, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { List } from "@/components/list";
 import { ConversationItem as Item} from "@/components/conversation-item";
-import { FadedScrollView as ScrollView } from "@/components/faded-scroll-view";
 import { useRouter } from "expo-router";
 import { getTranscripts } from "@/services/transcript-service";
 import { Transcript } from "@/constants/transcript";
@@ -13,14 +12,20 @@ import { Transcript } from "@/constants/transcript";
 // TODO: Change user id to authenticated user's id
 const USER_ID = 1;
 
-function formatDuration(seconds: number): { number: string; unit: string } {
-	if (seconds < 60) {
-		return { number: Math.round(seconds).toString(), unit: "Secs" };
-	} else if (seconds < 3600) {
-		return { number: Math.round(seconds / 60).toString(), unit: "Mins" };
-	} else {
-		return { number: Math.round(seconds / 3600).toString(), unit: "Hrs" };
+function formatDuration(inputSeconds: number): string {
+	const totalSeconds = Math.floor(inputSeconds);
+
+	const minutes = Math.floor(totalSeconds / 60);
+	const seconds = totalSeconds % 60;
+
+	if (minutes === 0) {
+		return `${seconds}s`;
 	}
+	if (seconds === 0) {
+		return `${minutes}m`;
+	}	
+
+	return `${minutes}m ${seconds}s`;
 }
 
 export default function ConversationHistoryScreen() {
@@ -41,9 +46,8 @@ export default function ConversationHistoryScreen() {
 					const data = await getTranscripts(USER_ID);
 					setTranscripts(data);
 					setError(null);
-				} catch (error: any) {
-					console.error("Failed to load transcripts:", error);
-					setError("Failed to load transcripts");
+				} catch (error) {
+					setError("Unable to load transcripts");
 				} finally {
 					setLoading(false);
 					hasLoaded.current = true;
@@ -55,15 +59,18 @@ export default function ConversationHistoryScreen() {
 
 	return (
 		<View style={styles.container}>
-			<Text type="title">Chat History</Text>
-			<ScrollView>
+			<ScrollView 
+				style={styles.scrollView} 
+				contentContainerStyle={styles.scrollContent}
+				showsVerticalScrollIndicator={false}
+			>
 				{loading ? (
 					<View style={styles.center}>
 						<ActivityIndicator size="large" color="#B8CDF7" />
 					</View>
 				) : error ? (
 					<View style={styles.center}>
-						<Text style={styles.error}>{error}</Text>
+						<Text lightColor="#B00020" darkColor="#CF6679">{error}</Text>
 					</View>
 				) : transcripts.length === 0 ? (
 					<View style={styles.center}>
@@ -72,15 +79,14 @@ export default function ConversationHistoryScreen() {
 				) : (
 					<List divider={true}>
 						{transcripts.map((transcript) => {
-							const duration = formatDuration(transcript.total_duration);
 							return (
 								<Item
 									key={transcript.transcript_id}
 									onPress={() => router.push(`/conversationScreen/${transcript.transcript_id}`)}
-									dateNumber={duration.number}
-									dateString={duration.unit}
-									conversationId={transcript.transcript_id.toString()}
-									conversationLength={transcript.transcript_id.toString()}
+									date={new Date(transcript.created_at).toLocaleDateString()}
+									id={transcript.transcript_id.toString()}
+									name={transcript.transcript_name}
+									duration={formatDuration(transcript.total_duration)}
 								/>
 							);
 						})}
@@ -95,15 +101,18 @@ const styles = StyleSheet.create({
   	container: {
     	flex: 1,
 		paddingHorizontal: 20,
-		paddingTop: 20,
   	},
+	scrollView: {
+		flex: 1,
+	},
+	scrollContent: {
+		flexGrow: 1,
+		paddingVertical: 20,
+	},
 	center: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
-	},
-	error: {
-		color: "#DD2C00",
 	},
 });

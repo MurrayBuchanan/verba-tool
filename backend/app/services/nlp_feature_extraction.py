@@ -88,29 +88,26 @@ class NLPFeatureExtraction:
         if not text.strip():
             return 0.0
         
-        # Process text with spaCy
-        doc = self.nlp(text)
+        tokens = self.nlp(text)
         
         # Count pronouns
-        pronouns = []
-        for token in doc:
+        pronouns = 0
+        for token in tokens:
             if token.pos_ == "PRON":
-                pronouns.append(token)
+                pronouns += 1
         
         # Count nouns
-        nouns = []
-        for token in doc:
+        nouns = 0
+        for token in tokens:
             if token.pos_ == "NOUN":
-                nouns.append(token)
+                nouns += 1
         
         # Calculate total
-        total = len(pronouns) + len(nouns)
+        total = pronouns + nouns
         if total == 0:
             return 0.0
         
-        # Calculate ratio
-        ratio = len(pronouns) / total
-        return ratio
+        return pronouns / total
     
     def prp_ratio_per_speaker(self, segments: List[Segment], group_by_speaker) -> SpeakerMetric:
         groupedSegments = group_by_speaker(segments)

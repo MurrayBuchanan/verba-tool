@@ -1,40 +1,35 @@
-import React from "react";
-import { Animated, Pressable, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { usePressedAnimation } from "@/hooks/use-pressed-animation";
 import { IconSymbol } from "@/components//ui/icon-symbol";
 import { getMetricDisplayName } from "@/utils/metric-display";
 
 export type MetricItemProps = {
     metricId: string;
+    onPress: () => void;
 };
 
-export function MetricItem({ metricId }: MetricItemProps) {
-  	const { scaleAnim, opacityAnim, handlePressIn, handlePressOut } = usePressedAnimation();
-    const router = useRouter();
-    const onPress = () => { router.push(`/metricScreen/${metricId}`); };
-
+export function MetricItem({ metricId, onPress }: MetricItemProps) {
   	return (
-    	<Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} hitSlop={8}>
-			<Animated.View style={[ styles.container, { transform: [{ scale: scaleAnim }], opacity: opacityAnim } ]}>
-				<View style={styles.row}>
-					<Text type="heading" numberOfLines={1}>{getMetricDisplayName(metricId)}</Text>
-					<IconSymbol name="chevron.right" size={18} color="#666" />
-				</View>
-			</Animated.View>
-		</Pressable>
+    	<TouchableOpacity onPress={onPress} style={styles.container}>	
+			<View style={styles.row}>
+				<IconSymbol name="chart.bar.fill" size={30} color="#666" />
+				<IconSymbol name="chevron.right" size={18} color="#666" />
+			</View>
+			<Text style={styles.text}>{getMetricDisplayName(metricId)}</Text>
+			
+		</TouchableOpacity>
 	);
 }
 
 const styles = StyleSheet.create({
   	container: {
+		width: "48%",
+		marginBottom: 12,
     	borderRadius: 12,
-    	paddingVertical: 12,
-    	paddingHorizontal: 16,
-		borderColor: "#ccc",
+    	padding: 16,
+		borderColor: "#9E9E9E",
 		borderWidth: 1,
   	},
   	row: {
@@ -42,4 +37,7 @@ const styles = StyleSheet.create({
     	alignItems: "center",
     	justifyContent: "space-between",
   	},
+	text: {
+		fontWeight: "600",
+	},
 });

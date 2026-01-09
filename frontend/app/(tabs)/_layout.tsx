@@ -13,7 +13,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticFeedback,
       }}>
       <Tabs.Screen
@@ -26,7 +26,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="recordAudioScreen"
         options={{
-          title: 'Record',
+          title: 'Record Audio',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="record.circle" color={color} />,
         }}
       />

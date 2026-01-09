@@ -56,7 +56,7 @@ export default function Index() {
 					style={styles.image}
 					contentFit="contain"
 				/>
-				<Button title={isSigningIn ? "Signing In" : "Secure Sign In"} onPress={handleSignIn} disabled={isSigningIn} />
+				<Button title={isSigningIn ? "Signing In" : "Secure Sign In"} onPress={handleSignIn} />
 			</View>
 		)
 	);

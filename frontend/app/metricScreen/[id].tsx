@@ -49,8 +49,7 @@ export default function MetricScreen() {
 					setTranscripts(data);
 					setError(null);
 				} catch (error: any) {
-					console.error("Failed to load transcripts:", error);
-					setError("Failed to load transcripts");
+					setError("Unable to load metrics");
 				} finally {
 					setLoading(false);
 				}
@@ -63,31 +62,36 @@ export default function MetricScreen() {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.content}>
-				<Text type="subtitle">Progression of {metricName} indicators</Text>
-				{loading ? (
-					<View style={styles.center}>
-						<ActivityIndicator size="large" color="#B8CDF7" />
-					</View>
-				) : error ? (
-					<View style={styles.center}>
-						<Text style={styles.error}>{error}</Text>
-					</View>
-				) : metricData.length === 0 ? (
-					<View style={styles.center}>
-						<Text>No data available for this metric yet.</Text>
-						<Text type="caption">Record some conversations to see progression!</Text>
-					</View>
-				) : (
-					<>
+			{loading ? (
+				<View style={styles.center}>
+					<ActivityIndicator size="large" color="#B8CDF7" />
+				</View>
+			) : error ? (
+				<View style={styles.center}>
+					<Text lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+				</View>
+			) : metricData.length === 0 ? (
+				<View style={styles.center}>
+					<Text>No data available for this metric yet.</Text>
+					<Text type="caption">Record some conversations to see progression!</Text>
+				</View>
+			) : (
+				<View style={styles.content}>
+					<View>
+						<Text type="heading">Changes over time</Text>
 						<BarGraph data={metricData} xAxisLabel={(value) => {
 							const point = metricData.find(d => d.x === value);
 							return point?.label || `#${value}`;
 						}}/>
-					</>
-				)}
-			</View>
-			<BlockButton title="Export data / Signout" onPress={handleSignOut()} />
+					</View>
+					<BlockButton 
+						title="Export data / Signout" 
+						lightBackgroundColor="#4F5D75"
+						darkBackgroundColor="#8A95B5"
+						onPress={handleSignOut()} 
+					/>
+				</View>
+			)}
 		</View>
 	);
 }
@@ -96,18 +100,16 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 20,
-		justifyContent: 'space-between',
+
 	},
 	content: {
 		flex: 1,
+		justifyContent: 'space-between',
 	},
 	center: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
-	},
-	error: {
-		color: "#DD2C00",
 	},
 });
