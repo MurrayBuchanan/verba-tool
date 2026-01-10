@@ -2,7 +2,6 @@ export interface Transcript {
 	transcript_id: number;
 	user_id: number;
 	transcript_name: string;
-	number_of_turns: number;
 	total_duration: number;
 	db_id: number;
 	created_at: string;

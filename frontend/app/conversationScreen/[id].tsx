@@ -66,19 +66,10 @@ export default function ConversationScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text lightColor="#B00020" darkColor="#CF6679">{error}</Text>
-				</View>
-			) : segments.length === 0 ? (
-				<View style={styles.center}>
-					<Text>No transcript found</Text>
-					{/* Maybe go back */}
+					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
 				</View>
 			) : (
-				<ScrollView 
-					style={styles.scrollView} 
-					contentContainerStyle={styles.scrollContent}
-					showsVerticalScrollIndicator={false}
-				>
+				<ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 					{segments.map((segment, index) => (
 						<SpeakerSegment
 							key={index}
@@ -94,9 +85,6 @@ export default function ConversationScreen() {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-	},
-	scrollView: {
 		flex: 1,
 	},
 	scrollContent: {

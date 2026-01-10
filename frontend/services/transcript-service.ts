@@ -18,7 +18,6 @@ export async function getTranscripts(userId: number): Promise<Transcript[]> {
 		}
 		return [];
 	} catch (error) {
-
 		throw error;
 	}
 }
@@ -33,7 +32,6 @@ export async function getTranscript(userId: number, transcriptId: number): Promi
 		const response = await axios.get(endpoint, { headers: { Authorization: `Bearer ${API_TOKEN}` }});
 		return response.data;
 	} catch (error) {
-		console.error('Error: Cannot fetch transcript', error);
 		throw error;
 	}
 }

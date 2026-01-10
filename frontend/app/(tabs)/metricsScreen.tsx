@@ -55,11 +55,11 @@ export default function MetricsScreen() {
 					</View>
 				) : error ? (
 					<View style={styles.center}>
-						<Text lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+						<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
 					</View>
 				) : (!hasConversations) ? (
 					<View style={styles.center}>
-						<Text>No metrics exist, record a conversation to see metrics!</Text>
+						<Text align="center">No metrics exist, record a conversation to see metrics!</Text>
 					</View>
 				) : (
 					<List>

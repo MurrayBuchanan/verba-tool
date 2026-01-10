@@ -68,12 +68,7 @@ export default function MetricScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text lightColor="#B00020" darkColor="#CF6679">{error}</Text>
-				</View>
-			) : metricData.length === 0 ? (
-				<View style={styles.center}>
-					<Text>No data available for this metric yet.</Text>
-					<Text type="caption">Record some conversations to see progression!</Text>
+					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
 				</View>
 			) : (
 				<View style={styles.content}>

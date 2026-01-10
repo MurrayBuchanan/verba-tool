@@ -33,7 +33,7 @@ export const RecordButton = () => {
 			recorder.record();
 			console.log("Started recording!");
 		} catch (error) {
-			console.error("Error: Failed to start recording", error);
+			console.log("Failed to start recording", error);
 		}
 	};
 

@@ -4,7 +4,6 @@ from app.core.database import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
 
 class Transcript(Base):
@@ -12,7 +11,6 @@ class Transcript(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     transcript_id = Column(Integer, nullable=False)
-    number_of_turns = Column(Integer, nullable=False)
     total_duration = Column(Float, nullable=False)
     wpm_per_speaker = Column(String, nullable=True)
     mean_utterance_length = Column(String, nullable=True)
