@@ -1,17 +1,25 @@
-import subprocess
+import ffmpeg
 
 class AudioConverter:
-    # Converts the uploaded audio to Speech Service compatible format (WAV 16kHz mono PCM)
-    def convert_to_wav(self, input_path: str, output_path: str) -> None:
-        ffmpeg_command = [
-            "ffmpeg",
-            "-y",
-            "-i", input_path,
-            "-ac", "1", # mono
-            "-ar", "16000", 
-            "-c:a", "pcm_s16le", # PCM
-            output_path,
-        ]
+    # Makes the audio compatible with Azure Speech Service
+    # ffmpeg repository: https://github.com/kkroening/ffmpeg-python
 
-        subprocess.run(ffmpeg_command, check=True)
+    # Expected format:
+    # - WAV file
+    # - 16kHz sample rate
+    # - Mono/single channel
+    # - 16-bit PCM encoding
 
+    def convert_to_wav(self, inputPath: str, outputPath: str) -> None:
+        (
+            ffmpeg
+            .input(inputPath)
+            .output(
+                outputPath,
+                ac=1,
+                ar=16000,
+                acodec='pcm_s16le'
+            )
+            .overwrite_output()  # Overwrite output
+            .run(quiet=True, check=True)  # Run and catch exceptions
+        )

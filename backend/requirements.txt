@@ -10,3 +10,4 @@ asyncpg
 greenlet
 spacy
 textstat
+ffmpeg-python
