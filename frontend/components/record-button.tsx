@@ -49,8 +49,9 @@ export const RecordButton = () => {
 
 			setIsProcessing(true);
 			await uploadRecording(recorder.uri);
-		} catch (error) {
-			console.error("Error: Failed to stop recording", error);
+			console.log("Uploaded recording successfully!");
+		} catch (error: any) {
+			console.error("Error: Failed to upload recording", error.message);
 		} finally {
 			setIsProcessing(false);
 		}

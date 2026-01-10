@@ -1,51 +1,57 @@
 import time
-from typing import List, Dict, Any
-
+from typing import List
 import azure.cognitiveservices.speech as speechsdk
+from app.schemas.schemas import Segment
+
+# Azure Speech Service documentation: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-stt-diarization?tabs=macos&pivots=programming-language-python
 
 class SpeechService:
-    # Wrapper for Azure Speech Service diarized transcription
-    def __init__(self, speech_key: str, speech_region: str) -> None:
-        if not speech_key or not speech_region:
-            raise ValueError("Speech key and region must be set.")
-        self.speech_key = speech_key
-        self.speech_region = speech_region
+    def __init__(self, speechKey: str, speechRegion: str) -> None:
+        if not speechKey or not speechRegion:
+            raise ValueError("Error: Speech key and region environment variables are not set.")
 
-    # Diarize and transcribe the audio file and return segments
-    def diarize_audio(self, file_path: str) -> List[Dict[str, Any]]:
-        speech_config = speechsdk.SpeechConfig(subscription=self.speech_key, region=self.speech_region)
-        speech_config.speech_recognition_language = "en-GB"
+        self.speechKey = speechKey
+        self.speechRegion = speechRegion
 
-        # Enable diarization, timestamps and text post-processing
-        speech_config.set_property(
+    # Transcribe and perform speaker diarisation on audio file using the Azure Speech Service API
+    def diarise_audio(self, filePath: str) -> List[Segment]:
+        speechConfig = speechsdk.SpeechConfig(subscription=self.speechKey, region=self.speechRegion)
+        speechConfig.speech_recognition_language = "en-GB"
+
+        # Enable speaker diarisation for per speaker transcriptions        
+        speechConfig.set_property(
             speechsdk.PropertyId.SpeechServiceResponse_DiarizeIntermediateResults,
             "true",
         )
-        speech_config.set_property(
+
+        # Enable timestamps for each word in the transcript
+        speechConfig.set_property(
             speechsdk.PropertyId.SpeechServiceResponse_RequestWordLevelTimestamps,
             "true",
         )
-        speech_config.set_property(
+
+        # Enable text post-processing for transcript corrections
+        speechConfig.set_property(
             speechsdk.PropertyId.SpeechServiceResponse_PostProcessingOption,
             "TrueText",
         )
 
-        audio_config = speechsdk.audio.AudioConfig(filename=file_path)
+        audioConfig = speechsdk.audio.AudioConfig(filename=filePath)
 
         # Conversation transcriber for multi-speaker transcription
         conversation_transcriber = speechsdk.transcription.ConversationTranscriber(
-            speech_config=speech_config,
-            audio_config=audio_config,
+            speech_config=speechConfig,
+            audio_config=audioConfig,
         )
 
-        segments: List[Dict[str, Any]] = []
+        segments: List[Segment] = []
         transcribing_stop = False
 
         # Extracts speaker, text, offset, and duration from each successful transcribed event
         def conversation_transcriber_transcribed_cb(evt: speechsdk.SpeechRecognitionEventArgs):
             result = evt.result
             if result and result.text:
-                segment = {
+                segment: Segment = {
                     "speaker": result.speaker_id,
                     "text": result.text,
                     "offset": result.offset / 10_000_000,
@@ -65,14 +71,16 @@ class SpeechService:
             print("ConversationTranscriber cancelled: ", evt.reason)
             transcribing_stop = True
 
-        # Wire up event handlers
+        # Connect callbacks to events fired by the conversation transcriber
         conversation_transcriber.transcribed.connect(conversation_transcriber_transcribed_cb)
         conversation_transcriber.session_stopped.connect(conversation_transcriber_session_stopped_cb)
         conversation_transcriber.canceled.connect(conversation_transcriber_cancelled_cb)
 
         conversation_transcriber.start_transcribing_async().get()
+
+        # Wait for the transcribing session to stop
         while not transcribing_stop:
-            time.sleep(0.1)
+            time.sleep(0.5)
         conversation_transcriber.stop_transcribing_async().get()
 
         return segments

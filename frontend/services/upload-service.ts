@@ -29,8 +29,8 @@ export async function uploadRecording(audioUri: string) {
 		});
 		console.log('Upload successful:', response.data);
 		return response.data;
-	} catch (error) {
-		console.error('Error: Cannot upload audio file', error);
+	} catch (error: any) {
+		console.error('Error: Cannot upload audio file', error.message);
 		throw error;
 	}
 }

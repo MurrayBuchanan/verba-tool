@@ -32,7 +32,7 @@ async def init_db():
         await conn.run_sync(Base.metadata.create_all)
 
 audio_converter = AudioConverter()
-speech_service = SpeechService(SPEECH_KEY, SPEECH_REGION)
+speechService = SpeechService(SPEECH_KEY, SPEECH_REGION)
 conversation_analytics = ConversationAnalytics()
 
 # Endpoint to upload audio for diarization and analytics
@@ -68,7 +68,7 @@ async def upload_audio(
     try:
         # Convert, diarize, and analyse
         audio_converter.convert_to_wav(temp_input, temp_wav)
-        segments = speech_service.diarize_audio(temp_wav)
+        segments = speechService.diarise_audio(temp_wav)
         analytics: Dict[str, Any] = conversation_analytics.analyse(segments)
         
         # Check if user exists, create if not

@@ -20,6 +20,6 @@ class AudioConverter:
                 ar=16000,
                 acodec='pcm_s16le'
             )
-            .overwrite_output()  # Overwrite output
-            .run(quiet=True, check=True)  # Run and catch exceptions
+            .overwrite_output() # Overwrite output
+            .run(quiet=True) # Run and catch exceptions
         )
