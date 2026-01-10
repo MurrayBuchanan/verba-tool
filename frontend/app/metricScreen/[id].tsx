@@ -5,7 +5,7 @@ import { useLocalSearchParams, useNavigation, router, useFocusEffect } from "exp
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { BlockButton } from "@/components/block-button";
-import { BarGraph } from "@/components/bar-graph";
+import { Chart } from "@/components/chart";
 import { signOut } from "@/services/authentication-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { Transcript } from "@/constants/transcript";
@@ -79,7 +79,7 @@ export default function MetricScreen() {
 				<View style={styles.content}>
 					<View>
 						<Text type="heading">Changes over time</Text>
-						<BarGraph data={metricData} xAxisLabel={(value) => {
+						<Chart data={metricData} xAxisLabel={(value) => {
 							const point = metricData.find(d => d.x === value);
 							return point?.label || `#${value}`;
 						}}/>

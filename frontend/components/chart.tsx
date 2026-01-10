@@ -1,11 +1,9 @@
 import { StyleSheet } from "react-native";
 import { ThemedView as View } from "@/components/themed-view";
-import { CartesianChart, Bar } from "victory-native";
-import { LinearGradient, vec } from "@shopify/react-native-skia";
+import { CartesianChart, Line } from "victory-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useCustomFont } from "@/hooks/use-custom-font";
 
-// Example from: https://nearform.com/open-source/victory-native/docs/cartesian/guides/basic-bar-chart
 
 type DataPoint = {
     x: number;
@@ -13,12 +11,14 @@ type DataPoint = {
     label?: string;
 };
 
-type BarGraphProps = {
+type ChartProps = {
     data: DataPoint[];
     xAxisLabel?: (value: number) => string;
 };
 
-export function BarGraph({ data, xAxisLabel }: BarGraphProps) {
+// TODO: Add mean and SD lines (maybe toggles)
+
+export function Chart({ data, xAxisLabel }: ChartProps) {
     const font = useCustomFont('600', 12);
     const textColor = useThemeColor({}, 'text');
 
@@ -40,13 +40,11 @@ export function BarGraph({ data, xAxisLabel }: BarGraphProps) {
                     labelColor: textColor,
                     formatXLabel: xAxisLabel || defaultXAxisLabel,
             }}>
-                {({ points, chartBounds }) => (
-                    <Bar 
-                        chartBounds={chartBounds} 
+                {({ points }) => (
+                    <Line 
                         points={points.value}
-                        roundedCorners={{ topLeft: 5, topRight: 5 }}>                        
-                        <LinearGradient start={vec(0, 0)} end={vec(0, 400)} colors={["#538BFA", "#B8CDF7"]}/>
-                    </Bar>
+                        color="#2F6FE4"
+                        strokeWidth={3}/>
                 )}
             </CartesianChart>
         </View>

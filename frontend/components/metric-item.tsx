@@ -12,31 +12,46 @@ export type MetricItemProps = {
 
 export function MetricItem({ metricId, onPress }: MetricItemProps) {
   	return (
-    	<TouchableOpacity onPress={onPress} style={styles.container}>	
-			<View style={styles.row}>
-				<IconSymbol name="chart.bar.fill" size={30} color="#666" />
+    	<View style={styles.container} lightColor="#fff" darkColor="#888">
+			<TouchableOpacity onPress={onPress} style={styles.content}>
+			<View style={styles.iconRow} lightColor="#fff" darkColor="#888">
+				<View lightColor="#2F6FE4" darkColor="#5A8DFF" style={styles.iconBackground}>
+					<IconSymbol name="chart.bar.fill" size={20} color="#fff" />
+				</View>
 				<IconSymbol name="chevron.right" size={18} color="#666" />
 			</View>
-			<Text style={styles.text}>{getMetricDisplayName(metricId)}</Text>
-			
-		</TouchableOpacity>
+			<Text type="caption" style={styles.text}>{getMetricDisplayName(metricId)}</Text>
+			</TouchableOpacity>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
   	container: {
 		width: "48%",
+		height: 140,
 		marginBottom: 12,
     	borderRadius: 12,
     	padding: 16,
-		borderColor: "#9E9E9E",
-		borderWidth: 1,
+		flexDirection: "column",
+		justifyContent: "space-between",
   	},
-  	row: {
+	content: {
+		flex: 1,
+		justifyContent: "space-between",
+	},
+  	iconRow: {
     	flexDirection: "row",
     	alignItems: "center",
     	justifyContent: "space-between",
   	},
+	iconBackground: {
+		width: 40,
+		height: 40,
+		borderRadius: 20,
+		alignItems: "center",
+		justifyContent: "center",
+	},
 	text: {
 		fontWeight: "600",
 	},

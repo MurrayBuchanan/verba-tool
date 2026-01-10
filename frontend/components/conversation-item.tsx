@@ -6,20 +6,19 @@ import { IconSymbol } from "@/components//ui/icon-symbol";
 
 export type ConversationItemProps = {
     onPress: () => void;
-	id: string;
-	name: string;
-	date: string;
+	datetime: string;
 	duration: string;
 };
 
-export function ConversationItem({ onPress, id, name, date, duration }: ConversationItemProps) {
+export function ConversationItem({ onPress, datetime, duration }: ConversationItemProps) {
   	return (
     	< TouchableOpacity onPress={onPress} style={styles.container}>
 			<View style={styles.row}>
 				<View style={styles.leftContent}>
-				<Text type="heading">Untitled Conversation{name}</Text>
-				<Text>Date: {date}</Text>
-				<Text>Duration: {duration}</Text>
+					<View lightColor="#2F6FE4" darkColor="#5A8DFF" style={styles.backgroundBox}>
+						<Text style={styles.durationText}>{duration}</Text>
+					</View>
+					<Text>Took place on {datetime}</Text>
 				</View>
 				<IconSymbol name="chevron.right" size={18} color="#666" />
 			</View>
@@ -37,7 +36,18 @@ const styles = StyleSheet.create({
     	alignItems: "center",
     	justifyContent: "space-between",
   	},
+	backgroundBox: {
+		padding: 6,
+		borderRadius: 8,
+		marginRight: 12,
+		paddingHorizontal: 20,
+	},
   	leftContent: {
-    	flexDirection: "column",
+    	flexDirection: "row",
+		alignItems: "center",
   	},
+	durationText: {
+		fontWeight: "600",
+		color: "#fff",
+	},
 });

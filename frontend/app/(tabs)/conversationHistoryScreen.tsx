@@ -83,9 +83,7 @@ export default function ConversationHistoryScreen() {
 								<Item
 									key={transcript.transcript_id}
 									onPress={() => router.push(`/conversationScreen/${transcript.transcript_id}`)}
-									date={new Date(transcript.created_at).toLocaleDateString()}
-									id={transcript.transcript_id.toString()}
-									name={transcript.transcript_name}
+									datetime={new Date(transcript.created_at).toLocaleDateString()}
 									duration={formatDuration(transcript.total_duration)}
 								/>
 							);
