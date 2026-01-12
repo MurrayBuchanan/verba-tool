@@ -4,7 +4,8 @@ from openai import AzureOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
 from app.schemas.schemas import RawSegments, AIFeatures
 
-# TODO: Write more about deployment from Foundry -> Models+endpoints -> This one
+# Documentation: https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-foundry?view=foundry-classic
+# GitHub: https://github.com/openai/openai-python
 
 # Create client with the OpenAI SDK for Azure
 client = AzureOpenAI(

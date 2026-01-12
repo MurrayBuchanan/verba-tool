@@ -9,7 +9,7 @@ import { Chart } from "@/components/chart";
 import { signOut } from "@/services/authentication-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { Transcript } from "@/constants/transcript";
-import { getMetricProgression, getMetricDisplayName } from "@/utils/metric-display";
+import { getMetricProgression, getMetricDetails } from "@/utils/metric-display";
 
 // TODO: Change user id to authenticated user's id
 const USER_ID = 1;
@@ -32,13 +32,13 @@ export default function MetricScreen() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	
-	const metricName = getMetricDisplayName(id);
+	const metricDetails = getMetricDetails(id);
 
 	useEffect(() => {
 		navigation.setOptions({
-			title: metricName,
+			title: metricDetails.name,
 		});
-	}, [navigation, metricName]);
+	}, [navigation, metricDetails.name]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -73,11 +73,15 @@ export default function MetricScreen() {
 			) : (
 				<View style={styles.content}>
 					<View>
-						<Text type="heading">Changes over time</Text>
+						<Text type="heading" style={styles.heading}>Changes over time</Text>
 						<Chart data={metricData} xAxisLabel={(value) => {
 							const point = metricData.find(d => d.x === value);
 							return point?.label || `#${value}`;
 						}}/>
+						<Text type="heading" style={styles.heading}>What does this show?</Text>
+						<Text>{metricDetails.description}</Text>
+						<Text type="heading" style={styles.heading}>How can this be used?</Text>
+						<Text>{metricDetails.details}</Text>
 					</View>
 					<BlockButton 
 						title="Export data / Signout" 
@@ -106,5 +110,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
+	},
+	heading: {
+		marginTop: 20,
+		marginBottom: 10,
 	},
 });

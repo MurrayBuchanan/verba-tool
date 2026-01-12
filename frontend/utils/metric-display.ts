@@ -7,6 +7,12 @@ export type MetricDataPoint = {
 	transcriptId: number;
 };
 
+export type MetricDetails = {
+	name: string;
+	description: string;
+	usage: string;
+};
+
 export function getMetricProgression(transcripts: Transcript[], metricKey: string): MetricDataPoint[] {
 	// Sort transcripts in order of creation
 	const orderedTranscripts = [...transcripts].sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime()).reverse();
@@ -29,23 +35,71 @@ export function getMetricProgression(transcripts: Transcript[], metricKey: strin
 	});
 }
 
-// Map metric keys to UI metric display names
-// TODO: Add descriptions and information about each metric
-export function getMetricDisplayName(metricKey: string): string {
-	const metricNames: Record<string, string> = {
-		wpm_per_speaker: "Words Per Minute",
-		mean_utterance_length: "Mean Utterance Length",
-		avg_word_length: "Average Word Length",
-		adverb_ratio: "Adverb Ratio",
-		flesch_kincaid: "Flesch-Kincaid Grade",
-		prp_ratio: "Pronoun Ratio",
-		num_unique_words: "Unique Words",
-		impoverished_vocabulary: "Impoverished Vocabulary",
-		word_finding_difficulties: "Word Finding Difficulties",
-		semantic_paraphasias: "Semantic Paraphasias",
-		syntactic_simplification: "Syntactic Simplification",
-		discourse_impairment: "Discourse Impairment",
+
+// Map metric keys to UI metric display names and descriptions of dementia benefits
+export function getMetricDetails(metricKey: string): MetricDetails {
+	const metricDetails: Record<string, MetricDetails> = {
+		wpm_per_speaker: {
+			name: "Words Per Minute",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		mean_utterance_length: {
+			name: "Mean Utterance Length",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		avg_word_length: {
+			name: "Average Word Length",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		adverb_ratio: {
+			name: "Adverb Ratio",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		flesch_kincaid: {
+			name: "Flesch-Kincaid Grade",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		prp_ratio: {
+			name: "Pronoun Ratio",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		num_unique_words: {
+			name: "Unique Words",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		impoverished_vocabulary: {
+			name: "Impoverished Vocabulary",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		word_finding_difficulties: {
+			name: "Word Finding Difficulties",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		semantic_paraphasias: {
+			name: "Semantic Paraphasias",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		syntactic_simplification: {
+			name: "Syntactic Simplification",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
+		discourse_impairment: {
+			name: "Discourse Impairment",
+			description: "Content coming soon",
+			usage: "Content coming soon",
+		},
 	};
 
-	return metricNames[metricKey] || metricKey;
+	return metricDetails[metricKey];
 }

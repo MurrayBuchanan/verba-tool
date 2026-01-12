@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
+import { Colors } from "@/constants/theme";
 
 export type SpeakerSegmentProps = {
     speaker: string;
@@ -10,14 +11,20 @@ export type SpeakerSegmentProps = {
 };
 
 export function SpeakerSegment({ speaker, text }: SpeakerSegmentProps) {
-    // If speaker 1 -> left; else speaker 2 -> right
-    const isSpeaker1 = speaker.endsWith("-1") || speaker === "Guest-1" || speaker === "Speaker-1";
+    // If primary speaker (Guest-1) is speaking the message is left aligned, otherwise it is right aligned
+    const isPrimarySpeaker = speaker === "Guest-1";
     
     return (
-        <View style={[ styles.messageContainer, isSpeaker1 ? styles.leftMessage : styles.rightMessage]}>
-            <View lightColor="#B8CDF7" darkColor="#538BFA"style={[ styles.bubble]}>
-                <Text type="default">{text}</Text>
-            </View>
+        <View style={[ styles.messageContainer, isPrimarySpeaker ? styles.isLeftAligned : styles.isRightAligned]}>
+            { isPrimarySpeaker ? (
+                <View lightColor="#ccc" darkColor="#333" style={styles.bubble}>
+                    <Text lightColor="#0B1220" darkColor="#FFFFFF">{text}</Text>
+                </View>
+            ) : (
+                <View lightColor={Colors.light.tint} darkColor={Colors.dark.tint} style={styles.bubble}>
+                    <Text lightColor="#FFFFFF" darkColor="#0B1220">{text}</Text>
+                </View>
+            )}
         </View>
     );
 }
@@ -25,13 +32,13 @@ export function SpeakerSegment({ speaker, text }: SpeakerSegmentProps) {
 const styles = StyleSheet.create({
     messageContainer: {
         flexDirection: "row",
-        marginVertical: 10,
-        paddingHorizontal: 10,
+        marginVertical: 8,
+        paddingHorizontal: 20,
     },
-    leftMessage: {
+    isLeftAligned: {
         justifyContent: "flex-start",
     },
-    rightMessage: {
+    isRightAligned: {
         justifyContent: "flex-end",
     },
     bubble: {
