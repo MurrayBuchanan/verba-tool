@@ -17,24 +17,31 @@ export default function TabLayout() {
         tabBarButton: HapticFeedback,
       }}>
       <Tabs.Screen
-        name="metricsScreen"
-        options={{
-          title: 'Metrics',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.bar.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="recordAudioScreen"
         options={{
           title: 'Record Audio',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="record.circle" color={color} />,
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={28} name={focused ? "record.circle.fill" : "record.circle"} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="metricsScreen"
+        options={{
+          title: 'Metrics',
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={28} name={focused ? "chart.bar.fill" : "chart.bar"} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="interventionScreen"
+        options={{
+          title: 'Interventions',
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={28} name={focused ? "sparkles" : "sparkles"} color={color} />,
         }}
       />
       <Tabs.Screen
         name="conversationHistoryScreen"
         options={{
           title: 'Chat History',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="clock.fill" color={color} />,
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={28} name={focused ? "clock.fill" : "clock"} color={color} />,
         }}
       />
     </Tabs>
