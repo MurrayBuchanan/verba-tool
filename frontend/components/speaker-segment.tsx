@@ -17,7 +17,7 @@ export function SpeakerSegment({ speaker, text }: SpeakerSegmentProps) {
     return (
         <View style={[ styles.messageContainer, isPrimarySpeaker ? styles.isLeftAligned : styles.isRightAligned]}>
             { isPrimarySpeaker ? (
-                <View lightColor="#ccc" darkColor="#333" style={styles.bubble}>
+                <View lightColor={Colors.light.secondaryBackground} darkColor={Colors.dark.secondaryBackground} style={styles.bubble}>
                     <Text lightColor="#0B1220" darkColor="#FFFFFF">{text}</Text>
                 </View>
             ) : (

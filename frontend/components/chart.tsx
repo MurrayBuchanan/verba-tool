@@ -3,6 +3,8 @@ import { ThemedView as View } from "@/components/themed-view";
 import { CartesianChart, Line } from "victory-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useCustomFont } from "@/hooks/use-custom-font";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 
 type DataPoint = {
@@ -21,6 +23,8 @@ type ChartProps = {
 export function Chart({ data, xAxisLabel }: ChartProps) {
     const font = useCustomFont('600', 12);
     const textColor = useThemeColor({}, 'text');
+    const colorScheme = useColorScheme() ?? 'light';
+    const lineColor = Colors[colorScheme].tint;
 
     const defaultXAxisLabel = (value: number) => {
         const point = data.find(d => d.x === value);
@@ -28,7 +32,7 @@ export function Chart({ data, xAxisLabel }: ChartProps) {
     };
 
     return (
-        <View style={styles.chartWrapper}>
+        <View style={styles.chartContainer} lightColor={Colors.light.secondaryBackground} darkColor={Colors.dark.secondaryBackground}>
             <CartesianChart
                 data={data}
                 xKey="x"
@@ -43,7 +47,7 @@ export function Chart({ data, xAxisLabel }: ChartProps) {
                 {({ points }) => (
                     <Line 
                         points={points.value}
-                        color="#2F6FE4"
+                        color={lineColor}
                         strokeWidth={3}/>
                 )}
             </CartesianChart>
@@ -51,8 +55,11 @@ export function Chart({ data, xAxisLabel }: ChartProps) {
     );
   }
 const styles = StyleSheet.create({
-	chartWrapper: {
+	chartContainer: {
+        marginVertical: 12,
 		width: 350,
 		height: 200,
+		borderRadius: 12,
+		padding: 16,
 	},
 });

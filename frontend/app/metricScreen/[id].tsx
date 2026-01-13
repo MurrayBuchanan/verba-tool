@@ -74,14 +74,17 @@ export default function MetricScreen() {
 				<View style={styles.content}>
 					<View>
 						<Text type="heading" style={styles.heading}>Changes over time</Text>
+						
 						<Chart data={metricData} xAxisLabel={(value) => {
 							const point = metricData.find(d => d.x === value);
-							return point?.label || `#${value}`;
+							return point?.label || `Conv ${value}`;
 						}}/>
-						<Text type="heading" style={styles.heading}>What does this show?</Text>
+
+						<Text type="heading" style={styles.heading}>Description</Text>
 						<Text>{metricDetails.description}</Text>
-						<Text type="heading" style={styles.heading}>How can this be used?</Text>
-						<Text>{metricDetails.details}</Text>
+						
+						<Text type="heading" style={styles.heading}>What does this show?</Text>
+						<Text>{metricDetails.usage}</Text>
 					</View>
 					<BlockButton 
 						title="Export data / Signout" 

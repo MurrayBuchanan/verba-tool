@@ -1,12 +1,11 @@
-// TODO: Change this to match end-user and consistent colour, size and rounding
-
-const tintColorLight = '#37245c';
-const tintColorDark = '#C9BEE6';
+const tintColorLight = '#2F6FE4';
+const tintColorDark = '#5A8DFF';
 
 export const Colors = {
   light: {
     text: '#11181C',
     background: '#FAFAFA',
+    secondaryBackground: '#F0F0F0',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
@@ -15,6 +14,7 @@ export const Colors = {
   dark: {
     text: '#ECEDEE',
     background: '#151718',
+    secondaryBackground: '#1F1F1F',
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',

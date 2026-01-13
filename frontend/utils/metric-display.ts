@@ -1,5 +1,7 @@
 import { Transcript } from "@/constants/transcript";
 
+// TODO: Implement flip feature for switching carer/speaker
+
 export type MetricDataPoint = {
 	x: number;
 	value: number;
@@ -15,24 +17,29 @@ export type MetricDetails = {
 
 export function getMetricProgression(transcripts: Transcript[], metricKey: string): MetricDataPoint[] {
 	// Sort transcripts in order of creation
-	const orderedTranscripts = [...transcripts].sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime()).reverse();
+	const sortedTranscripts = [...transcripts].sort((a, b) => a.transcript_id - b.transcript_id);
 
-	return orderedTranscripts.map((transcript, index) => {
+	const metricDataPoints: MetricDataPoint[] = [];
+	
+	for (let i = 0; i < sortedTranscripts.length; i++) {
+		const transcript = sortedTranscripts[i];
+		
 		// Get the metric value from the transcript
 		const metricValue = (transcript as any)[metricKey] as Record<string, number>;
 
-		// Get speaker1's value (sorted alphabetically)
-		// TODO: Implement flip feature for switching carer/speaker
-		const speakerKeys = Object.keys(metricValue).sort();
-		const speaker1Value = speakerKeys.length > 0 ? metricValue[speakerKeys[0]] : 0;
+		// Get speaker 1 values
+		const speakerNames = Object.keys(metricValue).sort();
+		const firstSpeakerValue = speakerNames.length > 0 ? metricValue[speakerNames[0]] : 0;
 
-		return {
-			x: index + 1,
-			value: speaker1Value,
+		metricDataPoints.push({
+			x: i + 1,
+			value: firstSpeakerValue,
 			label: `Conv ${transcript.transcript_id}`,
 			transcriptId: transcript.transcript_id,
-		};
-	});
+		});
+	}
+
+	return metricDataPoints;
 }
 
 

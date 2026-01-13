@@ -72,7 +72,7 @@ export default function MetricsScreen() {
 						</View>
 						
 						<View style={styles.categorySection}>
-							<Text type="heading" style={styles.categoryHeader}>Lexical & Vocabulary Measures</Text>
+							<Text type="heading" style={styles.categoryHeader}>Lexical & Vocabulary</Text>
 							<View style={styles.metricsRow}>
 								<Item metricId="num_unique_words" onPress={() => router.push(`/metricScreen/num_unique_words`)} />
 								<Item metricId="avg_word_length" onPress={() => router.push(`/metricScreen/avg_word_length`)} />
@@ -82,7 +82,7 @@ export default function MetricsScreen() {
 						</View>
 						
 						<View style={styles.categorySection}>
-							<Text type="heading" style={styles.categoryHeader}>Grammatical & Syntactic Measures</Text>
+							<Text type="heading" style={styles.categoryHeader}>Grammatical & Syntactic</Text>
 							<View style={styles.metricsRow}>
 								<Item metricId="prp_ratio" onPress={() => router.push(`/metricScreen/prp_ratio`)} />
 								<Item metricId="adverb_ratio" onPress={() => router.push(`/metricScreen/adverb_ratio`)} />
