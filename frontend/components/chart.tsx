@@ -1,11 +1,12 @@
-import { StyleSheet } from "react-native";
-import { ThemedView as View } from "@/components/themed-view";
+import { StyleSheet, View } from "react-native";
+import { ThemedView } from "@/components/themed-view";
+import { ThemedText as Text } from "@/components/themed-text";
 import { CartesianChart, Line } from "victory-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useCustomFont } from "@/hooks/use-custom-font";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-
+import { useMemo } from "react";
 
 type DataPoint = {
     x: number;
@@ -18,48 +19,132 @@ type ChartProps = {
     xAxisLabel?: (value: number) => string;
 };
 
-// TODO: Add mean and SD lines (maybe toggles)
+function calculateMean(numbers: number[]): number {
+    if (numbers.length === 0) return 0;
+    
+    let sum = 0;
+    for (let i = 0; i < numbers.length; i++) {
+        sum += numbers[i];
+    }
+    return sum / numbers.length;
+}
 
 export function Chart({ data, xAxisLabel }: ChartProps) {
+    const colorScheme = useColorScheme() ?? 'light';
     const font = useCustomFont('600', 12);
     const textColor = useThemeColor({}, 'text');
-    const colorScheme = useColorScheme() ?? 'light';
-    const lineColor = Colors[colorScheme].tint;
+    const dataColor = Colors[colorScheme].tint;
+    const meanColor = useThemeColor({ light: '#10b951', dark: '#34d366' }, 'text');
+    const sdColor = useThemeColor({ light: '#f5a30b', dark: '#fbc924' }, 'text');
 
-    const defaultXAxisLabel = (value: number) => {
+    // Calculate mean from all data points
+    const mean = useMemo(() => {
+        const values = data.map(d => d.value);
+        return calculateMean(values);
+    }, [data]);
+
+    const chartData = useMemo(() => {
+        return data.map(point => ({
+            x: point.x,
+            value: point.value,
+            mean: mean,
+            label: point.label
+        }));
+    }, [data, mean]);
+    
+    const formatXLabel = (value: number) => {
+        if (xAxisLabel) {
+            return xAxisLabel(value);
+        }
+        
         const point = data.find(d => d.x === value);
-        return point?.label || `#${value}`;
+        if (point?.label) {
+            return point.label;
+        }
+        
+        return `#${value}`;
     };
 
     return (
-        <View style={styles.chartContainer} lightColor={Colors.light.secondaryBackground} darkColor={Colors.dark.secondaryBackground}>
+        <ThemedView 
+            style={styles.chartContainer} 
+            lightColor={Colors.light.secondaryBackground} 
+            darkColor={Colors.dark.secondaryBackground}
+        >
+            <Text align="center" style={styles.chartTitle}>Changes over time</Text>
+            
             <CartesianChart
-                data={data}
+                data={chartData}
                 xKey="x"
-                yKeys={["value"]}
+                yKeys={["value", "mean"]}
                 domainPadding={{ left: 35, right: 35, top: 20 }}
-                
                 axisOptions={{ 
                     font,
                     labelColor: textColor,
-                    formatXLabel: xAxisLabel || defaultXAxisLabel,
-            }}>
+                    formatXLabel: formatXLabel,
+                }}
+            >
                 {({ points }) => (
-                    <Line 
-                        points={points.value}
-                        color={lineColor}
-                        strokeWidth={3}/>
+                    <>
+                        <Line
+                            points={points.mean}
+                            color={meanColor}
+                            strokeWidth={2}
+                        />
+                        <Line 
+                            points={points.value}
+                            color={dataColor}
+                            strokeWidth={3}
+                        />
+                    </>
                 )}
             </CartesianChart>
-        </View>
+            
+            <View style={styles.labelsContainer}>
+                <View style={styles.labelItem}>
+                    <View style={[styles.labelDot, { backgroundColor: dataColor }]} />
+                    <Text style={styles.labelText}>Data</Text>
+                </View>
+                <View style={styles.labelItem}>
+                    <View style={[styles.labelDot, { backgroundColor: meanColor }]} />
+                    <Text style={styles.labelText}>Baseline</Text>
+                </View>
+            </View>
+        </ThemedView>
     );
-  }
+}
 const styles = StyleSheet.create({
-	chartContainer: {
+    chartContainer: {
         marginVertical: 12,
-		width: 350,
-		height: 200,
-		borderRadius: 12,
-		padding: 16,
-	},
+        width: 350,
+        height: 250,
+        borderRadius: 12,
+        padding: 16,
+    },
+    chartTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 12,
+    },
+    labelsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 12,
+        gap: 20,
+    },
+    labelItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
+    labelDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+    },
+    labelText: {
+        fontSize: 12,
+        fontWeight: '500',
+    },
 });

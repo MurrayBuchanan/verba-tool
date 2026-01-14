@@ -18,7 +18,7 @@ export default function Index() {
 		try {
 			const authenticated = await isAuthenticated();
 			if (authenticated) {
-				router.replace("/(tabs)/metricsScreen");
+				router.replace("/(tabs)/recordAudioScreen");
 			} else {
 				setIsAuthenticating(false);
 			}
@@ -33,7 +33,7 @@ export default function Index() {
 		try {
 			const result = await signIn();
 			if (result) {
-				router.replace("/(tabs)/metricsScreen");
+				router.replace("/(tabs)/recordAudioScreen");
 			} else {
 				setIsSigningIn(false);
 			}
