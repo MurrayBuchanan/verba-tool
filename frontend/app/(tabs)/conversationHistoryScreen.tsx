@@ -33,24 +33,24 @@ export default function ConversationHistoryScreen() {
 	const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const hasLoaded = useRef(false);
+	const hasInitiallyLoaded = useRef(false);
 
 	useFocusEffect(
 		useCallback(() => {
 			async function fetchTranscripts() {
 				try {
 					// Only show loading on initial load
-					if (hasLoaded.current) {
-						return;
+					if (!hasInitiallyLoaded.current) {
+						setLoading(true);
 					}
 					const data = await getTranscripts(USER_ID);
 					setTranscripts(data);
 					setError(null);
+					hasInitiallyLoaded.current = true;
 				} catch (error) {
 					setError("Unable to load transcripts");
 				} finally {
 					setLoading(false);
-					hasLoaded.current = true;
 				}
 			}
 			fetchTranscripts();

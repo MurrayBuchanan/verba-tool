@@ -16,26 +16,25 @@ export default function MetricsScreen() {
 	const [loading, setLoading] = useState(true);
 	const [hasConversations, setHasConversations] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const hasLoaded = useRef(false);
+	const hasInitiallyLoaded = useRef(false);
 
 	useFocusEffect(
 		useCallback(() => {
 			async function checkConversations() {
 				try {
 					// Only show loading on initial load
-					if (hasLoaded.current) {
-						return;
+					if (!hasInitiallyLoaded.current) {
+						setLoading(true);
 					}
-					setLoading(true);
 					const transcripts = await getTranscripts(USER_ID);
 					setHasConversations(transcripts.length > 0);
 					setError(null);
+					hasInitiallyLoaded.current = true;
 				} catch (error: any) {
 					setError("Unable to load metrics");
 					setHasConversations(false);
 				} finally {
 					setLoading(false);
-					hasLoaded.current = true;
 				}
 			}
 			checkConversations();

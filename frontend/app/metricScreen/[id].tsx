@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useNavigation, router, useFocusEffect } from "expo-router";
 
@@ -58,7 +58,8 @@ export default function MetricScreen() {
 		}, [])
 	);
 
-	const metricData = getMetricProgression(transcripts, id);
+	// Memoize getMetrics to prevent unnecessary rerenders
+	const metricData = useMemo(() => getMetricProgression(transcripts, id), [transcripts, id]);
 
 	return (
 		<View style={styles.container}>
@@ -76,7 +77,7 @@ export default function MetricScreen() {
 						<Chart data={metricData} xAxisLabel={(value) => {
 							const point = metricData.find(d => d.x === value);
 							return point?.label || `Conv ${value}`;
-						}}/>
+						}} />
 
 						<Text type="heading" style={styles.heading}>Description</Text>
 						<Text>{metricDetails.description}</Text>

@@ -70,7 +70,7 @@ Content coming soon...
       ```
    3. Create development build
       ```bash
-      npx expo install expo-dev-client
+      eas build
       ```
 
 ## How to run

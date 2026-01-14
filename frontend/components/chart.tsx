@@ -6,7 +6,7 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 import { useCustomFont } from "@/hooks/use-custom-font";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 
 type DataPoint = {
     x: number;
@@ -31,7 +31,17 @@ function calculateMean(numbers: number[]): number {
 
 export function Chart({ data, xAxisLabel }: ChartProps) {
     const colorScheme = useColorScheme() ?? 'light';
-    const font = useCustomFont('600', 12);
+    const font = useCustomFont('500', 12);
+    const fontRef = useRef(font);
+    
+    // Uses the cached font after it's loaded once
+    useEffect(() => {
+        if (font) {
+            fontRef.current = font;
+        }
+    }, [font]);
+    
+    const chartFont = font || fontRef.current;
     const textColor = useThemeColor({}, 'text');
     const dataColor = Colors[colorScheme].tint;
     const meanColor = useThemeColor({ light: '#10b951', dark: '#34d366' }, 'text');
@@ -71,45 +81,49 @@ export function Chart({ data, xAxisLabel }: ChartProps) {
             lightColor={Colors.light.secondaryBackground} 
             darkColor={Colors.dark.secondaryBackground}
         >
-            <Text align="center" style={styles.chartTitle}>Changes over time</Text>
+            {chartFont && (
+            <>
+
+                <Text align="center" style={styles.chartTitle}>Changes over time</Text>
+                <CartesianChart
+                    data={chartData}
+                    xKey="x"
+                    yKeys={["value", "mean"]}
+                    domainPadding={{ left: 35, right: 35, top: 20 }}
+                    axisOptions={{ 
+                        font: chartFont,
+                        labelColor: textColor,
+                        formatXLabel: formatXLabel,
+                    }}
+                >
+                    {({ points }) => (
+                        <>
+                            <Line
+                                points={points.mean}
+                                color={meanColor}
+                                strokeWidth={2}
+                            />
+                            <Line 
+                                points={points.value}
+                                color={dataColor}
+                                strokeWidth={3}
+                            />
+                        </>
+                    )}
+                </CartesianChart>
             
-            <CartesianChart
-                data={chartData}
-                xKey="x"
-                yKeys={["value", "mean"]}
-                domainPadding={{ left: 35, right: 35, top: 20 }}
-                axisOptions={{ 
-                    font,
-                    labelColor: textColor,
-                    formatXLabel: formatXLabel,
-                }}
-            >
-                {({ points }) => (
-                    <>
-                        <Line
-                            points={points.mean}
-                            color={meanColor}
-                            strokeWidth={2}
-                        />
-                        <Line 
-                            points={points.value}
-                            color={dataColor}
-                            strokeWidth={3}
-                        />
-                    </>
-                )}
-            </CartesianChart>
-            
-            <View style={styles.labelsContainer}>
-                <View style={styles.labelItem}>
-                    <View style={[styles.labelDot, { backgroundColor: dataColor }]} />
-                    <Text style={styles.labelText}>Data</Text>
+                <View style={styles.labelsContainer}>
+                    <View style={styles.labelItem}>
+                        <View style={[styles.labelDot, { backgroundColor: dataColor }]} />
+                        <Text style={styles.labelText}>Data</Text>
+                    </View>
+                    <View style={styles.labelItem}>
+                        <View style={[styles.labelDot, { backgroundColor: meanColor }]} />
+                        <Text style={styles.labelText}>Baseline</Text>
+                    </View>
                 </View>
-                <View style={styles.labelItem}>
-                    <View style={[styles.labelDot, { backgroundColor: meanColor }]} />
-                    <Text style={styles.labelText}>Baseline</Text>
-                </View>
-            </View>
+            </>
+            )}
         </ThemedView>
     );
 }
@@ -123,7 +137,7 @@ const styles = StyleSheet.create({
     },
     chartTitle: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '500',
         marginBottom: 12,
     },
     labelsContainer: {
