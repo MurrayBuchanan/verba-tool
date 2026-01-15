@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { CartesianChart, Line } from "victory-native";
+import { CartesianChart, Line, AreaRange } from "victory-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useCustomFont } from "@/hooks/use-custom-font";
 import { Colors } from "@/constants/theme";
@@ -29,6 +29,22 @@ function calculateMean(numbers: number[]): number {
     return sum / numbers.length;
 }
 
+function calculateStandardDeviation(values: number[], mean: number): number {
+    if (values.length < 2) return 0;
+    
+    const squaredDifferences = values.map(value => {
+        const difference = value - mean;
+        return Math.pow(difference, 2);
+    });
+    
+    const sumSquaredDifferences = squaredDifferences.reduce((total, squaredDiff) => total + squaredDiff, 0);
+    
+    // Uses Bessel's correction (n-1)
+    const variance = sumSquaredDifferences / (values.length - 1);
+    
+    return Math.sqrt(variance);
+}
+
 export function Chart({ data, xAxisLabel }: ChartProps) {
     const colorScheme = useColorScheme() ?? 'light';
     const font = useCustomFont('500', 12);
@@ -44,23 +60,27 @@ export function Chart({ data, xAxisLabel }: ChartProps) {
     const chartFont = font || fontRef.current;
     const textColor = useThemeColor({}, 'text');
     const dataColor = Colors[colorScheme].tint;
-    const meanColor = useThemeColor({ light: '#10b951', dark: '#34d366' }, 'text');
-    const sdColor = useThemeColor({ light: '#f5a30b', dark: '#fbc924' }, 'text');
+    const meanColor = useThemeColor({ light: '#E4502F', dark: '#E4502F'}, 'text');
+    const sdColor = useThemeColor({ light: '#E4C62F', dark: '#E4C62F' }, 'text');
 
-    // Calculate mean from all data points
-    const mean = useMemo(() => {
-        const values = data.map(d => d.value);
-        return calculateMean(values);
-    }, [data]);
 
     const chartData = useMemo(() => {
-        return data.map(point => ({
-            x: point.x,
-            value: point.value,
-            mean: mean,
-            label: point.label
-        }));
-    }, [data, mean]);
+        return data.map((point, index) => {
+            const valuesUpToPoint = data.slice(0, index + 1).map(d => d.value);
+            
+            const mean = calculateMean(valuesUpToPoint);
+            const sd = calculateStandardDeviation(valuesUpToPoint, mean);
+            
+            return {
+                x: point.x,
+                value: point.value,
+                mean: mean,
+                upperBound: mean + sd,
+                lowerBound: mean - sd,
+                label: point.label
+            };
+        });
+    }, [data]);
     
     const formatXLabel = (value: number) => {
         if (xAxisLabel) {
@@ -83,12 +103,11 @@ export function Chart({ data, xAxisLabel }: ChartProps) {
         >
             {chartFont && (
             <>
-
                 <Text align="center" style={styles.chartTitle}>Changes over time</Text>
                 <CartesianChart
                     data={chartData}
                     xKey="x"
-                    yKeys={["value", "mean"]}
+                    yKeys={["value", "mean", "upperBound", "lowerBound"]}
                     domainPadding={{ left: 35, right: 35, top: 20 }}
                     axisOptions={{ 
                         font: chartFont,
@@ -98,6 +117,11 @@ export function Chart({ data, xAxisLabel }: ChartProps) {
                 >
                     {({ points }) => (
                         <>
+                            <AreaRange
+                                upperPoints={points.upperBound}
+                                lowerPoints={points.lowerBound}
+                                color={sdColor}
+                            />
                             <Line
                                 points={points.mean}
                                 color={meanColor}
@@ -120,6 +144,10 @@ export function Chart({ data, xAxisLabel }: ChartProps) {
                     <View style={styles.labelItem}>
                         <View style={[styles.labelDot, { backgroundColor: meanColor }]} />
                         <Text style={styles.labelText}>Baseline</Text>
+                    </View>
+                    <View style={styles.labelItem}>
+                        <View style={[styles.labelDot, { backgroundColor: sdColor }]} />
+                        <Text style={styles.labelText}>Range</Text>
                     </View>
                 </View>
             </>

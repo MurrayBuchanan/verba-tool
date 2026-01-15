@@ -50,6 +50,7 @@ Content coming soon...
 
    **API environment variables**
    <br>View IP using `ipconfig getifaddr en0`
+   
    <br>EXPO_PUBLIC_API_URL=http://BACKEND_IP:PORT
    <br>EXPO_PUBLIC_API_TOKEN=
 
