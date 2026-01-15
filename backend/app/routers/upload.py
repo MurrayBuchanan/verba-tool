@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from app.core.database import get_db
-from app.schemas.models import Transcript, TranscriptSegment, User
+from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, User
 from app.schemas.schemas import ConversationAnalysisResult
 from app.services.audio_converter import AudioConverter
 from app.services.speech_service import SpeechService
@@ -34,7 +34,7 @@ async def get_or_create_user(db: AsyncSession, user_id: int) -> User:
 async def get_next_transcript_id(db: AsyncSession, user_id: int) -> int:
 
     # Get the highest transcript id for the user
-    query = select(func.max(Transcript.transcript_id)).filter(Transcript.user_id == user_id)
+    query = select(func.max(TranscriptMetadata.transcript_id)).filter(TranscriptMetadata.user_id == user_id)
     result = await db.execute(query)
     
     highest_transcript_id = result.scalar_one_or_none()
@@ -85,11 +85,18 @@ async def upload_audio(authorization: str = Header(..., alias="Authorization"), 
         # Calculate total duration with safe type conversion
         total_duration = sum(float(segment.get("duration", 0.0) or 0.0) for segment in segments)
 
-        # Add the transcript to the database
-        transcript_record = Transcript(
+        # Add the transcript metadata to the database
+        transcript_metadata = TranscriptMetadata(
             user_id=user_id,
             transcript_id=transcript_id,
-            total_duration=total_duration,
+            total_duration=total_duration
+        )
+        db.add(transcript_metadata)
+        await db.flush()
+        
+        # Add the transcript features to the database
+        transcript_features = TranscriptFeatures(
+            transcript_metadata_id=transcript_metadata.id,
             wpm_per_speaker=json.dumps(analytics.get("wpm_per_speaker", {}) or {}),
             mean_utterance_length=json.dumps(analytics.get("mean_utterance_length_per_speaker", {}) or {}),
             avg_word_length=json.dumps(analytics.get("avg_word_length", {}) or {}),
@@ -103,13 +110,13 @@ async def upload_audio(authorization: str = Header(..., alias="Authorization"), 
             syntactic_simplification=json.dumps(analytics.get("syntactic_simplification", {}) or {}),
             discourse_impairment=json.dumps(analytics.get("discourse_impairment", {}) or {})
         )
-        db.add(transcript_record)
+        db.add(transcript_features)
         await db.flush()
         
         # Add the segments to the database
         for segment in segments:
             transcript_segment = TranscriptSegment(
-                transcript_feature_id=transcript_record.id,
+                transcript_metadata_id=transcript_metadata.id,
                 duration=float(segment.get("duration", 0.0) or 0.0),
                 offset=float(segment.get("offset", 0.0) or 0.0),
                 speaker=segment.get("speaker", ""),
@@ -119,7 +126,7 @@ async def upload_audio(authorization: str = Header(..., alias="Authorization"), 
         await db.commit()
         
         analytics["transcript_id"] = transcript_id
-        analytics["db_transcript_id"] = transcript_record.id
+        analytics["db_transcript_id"] = transcript_metadata.id
         
         return JSONResponse(content=analytics)
 

@@ -12,12 +12,7 @@ export default function InterventionScreen() {
 				</View>
 			</ScrollView>
 			<View style={styles.buttonContainer}>
-				<Button 
-					title="Add Intervention" 
-					onPress={() => console.log("Intervention Added")}
-					lightBackgroundColor="#4A9B5C"
-					darkBackgroundColor="#2D6A3F"
-				/>
+				<Button title="Add Intervention" onPress={() => console.log("Intervention Added")} />
 			</View>
 		</View>
 	);

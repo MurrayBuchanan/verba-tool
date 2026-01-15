@@ -11,12 +11,7 @@ export type BlockButtonProps = {
     darkBackgroundColor?: string;
 };
 
-export function BlockButton({
-    onPress,
-    title,
-    lightBackgroundColor='#7F4178',
-    darkBackgroundColor='#371B34',
-}: BlockButtonProps) {
+export function BlockButton({ onPress, title, lightBackgroundColor='#7F4178', darkBackgroundColor='#371B34' }: BlockButtonProps) {
     const background = useThemeColor({ light: lightBackgroundColor, dark: darkBackgroundColor, }, 'tint');
     const text = useThemeColor({ light: '#FFF', dark: '#0B1220' }, 'text');
 
@@ -24,9 +19,7 @@ export function BlockButton({
         < TouchableOpacity onPress={onPress}>
             <View
                 style={[ styles.container, { backgroundColor: background } ]}>
-                <View style={styles.content}>
-                    <Text type="button">{title}</Text>
-                </View>
+                    <Text type="button" style={{ color: text }}>{title}</Text>
             </View>
         </ TouchableOpacity>
     );
