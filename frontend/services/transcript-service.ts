@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { Transcript } from '@/constants/transcript';
+import { TranscriptWithFeatures, TranscriptWithSegments } from '@/constants/transcript';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN;
 
-export async function getTranscripts(userId: number): Promise<Transcript[]> {
+export async function getTranscripts(userId: number): Promise<TranscriptWithFeatures[]> {
 	if (!API_URL || !API_TOKEN) {
 		throw new Error('Error: Environment variables must be set for the API URL and token');
 	}
@@ -22,7 +22,7 @@ export async function getTranscripts(userId: number): Promise<Transcript[]> {
 	}
 }
 
-export async function getTranscript(userId: number, transcriptId: number): Promise<Transcript> {
+export async function getTranscript(userId: number, transcriptId: number): Promise<TranscriptWithSegments> {
 	if (!API_URL || !API_TOKEN) {
 		throw new Error('Error: Environment variables must be set for the API URL and token');
 	}

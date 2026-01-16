@@ -1,7 +1,7 @@
 import time
 from typing import List
 import azure.cognitiveservices.speech as speechsdk
-from app.schemas.schemas import Segment
+from app.schemas.schemas import TranscriptSegment
 
 # Azure Speech Service documentation: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-stt-diarization?tabs=macos&pivots=programming-language-python
 
@@ -14,7 +14,7 @@ class SpeechService:
         self.speechRegion = speechRegion
 
     # Transcribe and perform speaker diarisation on audio file using the Azure Speech Service API
-    def diarise_audio(self, filePath: str) -> List[Segment]:
+    def diarise_audio(self, filePath: str) -> List[TranscriptSegment]:
         speechConfig = speechsdk.SpeechConfig(subscription=self.speechKey, region=self.speechRegion)
         speechConfig.speech_recognition_language = "en-GB"
 
@@ -44,14 +44,14 @@ class SpeechService:
             audio_config=audioConfig,
         )
 
-        segments: List[Segment] = []
+        segments: List[TranscriptSegment] = []
         transcribing_stop = False
 
         # Extracts speaker, text, offset, and duration from each successful transcribed event
         def conversation_transcriber_transcribed_cb(evt: speechsdk.SpeechRecognitionEventArgs):
             result = evt.result
             if result and result.text:
-                segment: Segment = {
+                segment: TranscriptSegment = {
                     "speaker": result.speaker_id,
                     "text": result.text,
                     "offset": result.offset / 10_000_000,

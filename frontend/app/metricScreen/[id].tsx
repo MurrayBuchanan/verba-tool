@@ -8,7 +8,7 @@ import { BlockButton } from "@/components/block-button";
 import { Chart } from "@/components/chart";
 import { signOut } from "@/services/authentication-service";
 import { getTranscripts } from "@/services/transcript-service";
-import { Transcript } from "@/constants/transcript";
+import { TranscriptWithFeatures } from "@/constants/transcript";
 import { getMetricProgression, getMetricDetails } from "@/utils/metric-display";
 
 // TODO: Change user id to authenticated user's id
@@ -28,7 +28,7 @@ const handleSignOut = () => {
 export default function MetricScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const navigation = useNavigation();
-	const [transcripts, setTranscripts] = useState<Transcript[]>([]);
+	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	

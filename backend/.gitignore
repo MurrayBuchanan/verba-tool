@@ -3,19 +3,16 @@
 venv/
 env/
 ENV/
-*.env
-pipenv-*
 
 # Python caches and compiled files
 __pycache__/
 *.py[cod]
 *$py.class
-.git
-node_modules
-*.m4a
-*.wav
-.venv
+
+# Environment variables
 .env
+.env.local
+.env.*.local
 
 # Distribution / packaging
 build/
@@ -30,19 +27,13 @@ dist/
 htmlcov/
 coverage.xml
 
-# Type-checking / lint caches
+# Type-checking caches
 .mypy_cache/
-.pdm-python-*
 .pyright/
-.cache/
 
-# Logs and runtime files
+# Logs
 *.log
 logs/
-*.sqlite3
-*.db
-*.pid
-*.sock
 
 # IDE/editor settings
 .vscode/
@@ -53,16 +44,10 @@ logs/
 # macOS filesystem files
 .DS_Store
 
-# Editor swap files and backup
-*~
+# Editor swap files
 *.swp
 *.swo
+*~
 
-# Docker 
+# Docker overrides
 docker-compose.override.yml
-.env.*.local
-.Dockerfile.swp
-
-# Ignore compiled binary artifacts
-*.so
-*.dylib

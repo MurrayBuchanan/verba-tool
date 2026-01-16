@@ -7,7 +7,7 @@ import { List } from "@/components/list";
 import { ConversationItem as Item} from "@/components/conversation-item";
 import { useRouter } from "expo-router";
 import { getTranscripts } from "@/services/transcript-service";
-import { Transcript } from "@/constants/transcript";
+import { TranscriptWithFeatures } from "@/constants/transcript";
 
 // TODO: Change user id to authenticated user's id
 const USER_ID = 1;
@@ -30,7 +30,7 @@ function formatDuration(inputSeconds: number): string {
 
 export default function ConversationHistoryScreen() {
 	const router = useRouter();
-	const [transcripts, setTranscripts] = useState<Transcript[]>([]);
+	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
@@ -83,7 +83,7 @@ export default function ConversationHistoryScreen() {
 								<Item
 									key={transcript.transcript_id}
 									onPress={() => router.push(`/conversationScreen/${transcript.transcript_id}`)}
-									datetime={new Date(transcript.created_at).toLocaleDateString()}
+									datetime={`Transcript ${transcript.transcript_id}`}
 									duration={formatDuration(transcript.total_duration)}
 								/>
 							);

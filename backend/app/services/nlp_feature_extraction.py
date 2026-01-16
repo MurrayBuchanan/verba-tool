@@ -1,7 +1,7 @@
 from typing import List, Dict
 import spacy
 import textstat
-from app.schemas.schemas import SpeakerMetric, Segment
+from app.schemas.schemas import Feature, TranscriptSegment
 
 try:
     nlp = spacy.load("en_core_web_sm")
@@ -9,12 +9,15 @@ except OSError:
     nlp = spacy.blank("en")
 
 
+# TODO: This should be happening concurrently, and could use a helper
+
+
 class NLPFeatureExtraction:
     def __init__(self):
         self.nlp = nlp
     
     # Combine segments into a single text block
-    def combine_segments(self, segments: List[Segment]) -> str:
+    def combine_segments(self, segments: List[TranscriptSegment]) -> str:
         texts = []
         for segment in segments:
             text = segment.get("text", "")
@@ -25,7 +28,7 @@ class NLPFeatureExtraction:
 
     # Calculate adverb ratio
     # Formula: (number of adverbs) / (total words)
-    def calculate_adverb_ratio(self, segments: List[Segment]) -> float:
+    def calculate_adverb_ratio(self, segments: List[TranscriptSegment]) -> float:
         text = self.combine_segments(segments)
         if not text.strip():
             return 0.0
@@ -49,7 +52,7 @@ class NLPFeatureExtraction:
         
         return totalAdverbs / totalWords
     
-    def adverb_ratio_per_speaker(self, segments: List[Segment], group_by_speaker) -> SpeakerMetric:
+    def adverb_ratio_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
         groupedSegments = group_by_speaker(segments)
         result = {}
         
@@ -63,13 +66,13 @@ class NLPFeatureExtraction:
 
     # Calculate Flesch-Kincaid Grade Level
     # Calculation uses textstat library
-    def calculate_flesch_kincaid(self, segments: List[Segment]) -> float:
+    def calculate_flesch_kincaid(self, segments: List[TranscriptSegment]) -> float:
         text = self.combine_segments(segments)
         if not text.strip():
             return 0.0
         return textstat.flesch_kincaid_grade(text)
     
-    def flesch_kincaid_per_speaker(self, segments: List[Segment], group_by_speaker) -> SpeakerMetric:
+    def flesch_kincaid_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
         groupedSegments = group_by_speaker(segments)
         result = {}
         
@@ -83,7 +86,7 @@ class NLPFeatureExtraction:
 
     # Calculate pronoun to pronoun+noun ratio
     # Formula: (number of pronouns) / (number of pronouns + number of nouns)
-    def calculate_prp_ratio(self, segments: List[Segment]) -> float:
+    def calculate_prp_ratio(self, segments: List[TranscriptSegment]) -> float:
         text = self.combine_segments(segments)
         if not text.strip():
             return 0.0
@@ -109,7 +112,7 @@ class NLPFeatureExtraction:
         
         return pronouns / total
     
-    def prp_ratio_per_speaker(self, segments: List[Segment], group_by_speaker) -> SpeakerMetric:
+    def prp_ratio_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
         groupedSegments = group_by_speaker(segments)
         result = {}
         
@@ -123,12 +126,12 @@ class NLPFeatureExtraction:
 
     # Calculate number of unique words
     # Formula: Count of distinct words (case-insensitive)
-    def calculate_num_unique_words(self, segments: List[Segment]) -> int:
+    def calculate_num_unique_words(self, segments: List[TranscriptSegment]) -> int:
         text = self.combine_segments(segments)
         words = text.lower().split()
         return len(set(words))
     
-    def num_unique_words_per_speaker(self, segments: List[Segment], group_by_speaker) -> SpeakerMetric:
+    def num_unique_words_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
         groupedSegments = group_by_speaker(segments)
         result = {}
         

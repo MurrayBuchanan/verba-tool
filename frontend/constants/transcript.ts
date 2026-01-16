@@ -1,13 +1,11 @@
-export interface Transcript {
+export interface TranscriptMetadata {
 	transcript_id: number;
 	user_id: number;
-	transcript_name: string;
 	total_duration: number;
 	db_id: number;
-	created_at: string;
-	segments?: TranscriptSegment[];
+}
 
-	// Established features
+export interface TranscriptFeatures {
 	wpm_per_speaker: Record<string, number>;
 	mean_utterance_length: Record<string, number>;
 	avg_word_length: Record<string, number>;
@@ -15,8 +13,6 @@ export interface Transcript {
 	flesch_kincaid: Record<string, number>;
 	prp_ratio: Record<string, number>;
 	num_unique_words: Record<string, number>;
-
-	// AI features
 	impoverished_vocabulary: Record<string, number>;
 	word_finding_difficulties: Record<string, number>;
 	semantic_paraphasias: Record<string, number>;
@@ -29,4 +25,20 @@ export interface TranscriptSegment {
 	offset: number;
 	speaker: string;
 	text: string;
+}
+
+export interface TranscriptWithFeatures extends TranscriptMetadata, TranscriptFeatures {
+	// Combines interfaces
+}
+
+export interface TranscriptWithSegments extends TranscriptMetadata {
+	segments: TranscriptSegment[];
+}
+
+export interface Intervention {
+	id: number;
+	name: string;
+	description: string | null;
+	start_datetime: Date;
+	end_datetime: Date;
 }

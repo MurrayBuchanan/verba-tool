@@ -1,33 +1,29 @@
 from typing import TypedDict, List, Dict, Any
 
-class Segment(TypedDict):
+Feature = Dict[str, Any]
+
+class TranscriptSegment(TypedDict):
     speaker: str
     text: str
     duration: float
     offset: float
 
-class RawSegments(TypedDict):
-    raw_segments: List[Segment]
-
-SpeakerMetric = Dict[str, Any]
-
 class AIFeatures(TypedDict):
-    impoverished_vocabulary: SpeakerMetric
-    word_finding_difficulties: SpeakerMetric
-    semantic_paraphasias: SpeakerMetric
-    syntactic_simplification: SpeakerMetric
-    discourse_impairment: SpeakerMetric
+    impoverished_vocabulary: Feature
+    word_finding_difficulties: Feature
+    semantic_paraphasias: Feature
+    syntactic_simplification: Feature
+    discourse_impairment: Feature
 
-class EstablishedFeatures(TypedDict):
-    wpm_per_speaker: SpeakerMetric
-    mean_utterance_length_per_speaker: SpeakerMetric
-    avg_word_length: SpeakerMetric
-    adverb_ratio: SpeakerMetric
-    flesch_kincaid: SpeakerMetric
-    prp_ratio: SpeakerMetric
-    num_unique_words: SpeakerMetric
+class NLPFeatures(TypedDict):
+    wpm_per_speaker: Feature
+    mean_utterance_length_per_speaker: Feature
+    avg_word_length: Feature
+    adverb_ratio: Feature
+    flesch_kincaid: Feature
+    prp_ratio: Feature
+    num_unique_words: Feature
 
-class ConversationAnalysisResult(AIFeatures, EstablishedFeatures, TypedDict, total=False):
-    # Result combining AI and established features
-    raw_segments: List[Segment]
-    turns: SpeakerMetric
+class CAResult(AIFeatures, NLPFeatures, TypedDict, total=False):
+    raw_segments: List[TranscriptSegment]
+    turns: Feature

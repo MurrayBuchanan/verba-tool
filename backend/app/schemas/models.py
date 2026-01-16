@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from app.core.database import Base
 
 class User(Base):
@@ -39,3 +39,10 @@ class TranscriptSegment(Base):
     speaker = Column(String, nullable=False)
     text = Column(String, nullable=False)
 
+class Intervention(Base):
+    __tablename__ = "interventions"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    start_datetime = Column(DateTime, nullable=False)
+    end_datetime = Column(DateTime, nullable=False)

@@ -7,7 +7,7 @@ from sqlalchemy import select, func
 
 from app.core.database import get_db
 from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, User
-from app.schemas.schemas import ConversationAnalysisResult
+from app.schemas.schemas import CAResult
 from app.services.audio_converter import AudioConverter
 from app.services.speech_service import SpeechService
 from app.services.conversation_analytics import ConversationAnalytics
@@ -74,7 +74,7 @@ async def upload_audio(authorization: str = Header(..., alias="Authorization"), 
         segments = speech_service.diarise_audio(temp_wav)
 
         # Perform conversation feature extraction
-        analytics: ConversationAnalysisResult = conversation_analytics.analyse(segments)
+        analytics: CAResult = conversation_analytics.analyse(segments)
 
         # Get or create user
         await get_or_create_user(db, user_id)

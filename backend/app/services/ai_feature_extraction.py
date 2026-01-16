@@ -2,7 +2,7 @@ from typing import List, cast
 import json
 from openai import AzureOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
-from app.schemas.schemas import RawSegments, AIFeatures
+from app.schemas.schemas import TranscriptSegment, AIFeatures
 
 # Documentation: https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-foundry?view=foundry-classic
 # GitHub: https://github.com/openai/openai-python
@@ -14,11 +14,11 @@ client = AzureOpenAI(
     api_key = OPENAI_API_KEY,
 )
 
-def format_transcript(payload: RawSegments) -> str:
+def format_transcript(segments: List[TranscriptSegment]) -> str:
     # Format transcript segments into a readable string
     lines: List[str] = []
     
-    for segment in payload["raw_segments"]:
+    for segment in segments:
         offset = segment["offset"]
         duration = segment["duration"]
         speaker = segment["speaker"]
@@ -32,9 +32,8 @@ def format_transcript(payload: RawSegments) -> str:
     
     return "\n".join(lines)
 
-def extract_features(transcript: RawSegments) -> AIFeatures:
+def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     # Extract and validate speakers from transcript
-    segments = transcript["raw_segments"]
     if not segments:
         raise ValueError("Extraction error: No segments found")
     
@@ -79,7 +78,7 @@ def extract_features(transcript: RawSegments) -> AIFeatures:
 
     user_prompt = (
         f"Full speaker list: {speakers}\n"
-        f"Transcript:\n{format_transcript(transcript)}"
+        f"Transcript:\n{format_transcript(segments)}"
     )
 
     if client is None:

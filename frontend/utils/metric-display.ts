@@ -1,4 +1,4 @@
-import { Transcript } from "@/constants/transcript";
+import { TranscriptWithFeatures } from "@/constants/transcript";
 
 // TODO: Implement flip feature for switching carer/speaker
 
@@ -15,7 +15,7 @@ export type MetricDetails = {
 	usage: string;
 };
 
-export function getMetricProgression(transcripts: Transcript[], metricKey: string): MetricDataPoint[] {
+export function getMetricProgression(transcripts: TranscriptWithFeatures[], metricKey: string): MetricDataPoint[] {
 	// Sort transcripts in order of creation
 	const sortedTranscripts = [...transcripts].sort((a, b) => a.transcript_id - b.transcript_id);
 
