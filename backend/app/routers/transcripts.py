@@ -35,10 +35,11 @@ async def get_transcripts(user_id: int, authorization: str = Header(..., alias="
         # Convert transcripts to list of dictionaries
         transcript_list = []
         for transcript, features in rows:
-            transcript_list.append({
+            transcript_dict = {
                 "transcript_id": transcript.transcript_id,
                 "user_id": transcript.user_id,
                 "total_duration": transcript.total_duration,
+                "created_at": transcript.created_at.isoformat(),
                 "wpm_per_speaker": get_feature(features, "wpm_per_speaker"),
                 "mean_utterance_length": get_feature(features, "mean_utterance_length"),
                 "avg_word_length": get_feature(features, "avg_word_length"),
@@ -52,10 +53,11 @@ async def get_transcripts(user_id: int, authorization: str = Header(..., alias="
                 "syntactic_simplification": get_feature(features, "syntactic_simplification"),
                 "discourse_impairment": get_feature(features, "discourse_impairment"),
                 "db_id": transcript.id
-            })
+            }
+            transcript_list.append(transcript_dict)
         
         return JSONResponse(content={"transcripts": transcript_list})
-    except Exception as error:
+    except Exception:
         raise HTTPException(status_code=500, detail="Error while fetching transcripts")
 
 # Endpoint to get a specific transcript with segments
@@ -92,6 +94,7 @@ async def get_transcript(user_id: int, transcript_id: int, authorization: str = 
         return JSONResponse(content={
             "transcript_id": transcript.transcript_id,
             "user_id": transcript.user_id,
+            "created_at": transcript.created_at.isoformat(),
             "total_duration": transcript.total_duration,
             "segments": transcript_segments
         })

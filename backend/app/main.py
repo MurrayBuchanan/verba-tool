@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.database import engine
 from app.schemas.models import Base
-from app.routers import upload, transcripts
+from app.routers import upload, transcripts, interventions
 
 app = FastAPI()
 
@@ -25,3 +25,4 @@ async def init_db():
 # Endpoints
 app.include_router(upload.router)
 app.include_router(transcripts.router)
+app.include_router(interventions.router)

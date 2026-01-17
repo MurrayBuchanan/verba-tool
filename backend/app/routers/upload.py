@@ -2,6 +2,7 @@ from fastapi import APIRouter, File, UploadFile, Header, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import os
 import json
+from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
@@ -13,7 +14,7 @@ from app.services.speech_service import SpeechService
 from app.services.conversation_analytics import ConversationAnalytics
 from app.core.config import SPEECH_KEY, SPEECH_REGION, API_TOKEN
 
-router = APIRouter(prefix="/upload-audio", tags=["upload"])
+router = APIRouter(prefix="/upload", tags=["upload"])
 
 audio_converter = AudioConverter()
 speech_service = SpeechService(SPEECH_KEY, SPEECH_REGION)
@@ -25,7 +26,7 @@ conversation_analytics = ConversationAnalytics()
 async def get_or_create_user(db: AsyncSession, user_id: int) -> User:
     user = await db.get(User, user_id)
     if user is None:
-        user = User(id=user_id, email=user_id)
+        user = User(id=user_id, email=str(user_id))
         db.add(user)
         await db.flush()
     return user
@@ -47,11 +48,19 @@ async def get_next_transcript_id(db: AsyncSession, user_id: int) -> int:
 
 
 @router.post("")
-async def upload_audio(authorization: str = Header(..., alias="Authorization"), file: UploadFile = File(...), user_id: int = Header(..., alias="User-ID"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+async def upload_audio(authorization: str = Header(..., alias="Authorization"), file: UploadFile = File(...), user_id: int = Header(..., alias="User-ID"), created_at: str = Header(..., alias="Created-At"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     
     # Verify API token
     if authorization != f"Bearer {API_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    try:
+        created_at_datetime = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+        if created_at_datetime.tzinfo is not None:
+            created_at_datetime = created_at_datetime.astimezone(timezone.utc).replace(tzinfo=None)
+        created_at = created_at_datetime
+    except (ValueError, AttributeError):
+        raise HTTPException(status_code=400, detail="Invalid creation date")
 
     # Verify file is an audio file
     if not file.content_type.startswith("audio/"):
@@ -89,7 +98,8 @@ async def upload_audio(authorization: str = Header(..., alias="Authorization"), 
         transcript_metadata = TranscriptMetadata(
             user_id=user_id,
             transcript_id=transcript_id,
-            total_duration=total_duration
+            created_at=created_at,
+            total_duration=total_duration,
         )
         db.add(transcript_metadata)
         await db.flush()

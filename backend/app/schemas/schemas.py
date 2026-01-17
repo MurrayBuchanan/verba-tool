@@ -1,6 +1,9 @@
-from typing import TypedDict, List, Dict, Any
+from typing import TypedDict, List, Dict, Any, Optional
+from datetime import date
 
 Feature = Dict[str, Any]
+
+# TODO: Change to pydantic models
 
 class TranscriptSegment(TypedDict):
     speaker: str
@@ -27,3 +30,10 @@ class NLPFeatures(TypedDict):
 class CAResult(AIFeatures, NLPFeatures, TypedDict, total=False):
     raw_segments: List[TranscriptSegment]
     turns: Feature
+
+class Intervention(TypedDict, total=False):
+    id: int
+    name: str
+    description: Optional[str]
+    start_date: date
+    end_date: date

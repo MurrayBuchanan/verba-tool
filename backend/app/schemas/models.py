@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date
 from app.core.database import Base
 
 class User(Base):
@@ -11,6 +11,7 @@ class TranscriptMetadata(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     transcript_id = Column(Integer, nullable=False)
+    created_at = Column(DateTime, nullable=False)
     total_duration = Column(Float, nullable=False)
 
 class TranscriptFeatures(Base):
@@ -44,5 +45,5 @@ class Intervention(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
-    start_datetime = Column(DateTime, nullable=False)
-    end_datetime = Column(DateTime, nullable=False)
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
