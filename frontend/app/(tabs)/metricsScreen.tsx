@@ -7,9 +7,7 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { MetricItem as Item } from "@/components/metric-item";
 import { List } from "@/components/list";
 import { getTranscripts } from "@/services/transcript-service";
-
-// TODO: Change to authenticated user's id
-const USER_ID = 1;
+import { getUserId } from "@/services/authentication-service";
 
 export default function MetricsScreen() {
 	const router = useRouter();
@@ -26,7 +24,9 @@ export default function MetricsScreen() {
 					if (!hasInitiallyLoaded.current) {
 						setLoading(true);
 					}
-					const transcripts = await getTranscripts(USER_ID);
+					
+					const userId = await getUserId();
+					const transcripts = await getTranscripts(userId);
 					setHasConversations(transcripts.length > 0);
 					setError(null);
 					hasInitiallyLoaded.current = true;

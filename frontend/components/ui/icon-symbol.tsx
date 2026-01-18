@@ -23,6 +23,7 @@ const MAPPING = {
   'sparkles': 'auto-awesome',
   'clock': 'access-time',
   'clock.fill': 'access-time',
+  'plus': 'add',
 } as IconMapping;
 
 /**

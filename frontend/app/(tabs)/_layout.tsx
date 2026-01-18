@@ -1,10 +1,30 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Tabs, router } from 'expo-router';
 
 import { HapticFeedback } from '@/components/haptic-feedback';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { signOut } from '@/services/authentication-service';
+
+export function LogoutButton() {
+	const colorScheme = useColorScheme();
+
+	const handleLogout = async () => {
+		try {
+			await signOut();
+			router.replace("/");
+		} catch (error) {
+			console.error("Error signing out:", error);
+		}
+	};
+	return (
+		<TouchableOpacity onPress={handleLogout} style={styles.buttonContainer}>
+			<IconSymbol name="rectangle.portrait.and.arrow.right" size={24} color={Colors[colorScheme ?? 'light'].text} />
+		</TouchableOpacity>
+	);
+}
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
@@ -15,6 +35,7 @@ export default function TabLayout() {
 			tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
 			headerShown: true,
 			tabBarButton: HapticFeedback,
+			headerRight: () => (<LogoutButton />)
 		}}>
 			<Tabs.Screen
 				name="recordAudioScreen"
@@ -47,3 +68,9 @@ export default function TabLayout() {
 		</Tabs>
 	);
 }
+
+const styles = StyleSheet.create({
+	buttonContainer: {
+		marginRight: 20,
+	},
+});

@@ -1,7 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -17,8 +16,10 @@ export default function RootLayout() {
 			<Stack>
 				<Stack.Screen name="index" options={{ headerShown: false }} />
 				<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-				<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerBackTitle: "back" }} />
-				<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerBackTitle: "back" }} />
+				<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Metric", headerBackTitle: "Back" }} />
+				<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Chat", headerBackTitle: "Back" }} />
+				<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Intervention", headerBackTitle: "Back" }} />
+				<Stack.Screen name="interventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'Intervention' }} />
 			</Stack>
 			<StatusBar style="auto" />
 		</ThemeProvider>

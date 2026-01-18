@@ -1,16 +1,16 @@
-import { ActivityIndicator, StyleSheet, ScrollView } from "react-native";
 import { useState, useCallback, useRef } from "react";
+import { ActivityIndicator, StyleSheet, ScrollView } from "react-native";
+import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
+
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { List } from "@/components/list";
 import { ConversationItem as Item} from "@/components/conversation-item";
-import { useRouter } from "expo-router";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
-
-// TODO: Change user id to authenticated user's id
-const USER_ID = 1;
+import { formatDisplayDate } from "@/utils/date-formatting";
+import { getUserId } from "@/services/authentication-service";
 
 function formatDuration(inputSeconds: number): string {
 	const totalSeconds = Math.floor(inputSeconds);
@@ -43,7 +43,9 @@ export default function ConversationHistoryScreen() {
 					if (!hasInitiallyLoaded.current) {
 						setLoading(true);
 					}
-					const data = await getTranscripts(USER_ID);
+					
+					const userId = await getUserId();
+					const data = await getTranscripts(userId);
 					setTranscripts(data);
 					setError(null);
 					hasInitiallyLoaded.current = true;
@@ -82,8 +84,9 @@ export default function ConversationHistoryScreen() {
 							return (
 								<Item
 									key={transcript.transcript_id}
+									id={transcript.transcript_id}
 									onPress={() => router.push(`/conversationScreen/${transcript.transcript_id}`)}
-									datetime={`Transcript ${transcript.transcript_id}`}
+									datetime={formatDisplayDate(transcript.created_at)}
 									duration={formatDuration(transcript.total_duration)}
 								/>
 							);

@@ -4,21 +4,20 @@ import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { IconSymbol } from "@/components//ui/icon-symbol";
 
-export type ConversationItemProps = {
+export type InterventionItemProps = {
     onPress: () => void;
-	id: number;
-	datetime: string;
-	duration: string;
+	name: string;
+	dateRange: string;
 };
 
-export function ConversationItem({ onPress, id, datetime, duration }: ConversationItemProps) {
+export function InterventionItem({ onPress, name, dateRange }: InterventionItemProps) {
   	return (
     	<TouchableOpacity onPress={onPress} style={styles.container}>
 			<View style={styles.row}>
 				<View style={styles.left}>
 					<View style={styles.content}>
-						<Text style={styles.label}>Conversation {id}</Text>
-						<Text type="caption" style={styles.date}>{datetime} • {duration}</Text>
+						<Text style={styles.label}>{name}</Text>
+						<Text type="caption" style={styles.date}>{dateRange}</Text>
 					</View>
 				</View>
 				<IconSymbol name="chevron.right" size={18} color="#666" />
@@ -37,7 +36,16 @@ const styles = StyleSheet.create({
     	alignItems: "center",
     	justifyContent: "space-between",
   	},
-  	left: {
+	backgroundBox: {
+		padding: 8,
+		borderRadius: 8,
+		marginRight: 12,
+		width: 36,
+		height: 36,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	left: {
     	flexDirection: "row",
 		alignItems: "center",
 		flex: 1,

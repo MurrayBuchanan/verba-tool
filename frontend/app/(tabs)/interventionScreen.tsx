@@ -1,19 +1,88 @@
-import { StyleSheet, ScrollView } from "react-native";
+import { ActivityIndicator, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { useState, useCallback, useRef } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { BlockButton as Button } from "@/components/block-button";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { List } from "@/components/list";
+import { InterventionItem as Item } from "@/components/intervention-item";
+import { getInterventions } from "@/services/intervention-service";
+import { getUserId } from "@/services/authentication-service";
+import { Intervention } from "@/constants/transcript";
+import { formatDisplayDate } from "@/utils/date-formatting";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function InterventionScreen() {
+	const router = useRouter();
+	const [interventions, setInterventions] = useState<Intervention[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const hasInitiallyLoaded = useRef(false);
+	const colorScheme = useColorScheme() ?? 'light';
+
+	useFocusEffect(
+		useCallback(() => {
+			async function fetchInterventions() {
+				try {
+					if (!hasInitiallyLoaded.current) {
+						setLoading(true);
+					}
+					
+					const userId = await getUserId();
+					const data = await getInterventions(userId);
+					setInterventions(data);
+					setError(null);
+					hasInitiallyLoaded.current = true;
+				} catch (error) {
+					setError("Unable to load interventions");
+				} finally {
+					setLoading(false);
+				}
+			}
+			fetchInterventions();
+			return () => {};
+		}, [])
+	);
+
 	return (
 		<View style={styles.container}>
-			<ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-				<View style={styles.center}>
-					<Text align="center">This is for recording rehabilitation interventions</Text>
-				</View>
+			<ScrollView 
+				style={styles.scrollView} 
+				contentContainerStyle={styles.scrollContent}
+				showsVerticalScrollIndicator={false}
+			>
+				{loading ? (
+					<View style={styles.center}>
+						<ActivityIndicator size="large" color="#B8CDF7" />
+					</View>
+				) : error ? (
+					<View style={styles.center}>
+						<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					</View>
+				) : interventions.length === 0 ? (
+					<View style={styles.center}>
+						<Text align="center">No interventions, try creating a new intervention!</Text>
+					</View>
+				) : (
+					<List divider={true}>
+						{interventions.map((intervention) => {
+							return (
+								<Item
+									key={intervention.id}
+									onPress={() => router.push(`/interventionScreen/${intervention.id}`)}
+									name={intervention.name}
+									dateRange={`${formatDisplayDate(intervention.start_date)} - ${formatDisplayDate(intervention.end_date)}`}
+								/>
+							);
+						})}
+					</List>
+				)}
 			</ScrollView>
-			<View style={styles.buttonContainer}>
-				<Button title="Add Intervention" onPress={() => console.log("Intervention Added")} />
-			</View>
+			<TouchableOpacity style={[styles.buttonContainer, { backgroundColor: Colors[colorScheme].tint }]} onPress={() => router.push("/interventionModal")}>
+				<IconSymbol name="plus" size={28} color="#FFF"/>
+			</TouchableOpacity>
 		</View>
 	);
 }
@@ -31,8 +100,14 @@ const styles = StyleSheet.create({
 		paddingVertical: 20,
 	},
 	buttonContainer: {
-		paddingBottom: 20,
-		paddingTop: 10,
+		position: 'absolute',
+		justifyContent: 'center',
+		alignItems: 'center',
+		right: 20,
+		bottom: 20,
+		width: 70,
+		height: 70,
+		borderRadius: 35,
 	},
 	center: {
 		flex: 1,

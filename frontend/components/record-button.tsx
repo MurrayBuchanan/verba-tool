@@ -8,6 +8,7 @@ export const RecordButton = () => {
 	const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
 	const recorderState = useAudioRecorderState(recorder);
 	const [isProcessing, setIsProcessing] = useState(false);
+	const [createdAt, setCreatedAt] = useState<Date | null>(null);
 
 	// Request microphone permission
 	useEffect(() => {
@@ -31,6 +32,7 @@ export const RecordButton = () => {
 		try {
 			await recorder.prepareToRecordAsync();
 			recorder.record();
+			setCreatedAt(new Date());
 			console.log("Started recording!");
 		} catch (error) {
 			console.log("Failed to start recording", error);
@@ -44,12 +46,16 @@ export const RecordButton = () => {
 			console.log("Ended recording!");
 
 			if (!recorder.uri) {
-				throw new Error("Failed to retrieve recording URI");
+				throw new Error("Failed to get recording URI");
+			}
+			if (!createdAt) {
+				throw new Error("Failed to get timestamp");
 			}
 
 			setIsProcessing(true);
-			await uploadRecording(recorder.uri);
+			await uploadRecording(recorder.uri, createdAt);
 			console.log("Uploaded recording successfully!");
+			setCreatedAt(null);
 		} catch (error: any) {
 			console.error("Error: Failed to upload recording", error.message);
 		} finally {

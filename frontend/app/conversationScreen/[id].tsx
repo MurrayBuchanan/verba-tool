@@ -1,6 +1,6 @@
 import { StyleSheet, ActivityIndicator, ScrollView } from "react-native";
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useState, useCallback, useRef } from "react";
+import { useLocalSearchParams } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { ThemedView as View } from "@/components/themed-view";
@@ -8,24 +8,14 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { SpeakerSegment } from "@/components/speaker-segment";
 import { getTranscript } from "@/services/transcript-service";
 import { TranscriptSegment } from "@/constants/transcript";
-
-
-// TODO: Change user id to authenticated user's id
-const USER_ID = 1;
+import { getUserId } from "@/services/authentication-service";
 
 export default function ConversationScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const navigation = useNavigation();
 	const [segments, setSegments] = useState<TranscriptSegment[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const loadedId = useRef<string | undefined>(undefined);
-
-	useEffect(() => {
-		navigation.setOptions({
-			title: "Viewing Chat",
-		});
-	}, [navigation]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -42,9 +32,10 @@ export default function ConversationScreen() {
 						return;
 					}
 					setLoading(true);
+					
+					const userId = await getUserId();
 					const transcriptId = parseInt(id, 10);
-
-					const data = await getTranscript(USER_ID, transcriptId);
+					const data = await getTranscript(userId, transcriptId);
 					setSegments(data.segments || []);
 					setError(null);
 					loadedId.current = id;

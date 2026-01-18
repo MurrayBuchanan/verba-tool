@@ -1,4 +1,3 @@
-import { formatDateTimeForAPI } from '@/utils/date-formatting';
 import { getUserId } from '@/services/authentication-service';
 import { apiService } from '@/services/api-service';
 
@@ -17,7 +16,7 @@ export async function uploadRecording(audioUri: string, createdAt: Date) {
 			timeout: 1000 * 60 * 10,
 			headers: {
 				'User-ID': userId,
-				'Created-At': formatDateTimeForAPI(createdAt),
+				'Created-At': createdAt.toISOString(),
 				'Content-Type': 'multipart/form-data',
 			},
 		});
