@@ -1,17 +1,9 @@
-import axios from 'axios';
 import { TranscriptWithFeatures, TranscriptWithSegments } from '@/constants/transcript';
+import { apiService } from '@/services/api-service';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN;
-
-export async function getTranscripts(userId: number): Promise<TranscriptWithFeatures[]> {
-	if (!API_URL || !API_TOKEN) {
-		throw new Error('Error: Environment variables must be set for the API URL and token');
-	}
-
+export async function getTranscripts(userId: string): Promise<TranscriptWithFeatures[]> {
 	try {
-		const endpoint = API_URL + `/transcripts/${userId}`;
-		const response = await axios.get(endpoint, { headers: { Authorization: `Bearer ${API_TOKEN}` }});
+		const response = await apiService.get(`/transcripts/${userId}`);
 		
 		if (response.data && response.data.transcripts) {
 			return response.data.transcripts;
@@ -22,14 +14,9 @@ export async function getTranscripts(userId: number): Promise<TranscriptWithFeat
 	}
 }
 
-export async function getTranscript(userId: number, transcriptId: number): Promise<TranscriptWithSegments> {
-	if (!API_URL || !API_TOKEN) {
-		throw new Error('Error: Environment variables must be set for the API URL and token');
-	}
-
+export async function getTranscript(userId: string, transcriptId: number): Promise<TranscriptWithSegments> {
 	try {
-		const endpoint = API_URL + `/transcripts/${userId}/${transcriptId}`;
-		const response = await axios.get(endpoint, { headers: { Authorization: `Bearer ${API_TOKEN}` }});
+		const response = await apiService.get(`/transcripts/${userId}/${transcriptId}`);
 		return response.data;
 	} catch (error) {
 		throw error;

@@ -1,8 +1,9 @@
 export interface TranscriptMetadata {
 	transcript_id: number;
-	user_id: number;
-	total_duration: number;
+	user_id: string;
 	db_id: number;
+	created_at: string;
+	total_duration: number;
 }
 
 export interface TranscriptFeatures {
@@ -36,9 +37,9 @@ export interface TranscriptWithSegments extends TranscriptMetadata {
 }
 
 export interface Intervention {
-	id: number;
+	id?: number;
 	name: string;
 	description: string | null;
-	start_datetime: Date;
-	end_datetime: Date;
+	start_date: string;
+	end_date: string;
 }

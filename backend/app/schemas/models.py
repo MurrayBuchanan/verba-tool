@@ -3,13 +3,12 @@ from app.core.database import Base
 
 class User(Base):
     __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
+    id = Column(String, primary_key=True, index=True)
 
 class TranscriptMetadata(Base):
     __tablename__ = "transcript_metadata"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
     transcript_id = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False)
     total_duration = Column(Float, nullable=False)
@@ -43,6 +42,7 @@ class TranscriptSegment(Base):
 class Intervention(Base):
     __tablename__ = "interventions"
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, ForeignKey("users.id"), nullable=False)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
     start_date = Column(Date, nullable=False)

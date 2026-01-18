@@ -4,20 +4,31 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.config import API_TOKEN
 from app.core.database import get_db
-from app.schemas.models import Intervention as InterventionModel
+from app.schemas.models import User, Intervention as InterventionModel
 from app.schemas.schemas import Intervention as InterventionSchema
 
 router = APIRouter(prefix="/interventions", tags=["interventions"])
 
+async def get_or_create_user(db: AsyncSession, user_id: str) -> User:
+    user = await db.get(User, user_id)
+    if user is None:
+        user = User(id=user_id)
+        db.add(user)
+        await db.flush()
+    return user
 
-@router.post("")
-async def create_intervention(intervention: InterventionSchema, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+
+@router.post("/{user_id}")
+async def create_intervention(user_id: str, intervention: InterventionSchema, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     # Verify API token
     if authorization != f"Bearer {API_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     try:
+        await get_or_create_user(db, user_id)
+        
         db_intervention = InterventionModel(
+            user_id=user_id,
             name=intervention["name"],
             description=intervention.get("description"),
             start_date=intervention["start_date"],
@@ -44,15 +55,15 @@ async def create_intervention(intervention: InterventionSchema, authorization: s
         raise HTTPException(status_code=500, detail="Error while creating intervention")
 
 
-@router.get("")
-async def get_interventions(authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+@router.get("/{user_id}")
+async def get_interventions(user_id: str, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
 
     # Verify API token
     if authorization != f"Bearer {API_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     try:
-        result = await db.execute(select(InterventionModel).order_by(InterventionModel.start_date.desc()))
+        result = await db.execute(select(InterventionModel).filter(InterventionModel.user_id == user_id).order_by(InterventionModel.start_date.desc()))
         interventions = result.scalars().all()
         
         intervention_list = []
@@ -72,14 +83,14 @@ async def get_interventions(authorization: str = Header(..., alias="Authorizatio
         raise HTTPException(status_code=500, detail="Error while fetching interventions")
 
 
-@router.get("/{intervention_id}")
-async def get_intervention(intervention_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+@router.get("/{user_id}/{intervention_id}")
+async def get_intervention(user_id: str, intervention_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     # Verify API token
     if authorization != f"Bearer {API_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     try:
-        result = await db.execute(select(InterventionModel).where(InterventionModel.id == intervention_id))
+        result = await db.execute(select(InterventionModel).where(InterventionModel.id == intervention_id, InterventionModel.user_id == user_id))
         intervention = result.scalar_one_or_none()
         
         if intervention is None:

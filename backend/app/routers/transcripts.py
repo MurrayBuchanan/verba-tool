@@ -21,7 +21,7 @@ def get_feature(features, feature):
 
 # Endpoint to get all transcripts for a user
 @router.get("/{user_id}")
-async def get_transcripts(user_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+async def get_transcripts(user_id: str, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
 
     # Verify API token
     if authorization != f"Bearer {API_TOKEN}":
@@ -62,7 +62,7 @@ async def get_transcripts(user_id: int, authorization: str = Header(..., alias="
 
 # Endpoint to get a specific transcript with segments
 @router.get("/{user_id}/{transcript_id}")
-async def get_transcript(user_id: int, transcript_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+async def get_transcript(user_id: str, transcript_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     
     # Verify API token
     if authorization != f"Bearer {API_TOKEN}":

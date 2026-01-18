@@ -1,14 +1,9 @@
-import axios from 'axios';
+import { formatDateTimeForAPI } from '@/utils/date-formatting';
+import { getUserId } from '@/services/authentication-service';
+import { apiService } from '@/services/api-service';
 
-// TODO: Change user id to authenticated oid's
-
-export async function uploadRecording(audioUri: string) {
-	const API_URL = process.env.EXPO_PUBLIC_API_URL;
-	const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN;
-
-	if (!API_URL || !API_TOKEN) {
-		throw new Error('Error: Environment variables must be set for the API URL and token');
-	}
+export async function uploadRecording(audioUri: string, createdAt: Date) {
+	const userId = await getUserId();
 
 	const formData = new FormData();
 	formData.append('file', {
@@ -18,13 +13,12 @@ export async function uploadRecording(audioUri: string) {
 	} as any);
 
 	try {
-		const endpoint = API_URL + '/upload-audio';
-		const response = await axios.post(endpoint, formData, {
-			timeout: 1000 * 60 * 10, // Response can take up to 10 minutes
+		const response = await apiService.post('/upload', formData, {
+			timeout: 1000 * 60 * 10,
 			headers: {
-				Authorization: `Bearer ${API_TOKEN}`,
+				'User-ID': userId,
+				'Created-At': formatDateTimeForAPI(createdAt),
 				'Content-Type': 'multipart/form-data',
-				'User-ID': '1',
 			},
 		});
 		console.log('Upload successful:', response.data);

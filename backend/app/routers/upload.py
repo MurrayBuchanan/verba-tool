@@ -22,17 +22,15 @@ conversation_analytics = ConversationAnalytics()
 
 # TODO: Complete OAuth2 implementation and use actual details
 
-# Helper to get or create a user
-async def get_or_create_user(db: AsyncSession, user_id: int) -> User:
+async def get_or_create_user(db: AsyncSession, user_id: str) -> User:
     user = await db.get(User, user_id)
     if user is None:
-        user = User(id=user_id, email=str(user_id))
+        user = User(id=user_id)
         db.add(user)
         await db.flush()
     return user
 
-# Helper to get the next transcript id for a user
-async def get_next_transcript_id(db: AsyncSession, user_id: int) -> int:
+async def get_next_transcript_id(db: AsyncSession, user_id: str) -> int:
 
     # Get the highest transcript id for the user
     query = select(func.max(TranscriptMetadata.transcript_id)).filter(TranscriptMetadata.user_id == user_id)
@@ -48,7 +46,7 @@ async def get_next_transcript_id(db: AsyncSession, user_id: int) -> int:
 
 
 @router.post("")
-async def upload_audio(authorization: str = Header(..., alias="Authorization"), file: UploadFile = File(...), user_id: int = Header(..., alias="User-ID"), created_at: str = Header(..., alias="Created-At"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+async def upload_audio(authorization: str = Header(..., alias="Authorization"), file: UploadFile = File(...), user_id: str = Header(..., alias="User-ID"), created_at: str = Header(..., alias="Created-At"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     
     # Verify API token
     if authorization != f"Bearer {API_TOKEN}":
