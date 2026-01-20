@@ -6,11 +6,11 @@ import { Picker } from "@react-native-picker/picker";
 
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Chart } from "@/components/chart";
+import { MetricChart as Chart } from "@/components/metric-chart";
 import { getIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
-import { getMetricProgression } from "@/utils/metric-display";
+import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { formatDisplayDate } from "@/utils/date-formatting";

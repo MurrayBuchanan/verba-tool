@@ -4,10 +4,10 @@ import { useLocalSearchParams, useFocusEffect } from "expo-router";
 
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Chart } from "@/components/chart";
+import { MetricChart as Chart} from "@/components/metric-chart";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
-import { getMetricProgression } from "@/utils/metric-display";
+import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { Colors } from "@/constants/theme";
 import { getUserId } from "@/services/authentication-service";
