@@ -1,9 +1,8 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { IconSymbol } from "@/components//ui/icon-symbol";
-import { getMetricDetails } from "@/utils/metric-display";
+import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { Colors } from "@/constants/theme";
 
 export type MetricItemProps = {
@@ -21,7 +20,7 @@ export function MetricItem({ metricId, onPress }: MetricItemProps) {
 				</View>
 				<IconSymbol name="chevron.right" size={18} color="#666" />
 			</View>
-			<Text type="caption" style={styles.text}>{getMetricDetails(metricId).name}</Text>
+			<Text type="caption" style={styles.text}>{METRIC_DEFINITIONS[metricId].name}</Text>
 			</TouchableOpacity>
 		</View>
 	);

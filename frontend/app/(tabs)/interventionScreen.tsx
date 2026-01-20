@@ -55,7 +55,8 @@ export default function InterventionScreen() {
 			>
 				{loading ? (
 					<View style={styles.center}>
-						<ActivityIndicator size="large" color="#B8CDF7" />
+						<ActivityIndicator size="large" color={Colors.light.tint} />
+						<Text align="center">Loading...</Text>
 					</View>
 				) : error ? (
 					<View style={styles.center}>
@@ -114,5 +115,5 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
-	},
+	}
 });

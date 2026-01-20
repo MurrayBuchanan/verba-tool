@@ -1,54 +1,35 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { StyleSheet, ActivityIndicator } from "react-native";
-import { useLocalSearchParams, useNavigation, router, useFocusEffect } from "expo-router";
+import { useState, useCallback, useMemo } from "react";
+import { StyleSheet, ActivityIndicator, ScrollView, View } from "react-native";
+import { useLocalSearchParams, useFocusEffect } from "expo-router";
 
-import { ThemedView as View } from "@/components/themed-view";
+import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { BlockButton } from "@/components/block-button";
 import { Chart } from "@/components/chart";
-import { signOut } from "@/services/authentication-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
-import { getMetricProgression, getMetricDetails } from "@/utils/metric-display";
-
-// TODO: Change user id to authenticated user's id
-const USER_ID = 1;
-
-const handleSignOut = () => {
-	return async () => {
-		try {
-			await signOut();
-			router.replace("/");
-		} catch (error) {
-			console.error("Error signing out:", error);
-		}
-	};
-}
+import { getMetricProgression } from "@/utils/metric-display";
+import { METRIC_DEFINITIONS } from "@/constants/metrics";
+import { Colors } from "@/constants/theme";
+import { getUserId } from "@/services/authentication-service";
 
 export default function MetricScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const navigation = useNavigation();
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	
-	const metricDetails = getMetricDetails(id);
-
-	useEffect(() => {
-		navigation.setOptions({
-			title: metricDetails.name,
-		});
-	}, [navigation, metricDetails.name]);
+	const metricDetails = METRIC_DEFINITIONS[id];
 
 	useFocusEffect(
 		useCallback(() => {
 			async function fetchTranscripts() {
 				try {
 					setLoading(true);
-					const data = await getTranscripts(USER_ID);
+					
+					const userId = await getUserId();
+					const data = await getTranscripts(userId);
 					setTranscripts(data);
 					setError(null);
-				} catch (error: any) {
+				} catch {
 					setError("Unable to load metrics");
 				} finally {
 					setLoading(false);
@@ -58,60 +39,59 @@ export default function MetricScreen() {
 		}, [])
 	);
 
-	// Memoize getMetrics to prevent unnecessary rerenders
 	const metricData = useMemo(() => getMetricProgression(transcripts, id), [transcripts, id]);
 
 	return (
-		<View style={styles.container}>
+		<ThemedView style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color="#B8CDF7" />
+					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<Text align="center">Loading data...</Text>
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					<Text align="center">{error}</Text>
+				</View>
+			) : metricData.length === 0 ? (
+				<View style={styles.center}>
+					<Text align="center">No data available yet. Record conversations to see progress over time.</Text>
 				</View>
 			) : (
-				<View style={styles.content}>
+				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<View>
-						<Chart data={metricData} xAxisLabel={(value) => {
-							const point = metricData.find(d => d.x === value);
-							return point?.label || `Conv ${value}`;
-						}} />
+						<Chart 
+							data={metricData} 
+							xAxisLabel={(value) => {
+								const point = metricData.find(d => d.x === value);
+								return point?.label || "";
+							}}
+							title={metricDetails.name}
+						/>
+					</View>
 
-						<Text type="heading" style={styles.heading}>Description</Text>
+					<View>
+						<Text type="heading">Description</Text>
 						<Text>{metricDetails.description}</Text>
 					</View>
-					<BlockButton 
-						title="Export data / Signout" 
-						lightBackgroundColor="#4F5D75"
-						darkBackgroundColor="#8A95B5"
-						onPress={handleSignOut()} 
-					/>
-				</View>
+
+				</ScrollView>
 			)}
-		</View>
+		</ThemedView>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		padding: 20,
-
 	},
 	content: {
-		flex: 1,
-		justifyContent: 'space-between',
+		flexGrow: 1,
+		padding: 20,
 	},
 	center: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
-	},
-	heading: {
-		marginTop: 20,
-		marginBottom: 10,
 	},
 });

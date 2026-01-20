@@ -8,6 +8,7 @@ import { MetricItem as Item } from "@/components/metric-item";
 import { List } from "@/components/list";
 import { getTranscripts } from "@/services/transcript-service";
 import { getUserId } from "@/services/authentication-service";
+import { Colors } from "@/constants/theme";
 
 export default function MetricsScreen() {
 	const router = useRouter();
@@ -50,7 +51,8 @@ export default function MetricsScreen() {
 			>
 				{loading ? (
 					<View style={styles.center}>
-						<ActivityIndicator size="large" color="#B8CDF7" />
+						<ActivityIndicator size="large" color={Colors.light.tint} />
+						<Text align="center">Loading...</Text>
 					</View>
 				) : error ? (
 					<View style={styles.center}>

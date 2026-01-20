@@ -9,6 +9,7 @@ import { SpeakerSegment } from "@/components/speaker-segment";
 import { getTranscript } from "@/services/transcript-service";
 import { TranscriptSegment } from "@/constants/transcript";
 import { getUserId } from "@/services/authentication-service";
+import { Colors } from "@/constants/theme";
 
 export default function ConversationScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -39,7 +40,7 @@ export default function ConversationScreen() {
 					setSegments(data.segments || []);
 					setError(null);
 					loadedId.current = id;
-				} catch (error) {
+				} catch {
 					setError("Unable to load transcript");
 				} finally {
 					setLoading(false);
@@ -53,7 +54,8 @@ export default function ConversationScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color="#B8CDF7" />
+					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<Text align="center">Loading...</Text>
 				</View>
 			) : error ? (
 				<View style={styles.center}>

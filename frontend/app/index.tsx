@@ -7,6 +7,7 @@ import { BlockButton as Button } from "@/components/block-button";
 import { ThemedText as Text } from "@/components/themed-text";
 import { ThemedView as View } from "@/components/themed-view";
 import { signIn, isAuthenticated } from "@/services/authentication-service";
+import { Colors } from "@/constants/theme";
 
 export default function Index() {
 	const [isAuthenticating, setIsAuthenticating] = useState(true);
@@ -46,7 +47,7 @@ export default function Index() {
 	return (
 		isAuthenticating ? (
 			<View style={styles.container}>
-				<ActivityIndicator size="large" color="#371B34" />
+				<ActivityIndicator size="large" color={Colors.light.tint} />
 			</View>
 		) : (
 			<View style={styles.container}>

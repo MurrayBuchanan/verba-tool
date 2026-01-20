@@ -11,6 +11,7 @@ import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { formatDisplayDate } from "@/utils/date-formatting";
 import { getUserId } from "@/services/authentication-service";
+import { Colors } from "@/constants/theme";
 
 function formatDuration(inputSeconds: number): string {
 	const totalSeconds = Math.floor(inputSeconds);
@@ -68,7 +69,8 @@ export default function ConversationHistoryScreen() {
 			>
 				{loading ? (
 					<View style={styles.center}>
-						<ActivityIndicator size="large" color="#B8CDF7" />
+						<ActivityIndicator size="large" color={Colors.light.tint} />
+						<Text align="center">Loading...</Text>
 					</View>
 				) : error ? (
 					<View style={styles.center}>
