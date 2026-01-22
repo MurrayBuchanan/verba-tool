@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Header
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from app.core.config import API_TOKEN
 from app.core.database import get_db
 from app.schemas.models import User, Intervention as InterventionModel
@@ -20,7 +20,7 @@ async def get_or_create_user(db: AsyncSession, user_id: str) -> User:
 
 @router.post("/{user_id}")
 async def create_intervention(user_id: str, intervention: InterventionSchema, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-    # Verify API token
+    
     if authorization != f"Bearer {API_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -58,7 +58,6 @@ async def create_intervention(user_id: str, intervention: InterventionSchema, au
 @router.get("/{user_id}")
 async def get_interventions(user_id: str, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
 
-    # Verify API token
     if authorization != f"Bearer {API_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -85,7 +84,7 @@ async def get_interventions(user_id: str, authorization: str = Header(..., alias
 
 @router.get("/{user_id}/{intervention_id}")
 async def get_intervention(user_id: str, intervention_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-    # Verify API token
+
     if authorization != f"Bearer {API_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
@@ -108,3 +107,64 @@ async def get_intervention(user_id: str, intervention_id: int, authorization: st
         raise
     except Exception:
         raise HTTPException(status_code=500, detail="Error while fetching intervention")
+
+
+@router.put("/{user_id}/{intervention_id}")
+async def update_intervention(user_id: str, intervention_id: int, intervention: InterventionSchema, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+
+    if authorization != f"Bearer {API_TOKEN}":
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    try:
+        result = await db.execute(select(InterventionModel).where(InterventionModel.id == intervention_id, InterventionModel.user_id == user_id))
+        db_intervention = result.scalar_one_or_none()
+        
+        if db_intervention is None:
+            raise HTTPException(status_code=404, detail="Intervention not found")
+        
+        db_intervention.name = intervention["name"]
+        db_intervention.description = intervention.get("description")
+        db_intervention.start_date = intervention["start_date"]
+        db_intervention.end_date = intervention["end_date"]
+        
+        await db.commit()
+        await db.refresh(db_intervention)
+        
+        return JSONResponse(content={
+            "id": db_intervention.id,
+            "name": db_intervention.name,
+            "description": db_intervention.description,
+            "start_date": db_intervention.start_date.isoformat(),
+            "end_date": db_intervention.end_date.isoformat()
+        })
+    
+    except HTTPException:
+        raise
+    except Exception:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Cannot update intervention details")
+
+
+@router.delete("/{user_id}/{intervention_id}")
+async def delete_intervention(user_id: str, intervention_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+
+    if authorization != f"Bearer {API_TOKEN}":
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    try:
+        result = await db.execute(select(InterventionModel).where(InterventionModel.id == intervention_id, InterventionModel.user_id == user_id))
+        intervention = result.scalar_one_or_none()
+        
+        if intervention is None:
+            raise HTTPException(status_code=404, detail="Intervention not found")
+        
+        await db.execute(delete(InterventionModel).where(InterventionModel.id == intervention_id))
+        await db.commit()
+        
+        return JSONResponse(content={"message": "Intervention deleted"})
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Cannot delete intervention")

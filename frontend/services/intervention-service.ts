@@ -31,3 +31,20 @@ export async function createIntervention(userId: string, intervention: Intervent
 		throw error;
 	}
 }
+
+export async function updateIntervention(userId: string, interventionId: number, intervention: Intervention): Promise<Intervention> {
+	try {
+		const response = await apiService.put(`/interventions/${userId}/${interventionId}`, intervention);
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function deleteIntervention(userId: string, interventionId: number): Promise<void> {
+	try {
+		await apiService.delete(`/interventions/${userId}/${interventionId}`);
+	} catch (error) {
+		throw error;
+	}
+}

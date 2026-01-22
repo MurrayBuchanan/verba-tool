@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Header
 from fastapi.responses import JSONResponse
 import json
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, delete
 
 from app.core.database import get_db
 from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment
@@ -102,3 +102,31 @@ async def get_transcript(user_id: str, transcript_id: int, authorization: str = 
         raise
     except Exception:
         raise HTTPException(status_code=500, detail="Error while fetching transcript")
+
+# Endpoint to delete a transcript
+@router.delete("/{user_id}/{transcript_id}")
+async def delete_transcript(user_id: str, transcript_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+    
+    if authorization != f"Bearer {API_TOKEN}":
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    try:
+        transcript = await db.execute(select(TranscriptMetadata).filter(TranscriptMetadata.user_id == user_id, TranscriptMetadata.transcript_id == transcript_id))
+        transcript = transcript.scalar_one_or_none()
+        
+        if transcript is None:
+            raise HTTPException(status_code=404, detail="Transcript not found")
+        
+        # Delete all metadata, segments, and features for a transcript
+        await db.execute(delete(TranscriptSegment).filter(TranscriptSegment.transcript_metadata_id == transcript.id))
+        await db.execute(delete(TranscriptFeatures).filter(TranscriptFeatures.transcript_metadata_id == transcript.id))
+        await db.execute(delete(TranscriptMetadata).filter(TranscriptMetadata.id == transcript.id))
+        
+        await db.commit()
+        
+        return JSONResponse(content={"message": "Transcript deleted"})
+    except HTTPException:
+        raise
+    except Exception:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Cannot delete transcript")

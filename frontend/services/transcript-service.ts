@@ -22,3 +22,11 @@ export async function getTranscript(userId: string, transcriptId: number): Promi
 		throw error;
 	}
 }
+
+export async function deleteTranscript(userId: string, transcriptId: number): Promise<void> {
+	try {
+		await apiService.delete(`/transcripts/${userId}/${transcriptId}`);
+	} catch (error) {
+		throw error;
+	}
+}
