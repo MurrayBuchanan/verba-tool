@@ -2,17 +2,16 @@ import { StyleSheet, ActivityIndicator, ScrollView, View } from "react-native";
 import { useState, useCallback, useRef, useMemo } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
-import { Picker } from "@react-native-picker/picker";
 
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { MetricChart as Chart } from "@/components/metric-chart";
+import { MetricSelector as Selector } from "@/components/metric-selector";
 import { getIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { formatDisplayDate } from "@/utils/date-formatting";
 import { Colors } from "@/constants/theme";
 import { getUserId } from "@/services/authentication-service";
@@ -41,8 +40,6 @@ export default function InterventionDetailScreen() {
 	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
 	const loadedId = useRef<string | undefined>(undefined);
 	
-	const textColor = useThemeColor({}, 'text');
-	const backgroundColor = useThemeColor({}, 'background');
 
 	useFocusEffect(
 		useCallback(() => {
@@ -88,6 +85,13 @@ export default function InterventionDetailScreen() {
 
 	const metricDetails = METRIC_DEFINITIONS[selectedMetric];
 	
+	const metricKeys = useMemo(() => {
+		return Object.keys(METRIC_DEFINITIONS).map((metricKey) => ({
+			label: METRIC_DEFINITIONS[metricKey].name,
+			value: metricKey,
+		}));
+	}, []);
+	
 	return (
 		<ThemedView style={styles.container}>
 			{loading ? (
@@ -113,21 +117,11 @@ export default function InterventionDetailScreen() {
 						<>
 							<View>
 								<Text type="heading">Metric</Text>
-								<View style={[styles.picker, { backgroundColor }]}>
-									<Picker
-										selectedValue={selectedMetric}
-										onValueChange={setSelectedMetric}
-										style={{ color: textColor }}
-										dropdownIconColor={textColor}
-									>
-									{ Object.keys(METRIC_DEFINITIONS).map((metricKey) => {
-										const details = METRIC_DEFINITIONS[metricKey];
-										return (
-											<Picker.Item key={metricKey} label={details.name} value={metricKey} />
-										);
-									})}
-									</Picker>
-								</View>
+								<Selector
+									options={metricKeys}
+									selectedValue={selectedMetric}
+									onValueChange={setSelectedMetric}
+								/>
 							</View>
 							{metricData.length > 0 && (
 								<View>
@@ -186,11 +180,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
-	},
-	picker: {
-		borderRadius: 12,
-		paddingHorizontal: 4,
-		marginTop: 4,
 	},
 	spacer: {
 		paddingVertical: 12,

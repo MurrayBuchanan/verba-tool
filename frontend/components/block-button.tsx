@@ -13,7 +13,7 @@ export type BlockButtonProps = {
 
 export function BlockButton({ onPress, title, lightBackgroundColor='#7F4178', darkBackgroundColor='#371B34' }: BlockButtonProps) {
     const background = useThemeColor({ light: lightBackgroundColor, dark: darkBackgroundColor, }, 'tint');
-    const text = useThemeColor({ light: '#FFF', dark: '#0B1220' }, 'text');
+    const text = useThemeColor({ light: '#FFF', dark: '#FFF' }, 'text');
 
     return (
         < TouchableOpacity onPress={onPress}>
