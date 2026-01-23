@@ -107,33 +107,30 @@ export default function InterventionDetailScreen() {
 					contentContainerStyle={styles.scrollContent} 
 					showsVerticalScrollIndicator={false}
 				>
-					{filteredTranscripts.length === 0 ? (
-						<View style={styles.center}>
-							<Text align="center">No conversations found within this intervention period.</Text>
+					<View>
+						<Text type="heading">Filter by Metric</Text>
+						<Selector
+							options={metricKeys}
+							selectedValue={selectedMetric}
+							onValueChange={setSelectedMetric}
+						/>
+					</View>
+					
+					{ metricData.length > 0 ? (
+						<View>
+							<Chart 
+								data={metricData} 
+								xAxisLabel={(value) => {
+									const point = metricData.find(d => d.x === value);
+									return point?.label || "";
+								}}
+								title={`Changes to ${metricDetails.name} During Intervention`}
+							/>
 						</View>
 					) : (
-						<>
-							<View>
-								<Text type="heading">Metric</Text>
-								<Selector
-									options={metricKeys}
-									selectedValue={selectedMetric}
-									onValueChange={setSelectedMetric}
-								/>
-							</View>
-							{metricData.length > 0 && (
-								<View>
-									<Chart 
-										data={metricData} 
-										xAxisLabel={(value) => {
-											const point = metricData.find(d => d.x === value);
-											return point?.label || "";
-										}}
-										title={`${metricDetails.name} Progression`}
-									/>
-								</View>
-							)}
-						</>
+						<View style={styles.center}>
+							<Text align="center">No data available for this metric within this intervention period.</Text>
+						</View>
 					)}
 					
 					{intervention && (

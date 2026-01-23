@@ -15,7 +15,7 @@ const ISSUER = `https://${TENANT_DOMAIN}/${TENANT_ID}/v2.0`;
 
 export async function signIn() {
 	const discovery = await AuthSession.fetchDiscoveryAsync(ISSUER);
-	const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "authentication" });
+	const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "auth" });
 
 	const request = new AuthSession.AuthRequest({
 		clientId: CLIENT_ID,
@@ -81,7 +81,7 @@ export async function getToken(): Promise<string | null> {
 			await SecureStore.deleteItemAsync("refresh_token");
 			return null;
 		}
-		const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "authentication" });
+		const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "auth" });
 
 		const formData = new URLSearchParams();
 		formData.append("client_id", CLIENT_ID);

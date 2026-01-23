@@ -1,10 +1,11 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, ActivityIndicator, ScrollView, View } from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { MetricChart as Chart} from "@/components/metric-chart";
+import { MetricSelector as Selector } from "@/components/metric-selector";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
@@ -16,7 +17,14 @@ export default function MetricScreen() {
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const metricDetails = METRIC_DEFINITIONS[id];
+	const [selectedMetric, setSelectedMetric] = useState<string>(id || "wpm_per_speaker");
+	const metricDetails = METRIC_DEFINITIONS[selectedMetric];
+
+	useEffect(() => {
+		if (id && METRIC_DEFINITIONS[id]) {
+			setSelectedMetric(id);
+		}
+	}, [id]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -37,7 +45,14 @@ export default function MetricScreen() {
 		}, [])
 	);
 
-	const metricData = useMemo(() => getMetricProgression(transcripts, id), [transcripts, id]);
+	const metricData = useMemo(() => getMetricProgression(transcripts, selectedMetric), [transcripts, selectedMetric]);
+
+	const metricKeys = useMemo(() => {
+		return Object.keys(METRIC_DEFINITIONS).map((metricKey) => ({
+			label: METRIC_DEFINITIONS[metricKey].name,
+			value: metricKey,
+		}));
+	}, []);
 
 	return (
 		<ThemedView style={styles.container}>
@@ -50,22 +65,33 @@ export default function MetricScreen() {
 				<View style={styles.center}>
 					<Text align="center">{error}</Text>
 				</View>
-			) : metricData.length === 0 ? (
-				<View style={styles.center}>
-					<Text align="center">No data available yet. Record conversations to see progress over time.</Text>
-				</View>
 			) : (
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<View>
-						<Chart 
-							data={metricData} 
-							xAxisLabel={(value) => {
-								const point = metricData.find(d => d.x === value);
-								return point?.label || "";
-							}}
-							title={metricDetails.name}
+						<Text type="heading">Filter by Metric</Text>
+						<Selector
+							options={metricKeys}
+							selectedValue={selectedMetric}
+							onValueChange={setSelectedMetric}
 						/>
 					</View>
+					
+					{ metricData.length > 0 ? (
+						<View>
+							<Chart 
+								data={metricData} 
+								xAxisLabel={(value) => {
+									const point = metricData.find(d => d.x === value);
+									return point?.label || "";
+								}}
+								title={`Changes to ${metricDetails.name}`}
+							/>
+						</View>
+					) : (
+						<View style={styles.center}>
+							<Text align="center">No data available for this metric yet. Record conversations to see progress over time.</Text>
+						</View>
+					)}
 
 					<View>
 						<Text type="heading">Description</Text>
