@@ -1,12 +1,12 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import json
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc, delete
 
 from app.core.database import get_db
+from app.core.authentication import get_user_id
 from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment
-from app.core.config import API_TOKEN
 
 router = APIRouter(prefix="/transcripts", tags=["transcripts"])
 
@@ -19,20 +19,13 @@ def get_feature(features, feature):
         return {}
 
 
-# Endpoint to get all transcripts for a user
-@router.get("/{user_id}")
-async def get_transcripts(user_id: str, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-
-    # Verify API token
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+@router.get("")
+async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        # Get all transcripts features
+        # Get all transcripts with their metadata, features but not segments
         result = await db.execute(select(TranscriptMetadata, TranscriptFeatures).join(TranscriptFeatures, TranscriptMetadata.id == TranscriptFeatures.transcript_metadata_id).filter(TranscriptMetadata.user_id == user_id).order_by(desc(TranscriptMetadata.transcript_id)))
         rows = result.all()
         
-        # Convert transcripts to list of dictionaries
         transcript_list = []
         for transcript, features in rows:
             transcript_dict = {
@@ -61,27 +54,20 @@ async def get_transcripts(user_id: str, authorization: str = Header(..., alias="
         raise HTTPException(status_code=500, detail="Error while fetching transcripts")
 
 # Endpoint to get a specific transcript with segments
-@router.get("/{user_id}/{transcript_id}")
-async def get_transcript(user_id: str, transcript_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-    
-    # Verify API token
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
+@router.get("/{transcript_id}")
+async def get_transcript(transcript_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        # Get the transcript metadata
         transcript = await db.execute(select(TranscriptMetadata).filter(TranscriptMetadata.user_id == user_id, TranscriptMetadata.transcript_id == transcript_id))
         transcript = transcript.scalar_one_or_none()
         
-        # Checks if transcript exists
         if transcript is None:
             raise HTTPException(status_code=404, detail="Transcript not found")
         
-        # Get all segments for transcript in order of what came first
+        # Get all segments for transcript in order of creation
         segments = await db.execute(select(TranscriptSegment).filter(TranscriptSegment.transcript_metadata_id == transcript.id).order_by(TranscriptSegment.offset))
         segments = segments.scalars().all()
         
-        # Combines the individual segments into a list of segments
+        # Combines the text segments into a complete transcript
         transcript_segments = []
         for segment in segments:
             transcript_segments.append({
@@ -103,13 +89,8 @@ async def get_transcript(user_id: str, transcript_id: int, authorization: str = 
     except Exception:
         raise HTTPException(status_code=500, detail="Error while fetching transcript")
 
-# Endpoint to delete a transcript
-@router.delete("/{user_id}/{transcript_id}")
-async def delete_transcript(user_id: str, transcript_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-    
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
+@router.delete("/{transcript_id}")
+async def delete_transcript(transcript_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         transcript = await db.execute(select(TranscriptMetadata).filter(TranscriptMetadata.user_id == user_id, TranscriptMetadata.transcript_id == transcript_id))
         transcript = transcript.scalar_one_or_none()

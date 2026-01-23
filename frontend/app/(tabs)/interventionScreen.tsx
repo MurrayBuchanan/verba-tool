@@ -8,7 +8,6 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { List } from "@/components/list";
 import { InterventionItem as Item } from "@/components/intervention-item";
 import { getInterventions } from "@/services/intervention-service";
-import { getUserId } from "@/services/authentication-service";
 import { Intervention } from "@/constants/transcript";
 import { formatDisplayDate } from "@/utils/date-formatting";
 import { Colors } from "@/constants/theme";
@@ -30,8 +29,7 @@ export default function InterventionScreen() {
 						setLoading(true);
 					}
 					
-					const userId = await getUserId();
-					const data = await getInterventions(userId);
+					const data = await getInterventions();
 					setInterventions(data);
 					setError(null);
 					hasInitiallyLoaded.current = true;

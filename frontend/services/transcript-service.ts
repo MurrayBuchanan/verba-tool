@@ -1,9 +1,9 @@
 import { TranscriptWithFeatures, TranscriptWithSegments } from '@/constants/transcript';
 import { apiService } from '@/services/api-service';
 
-export async function getTranscripts(userId: string): Promise<TranscriptWithFeatures[]> {
+export async function getTranscripts(): Promise<TranscriptWithFeatures[]> {
 	try {
-		const response = await apiService.get(`/transcripts/${userId}`);
+		const response = await apiService.get(`/transcripts`);
 		
 		if (response.data && response.data.transcripts) {
 			return response.data.transcripts;
@@ -14,18 +14,18 @@ export async function getTranscripts(userId: string): Promise<TranscriptWithFeat
 	}
 }
 
-export async function getTranscript(userId: string, transcriptId: number): Promise<TranscriptWithSegments> {
+export async function getTranscript(transcriptId: number): Promise<TranscriptWithSegments> {
 	try {
-		const response = await apiService.get(`/transcripts/${userId}/${transcriptId}`);
+		const response = await apiService.get(`/transcripts/${transcriptId}`);
 		return response.data;
 	} catch (error) {
 		throw error;
 	}
 }
 
-export async function deleteTranscript(userId: string, transcriptId: number): Promise<void> {
+export async function deleteTranscript(transcriptId: number): Promise<void> {
 	try {
-		await apiService.delete(`/transcripts/${userId}/${transcriptId}`);
+		await apiService.delete(`/transcripts/${transcriptId}`);
 	} catch (error) {
 		throw error;
 	}

@@ -7,28 +7,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 
 from app.core.database import get_db
+from app.core.authentication import get_user_id
 from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, User
 from app.schemas.schemas import CAResult
 from app.services.audio_converter import AudioConverter
 from app.services.speech_service import SpeechService
 from app.services.conversation_analytics import ConversationAnalytics
-from app.core.config import SPEECH_KEY, SPEECH_REGION, API_TOKEN
+from app.core.config import SPEECH_KEY, SPEECH_REGION
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 
 audio_converter = AudioConverter()
 speech_service = SpeechService(SPEECH_KEY, SPEECH_REGION)
 conversation_analytics = ConversationAnalytics()
-
-# TODO: Complete OAuth2 implementation and use actual details
-
-async def get_or_create_user(db: AsyncSession, user_id: str) -> User:
-    user = await db.get(User, user_id)
-    if user is None:
-        user = User(id=user_id)
-        db.add(user)
-        await db.flush()
-    return user
 
 async def get_next_transcript_id(db: AsyncSession, user_id: str) -> int:
 
@@ -46,12 +37,7 @@ async def get_next_transcript_id(db: AsyncSession, user_id: str) -> int:
 
 
 @router.post("")
-async def upload_audio(authorization: str = Header(..., alias="Authorization"), file: UploadFile = File(...), user_id: str = Header(..., alias="User-ID"), created_at: str = Header(..., alias="Created-At"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-    
-    # Verify API token
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
+async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..., alias="Created-At"), user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         created_at_datetime = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
         if created_at_datetime.tzinfo is not None:
@@ -82,9 +68,6 @@ async def upload_audio(authorization: str = Header(..., alias="Authorization"), 
 
         # Perform conversation feature extraction
         analytics: CAResult = conversation_analytics.analyse(segments)
-
-        # Get or create user
-        await get_or_create_user(db, user_id)
 
         # Get next transcript id for the user
         transcript_id = await get_next_transcript_id(db, user_id)

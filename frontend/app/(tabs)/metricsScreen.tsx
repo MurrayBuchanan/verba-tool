@@ -7,7 +7,6 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { MetricItem as Item } from "@/components/metric-item";
 import { List } from "@/components/list";
 import { getTranscripts } from "@/services/transcript-service";
-import { getUserId } from "@/services/authentication-service";
 import { Colors } from "@/constants/theme";
 
 export default function MetricsScreen() {
@@ -26,8 +25,7 @@ export default function MetricsScreen() {
 						setLoading(true);
 					}
 					
-					const userId = await getUserId();
-					const transcripts = await getTranscripts(userId);
+					const transcripts = await getTranscripts();
 					setHasConversations(transcripts.length > 0);
 					setError(null);
 					hasInitiallyLoaded.current = true;

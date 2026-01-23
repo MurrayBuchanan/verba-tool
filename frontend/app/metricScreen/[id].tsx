@@ -10,7 +10,6 @@ import { TranscriptWithFeatures } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { Colors } from "@/constants/theme";
-import { getUserId } from "@/services/authentication-service";
 
 export default function MetricScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -25,8 +24,7 @@ export default function MetricScreen() {
 				try {
 					setLoading(true);
 					
-					const userId = await getUserId();
-					const data = await getTranscripts(userId);
+					const data = await getTranscripts();
 					setTranscripts(data);
 					setError(null);
 				} catch {

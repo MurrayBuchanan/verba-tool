@@ -3,9 +3,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configuration variables
-API_TOKEN = os.getenv("API_TOKEN")
-
 # Azure Speech Service configuration
 SPEECH_KEY = os.getenv("SPEECH_KEY")
 SPEECH_REGION = os.getenv("SPEECH_REGION")

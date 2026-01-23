@@ -8,7 +8,6 @@ import { ThemedView } from "@/components/themed-view";
 import { DatePickerInput } from "@/components/date-picker";
 import { BlockButton } from "@/components/block-button";
 import { createIntervention } from "@/services/intervention-service";
-import { getUserId } from "@/services/authentication-service";
 import { formatAPIDate } from "@/utils/date-formatting";
 
 export default function InterventionModal() {
@@ -55,8 +54,7 @@ export default function InterventionModal() {
 
 		setIsCreating(true);
 		try {
-			const userId = await getUserId();
-			await createIntervention(userId, {
+			await createIntervention({
 				name: name.trim(),
 				description: description.trim() || null,
 				start_date: formatAPIDate(startDate),

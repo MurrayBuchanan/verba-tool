@@ -1,9 +1,9 @@
 import { Intervention } from '@/constants/transcript';
 import { apiService } from '@/services/api-service';
 
-export async function getInterventions(userId: string): Promise<Intervention[]> {
+export async function getInterventions(): Promise<Intervention[]> {
 	try {
-		const response = await apiService.get(`/interventions/${userId}`);
+		const response = await apiService.get(`/interventions`);
 		
 		if (response.data && response.data.interventions) {
 			return response.data.interventions;
@@ -14,36 +14,36 @@ export async function getInterventions(userId: string): Promise<Intervention[]> 
 	}
 }
 
-export async function getIntervention(userId: string, interventionId: number): Promise<Intervention> {
+export async function getIntervention(interventionId: number): Promise<Intervention> {
 	try {
-		const response = await apiService.get(`/interventions/${userId}/${interventionId}`);
+		const response = await apiService.get(`/interventions/${interventionId}`);
 		return response.data;
 	} catch (error) {
 		throw error;
 	}
 }
 
-export async function createIntervention(userId: string, intervention: Intervention): Promise<Intervention> {
+export async function createIntervention(intervention: Intervention): Promise<Intervention> {
 	try {
-		const response = await apiService.post(`/interventions/${userId}`, intervention);
+		const response = await apiService.post(`/interventions`, intervention);
 		return response.data;
 	} catch (error) {
 		throw error;
 	}
 }
 
-export async function updateIntervention(userId: string, interventionId: number, intervention: Intervention): Promise<Intervention> {
+export async function updateIntervention(interventionId: number, intervention: Intervention): Promise<Intervention> {
 	try {
-		const response = await apiService.put(`/interventions/${userId}/${interventionId}`, intervention);
+		const response = await apiService.put(`/interventions/${interventionId}`, intervention);
 		return response.data;
 	} catch (error) {
 		throw error;
 	}
 }
 
-export async function deleteIntervention(userId: string, interventionId: number): Promise<void> {
+export async function deleteIntervention(interventionId: number): Promise<void> {
 	try {
-		await apiService.delete(`/interventions/${userId}/${interventionId}`);
+		await apiService.delete(`/interventions/${interventionId}`);
 	} catch (error) {
 		throw error;
 	}

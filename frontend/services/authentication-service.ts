@@ -15,19 +15,19 @@ const ISSUER = `https://${TENANT_DOMAIN}/${TENANT_ID}/v2.0`;
 
 export async function signIn() {
 	const discovery = await AuthSession.fetchDiscoveryAsync(ISSUER);
-	const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "auth" });
+	const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "authentication" });
 
-	// Create the authentication request
 	const request = new AuthSession.AuthRequest({
 		clientId: CLIENT_ID,
 		redirectUri,
 		responseType: AuthSession.ResponseType.Code,
 		usePKCE: true,
-		scopes: ["openid", "profile"],
+		scopes: ["openid", "profile", "offline_access"],
 	});
 
 	// Launch system browser
 	const result = await request.promptAsync(discovery);
+	
 	// Handle user cancellation
 	if (result.type !== "success") {
 		return null;
@@ -41,34 +41,95 @@ export async function signIn() {
 	}).performAsync({ tokenEndpoint: discovery.tokenEndpoint });
 
 	if (tokenResponse.idToken) {
-		await SecureStore.setItemAsync("id_token", tokenResponse.idToken);
+		await SecureStore.setItemAsync("token", tokenResponse.idToken);
+	}
+	if (tokenResponse.refreshToken) {
+		await SecureStore.setItemAsync("refresh_token", tokenResponse.refreshToken);
 	}
 	return tokenResponse;
 }
 
-export async function getIdToken() {
-  	return SecureStore.getItemAsync("id_token");
+function hasExpired(token: string): boolean {
+	const decoded: any = jwtDecode(token);
+	const expirationTime = decoded.exp;
+	const currentTime = Math.floor(Date.now() / 1000);
+	return expirationTime < currentTime;
+}
+
+export async function getToken(): Promise<string | null> {
+	const token = await SecureStore.getItemAsync("token");
+	if (!token) {
+		return null;
+	}
+
+	if (!hasExpired(token)) {
+		return token;
+	}
+
+	// Refresh token since it expired
+	const refreshToken = await SecureStore.getItemAsync("refresh_token");
+	if (!refreshToken) {
+		await SecureStore.deleteItemAsync("token");
+		return null;
+	}
+
+	try {
+		// Get token endpoint
+		const discovery = await AuthSession.fetchDiscoveryAsync(ISSUER);
+		if (!discovery.tokenEndpoint) {
+			await SecureStore.deleteItemAsync("token");
+			await SecureStore.deleteItemAsync("refresh_token");
+			return null;
+		}
+		const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "authentication" });
+
+		const formData = new URLSearchParams();
+		formData.append("client_id", CLIENT_ID);
+		formData.append("refresh_token", refreshToken);
+		formData.append("grant_type", "refresh_token");
+		formData.append("redirect_uri", redirectUri);
+
+		// Get new token
+		const response = await fetch(discovery.tokenEndpoint, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+			},
+			body: formData.toString(),
+		});
+
+		if (!response.ok) {
+			await SecureStore.deleteItemAsync("token");
+			await SecureStore.deleteItemAsync("refresh_token");
+			return null;
+		}
+
+		const tokenResponse = await response.json();
+
+		if (tokenResponse.id_token) {
+			await SecureStore.setItemAsync("token", tokenResponse.id_token);
+			if (tokenResponse.refresh_token) {
+				await SecureStore.setItemAsync("refresh_token", tokenResponse.refresh_token);
+			}
+			return tokenResponse.id_token;
+		}
+		return null;
+	} catch (error) {
+		await SecureStore.deleteItemAsync("token");
+		await SecureStore.deleteItemAsync("refresh_token");
+		return null;
+	}
 }
 
 export async function isAuthenticated(): Promise<boolean> {
-	const token = await getIdToken();
-	if (token === null || token === undefined) {
-		return false;
-	} else {
+	const token = await getToken();
+	if (token) {
 		return true;
 	}
+	return false;
 }
 
 export async function signOut() {
- 	await SecureStore.deleteItemAsync("id_token");
-}
-
-export async function getUserId(): Promise<string> {
-	const idToken = await getIdToken();
-	if (!idToken) {
-		throw new Error('No ID token');
-	}
-
-	const tokenData: any = jwtDecode(idToken);
-	return tokenData.sub;
+	await SecureStore.deleteItemAsync("token");
+	await SecureStore.deleteItemAsync("refresh_token");
 }

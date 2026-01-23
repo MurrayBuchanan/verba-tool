@@ -1,16 +1,24 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
+import { getToken } from '@/services/authentication-service';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
-const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN;
 
-if (!API_URL || !API_TOKEN) {
-	throw new Error('Error: Environment variables must be set for the API URL and token');
+if (!API_URL) {
+	throw new Error('API URL environment variable must be set');
 }
 
-export const apiService = axios.create({
+export const apiService: AxiosInstance = axios.create({
 	baseURL: API_URL,
 	headers: {
-		Authorization: `Bearer ${API_TOKEN}`,
 		'Content-Type': 'application/json',
 	},
+});
+
+// Add token to headers
+apiService.interceptors.request.use(async (config) => {
+	const token = await getToken();
+	if (token) {
+		config.headers.Authorisation = `Bearer ${token}`;
+	}
+	return config;
 });

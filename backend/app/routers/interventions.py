@@ -1,32 +1,17 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from app.core.config import API_TOKEN
 from app.core.database import get_db
+from app.core.authentication import get_user_id
 from app.schemas.models import User, Intervention as InterventionModel
 from app.schemas.schemas import Intervention as InterventionSchema
 
 router = APIRouter(prefix="/interventions", tags=["interventions"])
 
-async def get_or_create_user(db: AsyncSession, user_id: str) -> User:
-    user = await db.get(User, user_id)
-    if user is None:
-        user = User(id=user_id)
-        db.add(user)
-        await db.flush()
-    return user
-
-
-@router.post("/{user_id}")
-async def create_intervention(user_id: str, intervention: InterventionSchema, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-    
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+@router.post("")
+async def create_intervention(intervention: InterventionSchema, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        await get_or_create_user(db, user_id)
-        
         db_intervention = InterventionModel(
             user_id=user_id,
             name=intervention["name"],
@@ -55,12 +40,8 @@ async def create_intervention(user_id: str, intervention: InterventionSchema, au
         raise HTTPException(status_code=500, detail="Error while creating intervention")
 
 
-@router.get("/{user_id}")
-async def get_interventions(user_id: str, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+@router.get("")
+async def get_interventions(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         result = await db.execute(select(InterventionModel).filter(InterventionModel.user_id == user_id).order_by(InterventionModel.start_date.desc()))
         interventions = result.scalars().all()
@@ -82,12 +63,8 @@ async def get_interventions(user_id: str, authorization: str = Header(..., alias
         raise HTTPException(status_code=500, detail="Error while fetching interventions")
 
 
-@router.get("/{user_id}/{intervention_id}")
-async def get_intervention(user_id: str, intervention_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+@router.get("/{intervention_id}")
+async def get_intervention(intervention_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         result = await db.execute(select(InterventionModel).where(InterventionModel.id == intervention_id, InterventionModel.user_id == user_id))
         intervention = result.scalar_one_or_none()
@@ -109,12 +86,8 @@ async def get_intervention(user_id: str, intervention_id: int, authorization: st
         raise HTTPException(status_code=500, detail="Error while fetching intervention")
 
 
-@router.put("/{user_id}/{intervention_id}")
-async def update_intervention(user_id: str, intervention_id: int, intervention: InterventionSchema, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+@router.put("/{intervention_id}")
+async def update_intervention(intervention_id: int, intervention: InterventionSchema, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         result = await db.execute(select(InterventionModel).where(InterventionModel.id == intervention_id, InterventionModel.user_id == user_id))
         db_intervention = result.scalar_one_or_none()
@@ -145,12 +118,8 @@ async def update_intervention(user_id: str, intervention_id: int, intervention: 
         raise HTTPException(status_code=500, detail="Cannot update intervention details")
 
 
-@router.delete("/{user_id}/{intervention_id}")
-async def delete_intervention(user_id: str, intervention_id: int, authorization: str = Header(..., alias="Authorization"), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-
-    if authorization != f"Bearer {API_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
+@router.delete("/{intervention_id}")
+async def delete_intervention(intervention_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         result = await db.execute(select(InterventionModel).where(InterventionModel.id == intervention_id, InterventionModel.user_id == user_id))
         intervention = result.scalar_one_or_none()
@@ -165,6 +134,6 @@ async def delete_intervention(user_id: str, intervention_id: int, authorization:
     
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot delete intervention")

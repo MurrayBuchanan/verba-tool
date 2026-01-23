@@ -10,7 +10,6 @@ import { ConversationItem as Item} from "@/components/conversation-item";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { formatDisplayDate } from "@/utils/date-formatting";
-import { getUserId } from "@/services/authentication-service";
 import { Colors } from "@/constants/theme";
 
 function formatDuration(inputSeconds: number): string {
@@ -45,8 +44,7 @@ export default function ConversationHistoryScreen() {
 						setLoading(true);
 					}
 					
-					const userId = await getUserId();
-					const data = await getTranscripts(userId);
+					const data = await getTranscripts();
 					setTranscripts(data);
 					setError(null);
 					hasInitiallyLoaded.current = true;

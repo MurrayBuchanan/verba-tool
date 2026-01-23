@@ -14,7 +14,6 @@ import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatDisplayDate } from "@/utils/date-formatting";
 import { Colors } from "@/constants/theme";
-import { getUserId } from "@/services/authentication-service";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
@@ -49,11 +48,10 @@ export default function InterventionDetailScreen() {
 						return;
 					}
 					setLoading(true);
-					const userId = await getUserId();
 					const interventionId = parseInt(id, 10);
 
-					const interventionData = await getIntervention(userId, interventionId);
-					const transcriptsData = await getTranscripts(userId);
+					const interventionData = await getIntervention(interventionId);
+					const transcriptsData = await getTranscripts();
 					
 					setIntervention(interventionData);
 					setTranscripts(transcriptsData);

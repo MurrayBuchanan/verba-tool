@@ -8,7 +8,6 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { SpeakerSegment } from "@/components/speaker-segment";
 import { getTranscript } from "@/services/transcript-service";
 import { TranscriptSegment } from "@/constants/transcript";
-import { getUserId } from "@/services/authentication-service";
 import { Colors } from "@/constants/theme";
 
 export default function ConversationScreen() {
@@ -34,9 +33,8 @@ export default function ConversationScreen() {
 					}
 					setLoading(true);
 					
-					const userId = await getUserId();
 					const transcriptId = parseInt(id, 10);
-					const data = await getTranscript(userId, transcriptId);
+					const data = await getTranscript(transcriptId);
 					setSegments(data.segments || []);
 					setError(null);
 					loadedId.current = id;
