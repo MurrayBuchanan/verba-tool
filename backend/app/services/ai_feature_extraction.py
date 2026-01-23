@@ -4,7 +4,6 @@ from openai import AzureOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
 from app.schemas.schemas import TranscriptSegment, AIFeatures
 
-# Documentation: https://learn.microsoft.com/en-us/azure/ai-foundry/what-is-foundry?view=foundry-classic
 # GitHub: https://github.com/openai/openai-python
 
 # Create client with the OpenAI SDK for Azure
@@ -68,7 +67,7 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     - Impoverished Vocabulary: Limited range of vocabulary, repetitive word choice, overuse of generic terms. 0.0 = rich vocabulary, 1.0 = very limited vocabulary.
     - Semantic Paraphasias: Substitution of words with semantically related but incorrect words. 0.0 = no paraphasias, 1.0 = frequent semantic errors.
     - Syntactic Simplification: Overuse of simple, short sentence structures, reduced complexity, increased grammatical errors. 0.0 = complex syntax, 1.0 = very simplified syntax.
-    - Discourse Impairment: Poor coherence, topic maintenance issues, difficulty organizing thoughts, tangential speech. 0.0 = coherent discourse, 1.0 = severely impaired discourse.
+    - Discourse Impairment: Poor coherence, topic maintenance issues, difficulty organising thoughts, tangential speech. 0.0 = coherent discourse, 1.0 = severely impaired discourse.
 
     Rules:
     - Include every speaker from the provided speaker list.
