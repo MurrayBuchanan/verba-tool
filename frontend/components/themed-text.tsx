@@ -4,7 +4,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 export type ThemedTextProps = TextProps & {
 	lightColor?: string;
 	darkColor?: string;
-	type?: 'default' | 'caption' | 'heading' | 'subtitle' | 'title' | 'button';
+	type?: 'default' | 'caption' | 'heading' | 'title' | 'button';
 	align?: 'left' | 'center' | 'right';
 };
 
@@ -18,7 +18,6 @@ export function ThemedText({style, lightColor, darkColor, type = 'default', alig
 			type === 'default' ? styles.default : undefined,
 			type === 'caption' ? styles.caption : undefined,
 			type === 'heading' ? styles.heading : undefined,
-			type === 'subtitle' ? styles.subtitle : undefined,
 			type === 'title' ? styles.title : undefined,
 			type === 'button' ? styles.button : undefined,
 
@@ -41,24 +40,18 @@ const styles = StyleSheet.create({
 	},
 	caption: {
 		fontSize: 16,
-		lineHeight: 16,
+		lineHeight: 20,
 		fontWeight: '400'
 	},
 	heading: {  
-		fontSize: 22,
-		lineHeight: 28,
-		fontWeight: '600',
-	},
-	subtitle: {
-		fontSize: 24,
+		fontSize: 20,
+		lineHeight: 24,
 		fontWeight: '600',
 	},
 	title: {
-		fontSize: 30,
-		fontWeight: '800',
-		lineHeight: 32,
-		marginTop: 50,
-		marginBottom: 20,
+		fontSize: 32,
+		fontWeight: '600',
+		lineHeight: 30,
 	},
 	button: {
 		fontSize: 18,

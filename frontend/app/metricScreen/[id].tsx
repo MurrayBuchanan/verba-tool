@@ -67,17 +67,14 @@ export default function MetricScreen() {
 				</View>
 			) : (
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<View>
-						<Text type="heading">Filter by Metric</Text>
-						<Selector
-							options={metricKeys}
-							selectedValue={selectedMetric}
-							onValueChange={setSelectedMetric}
-						/>
-					</View>
+					<Selector
+						options={metricKeys}
+						selectedValue={selectedMetric}
+						onValueChange={setSelectedMetric}
+					/>
 					
 					{ metricData.length > 0 ? (
-						<View>
+						<View style={styles.section}>
 							<Chart 
 								data={metricData} 
 								xAxisLabel={(value) => {
@@ -93,7 +90,7 @@ export default function MetricScreen() {
 						</View>
 					)}
 
-					<View>
+					<View style={styles.section}>
 						<Text type="heading">Description</Text>
 						<Text>{metricDetails.description}</Text>
 					</View>
@@ -110,7 +107,10 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		flexGrow: 1,
-		padding: 20,
+	},
+	section: {
+		paddingHorizontal: 20,
+		paddingVertical: 10,
 	},
 	center: {
 		flex: 1,

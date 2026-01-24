@@ -1,19 +1,21 @@
-import { StyleSheet, ActivityIndicator, ScrollView, View } from "react-native";
-import { useState, useCallback, useRef, useMemo } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { StyleSheet, ActivityIndicator, ScrollView, View, TouchableOpacity, Alert } from "react-native";
+import { useState, useCallback, useRef, useMemo, useLayoutEffect } from "react";
+import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { MetricChart as Chart } from "@/components/metric-chart";
 import { MetricSelector as Selector } from "@/components/metric-selector";
-import { getIntervention } from "@/services/intervention-service";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { getIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatDisplayDate } from "@/utils/date-formatting";
 import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
@@ -32,13 +34,59 @@ function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, 
 
 export default function InterventionDetailScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
+	const navigation = useNavigation();
+	const colorScheme = useColorScheme() ?? 'light';
 	const [intervention, setIntervention] = useState<any>(null);
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
 	const loadedId = useRef<string | undefined>(undefined);
-	
+
+	const handleDelete = useCallback(async () => {
+		if (!id) return;
+		
+		Alert.alert(
+			"Delete Intervention",
+			"Are you sure you want to delete this intervention?",
+			[
+				{
+					text: "Cancel",
+					style: "cancel"
+				},
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: async () => {
+						try {
+							const interventionId = parseInt(id, 10);
+							await deleteIntervention(interventionId);
+							router.back();
+						} catch (error) {
+							Alert.alert("Failed to delete intervention");
+						}
+					}
+				}
+			]
+		);
+	}, [id]);
+
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity 
+					style={styles.button} 
+					onPress={handleDelete}
+				>
+					<IconSymbol 
+						name="trash" 
+						size={24} 
+						color={Colors[colorScheme].text} 
+					/>
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation, handleDelete, colorScheme]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -102,22 +150,15 @@ export default function InterventionDetailScreen() {
 					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
 				</View>
 			) : (
-				<ScrollView 
-					style={styles.container} 
-					contentContainerStyle={styles.scrollContent} 
-					showsVerticalScrollIndicator={false}
-				>
-					<View>
-						<Text type="heading">Filter by Metric</Text>
-						<Selector
-							options={metricKeys}
-							selectedValue={selectedMetric}
-							onValueChange={setSelectedMetric}
-						/>
-					</View>
+				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+					<Selector
+						options={metricKeys}
+						selectedValue={selectedMetric}
+						onValueChange={setSelectedMetric}
+					/>
 					
 					{ metricData.length > 0 ? (
-						<View>
+						<View style={styles.section}>
 							<Chart 
 								data={metricData} 
 								xAxisLabel={(value) => {
@@ -134,7 +175,7 @@ export default function InterventionDetailScreen() {
 					)}
 					
 					{intervention && (
-						<View>
+						<View style={styles.section}>
 							<Text type="heading">Intervention Details</Text>
 							
 							<View style={styles.spacer}>
@@ -166,9 +207,12 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-	scrollContent: {
+	content: {
 		flexGrow: 1,
-		padding: 20,
+	},
+	section: {
+		paddingHorizontal: 20,
+		paddingVertical: 10,
 	},
 	center: {
 		flex: 1,
@@ -178,5 +222,8 @@ const styles = StyleSheet.create({
 	},
 	spacer: {
 		paddingVertical: 12,
+	},
+	button: {
+		marginRight: 10,
 	},
 });

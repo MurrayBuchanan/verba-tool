@@ -14,7 +14,7 @@ export default function RecordAudioScreen() {
 			resizeMode="contain"
 		/>	
 		<View style={styles.tutorialTextContainer}>
-			<Text type='subtitle' align='center'>How to use</Text>
+			<Text type='title' align='center'>How to use</Text>
 			<Text align='center'>The app owner should speak first, using a consistent set of questions to form a baseline between conversations</Text>
 		</View>
 	

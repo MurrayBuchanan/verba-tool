@@ -1,21 +1,70 @@
-import { StyleSheet, ActivityIndicator, ScrollView } from "react-native";
-import { useState, useCallback, useRef } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { useState, useCallback, useRef, useLayoutEffect } from "react";
+import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { SpeakerSegment } from "@/components/speaker-segment";
-import { getTranscript } from "@/services/transcript-service";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { getTranscript, deleteTranscript } from "@/services/transcript-service";
 import { TranscriptSegment } from "@/constants/transcript";
 import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function ConversationScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
+	const navigation = useNavigation();
+	const colorScheme = useColorScheme() ?? 'light';
 	const [segments, setSegments] = useState<TranscriptSegment[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const loadedId = useRef<string | undefined>(undefined);
+
+	const handleDelete = useCallback(async () => {
+		if (!id) return;
+		
+		Alert.alert(
+			"Delete Conversation",
+			"Are you sure you want to delete this conversation? This will permanently delete the conversation and the metrics associated with it.",
+			[
+				{
+					text: "Cancel",
+					style: "cancel"
+				},
+				{
+					text: "Delete",
+					style: "destructive",
+					onPress: async () => {
+						try {
+							const transcriptId = parseInt(id, 10);
+							await deleteTranscript(transcriptId);
+							router.back();
+						} catch (error) {
+							Alert.alert("Failed to delete conversation");
+						}
+					}
+				}
+			]
+		);
+	}, [id]);
+
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity 
+					style={styles.button} 
+					onPress={handleDelete}
+				>
+					<IconSymbol 
+						name="trash" 
+						size={24} 
+						color={Colors[colorScheme].text} 
+					/>
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation, handleDelete, colorScheme]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -91,5 +140,8 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
+	},
+	button: {
+		marginRight: 10,
 	},
 });

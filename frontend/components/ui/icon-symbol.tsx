@@ -17,13 +17,10 @@ const MAPPING = {
   'chevron.left': 'chevron-left',
   'chevron.right': 'chevron-right',
   'record.circle': 'fiber-manual-record',
-  'record.circle.fill': 'fiber-manual-record',
   'chart.bar': 'bar-chart',
-  'chart.bar.fill': 'bar-chart',
-  'sparkles': 'auto-awesome',
   'clock': 'access-time',
-  'clock.fill': 'access-time',
   'plus': 'add',
+  'trash': 'delete',
 } as IconMapping;
 
 /**
