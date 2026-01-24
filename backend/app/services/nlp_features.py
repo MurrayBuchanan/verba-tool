@@ -23,6 +23,84 @@ class NLPFeatureExtraction:
             text = segment.get("text", "")
             texts.append(text)
         return " ".join(texts)
+
+    # Count words in text segment by splitting on whitespace
+    def count_words(self, text: str) -> int:
+        return len((text or "").split())
+
+    # Calculate words per minute
+    # Formula: (total words) / (total seconds / 60)
+    def calculate_wpm(self, segments: List[TranscriptSegment]) -> float:
+        total_words = 0
+        total_seconds = 0.0
+
+        for segment in segments:
+            total_words += self.count_words(segment.get("text", ""))
+            total_seconds += float(segment.get("duration", 0.0))
+
+        if total_seconds <= 0:
+            return 0.0
+
+        return total_words / (total_seconds / 60.0)
+
+    def wpm_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
+        groupedSegments = group_by_speaker(segments)
+        result = {}
+
+        for speaker, speaker_segments in groupedSegments.items():
+            wpm = self.calculate_wpm(speaker_segments)
+            result[speaker] = round(wpm, 2)
+
+        return result
+
+    # Calculate mean utterance length
+    # Formula: (total words) / (number of utterances)
+    def calculate_mul(self, segments: List[TranscriptSegment]) -> float:
+        if not segments:
+            return 0.0
+
+        total_words = 0
+        for segment in segments:
+            total_words += self.count_words(segment.get("text", ""))
+
+        return total_words / len(segments)
+
+    def mul_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
+        groupedSegments = group_by_speaker(segments)
+        result = {}
+
+        for speaker, speaker_segments in groupedSegments.items():
+            mul = self.calculate_mul(speaker_segments)
+            result[speaker] = round(mul, 2)
+
+        return result
+
+
+
+    # Calculate average word length
+    # Formula: (total characters) / (total words)
+    def calculate_avg_word_length(self, segments: List[TranscriptSegment]) -> float:
+        text = self.combine_segments(segments)
+        words = text.split()
+
+        if len(words) == 0:
+            return 0.0
+
+        total_characters = 0
+        for word in words:
+            total_characters += len(word)
+
+        return total_characters / len(words)
+
+    def avg_word_length_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
+        groupedSegments = group_by_speaker(segments)
+        result = {}
+
+        for speaker, speaker_segments in groupedSegments.items():
+            avg_length = self.calculate_avg_word_length(speaker_segments)
+            result[speaker] = round(avg_length, 2)
+
+        return result
     
 
 
@@ -38,7 +116,7 @@ class NLPFeatureExtraction:
         # Count all words
         totalWords = 0
         for token in tokens:
-            if not token.is_punct and not token.is_space: # Exclude punctuation and spaces
+            if not token.is_punct and not token.is_space:
                 totalWords += 1
         
         if totalWords == 0:

@@ -1,7 +1,7 @@
 from typing import List, Dict
-from app.services.ai_feature_extraction import extract_features
-from app.services.nlp_feature_extraction import NLPFeatureExtraction
-from app.schemas.schemas import Feature, NLPFeatures,TranscriptSegment, CAResult
+from app.services.ai_features import extract_features
+from app.services.nlp_features import NLPFeatureExtraction
+from app.schemas.schemas import Feature, NLPFeatures, TranscriptSegment, CAResult
 
 class ConversationAnalytics:
     def __init__(self):
@@ -16,10 +16,6 @@ class ConversationAnalytics:
                 groupedSegmentsSegments[speaker] = []
             groupedSegmentsSegments[speaker].append(segment)
         return groupedSegmentsSegments
-
-    # Count words in text segment by splitting on whitespace
-    def count_words(self, text: str) -> int:
-        return len((text or "").split())
 
     # Count turns per speaker
     def count_turns_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
@@ -38,93 +34,6 @@ class ConversationAnalytics:
                 last_speaker = speaker
         return counts
 
-    # Combine segments into a single text block
-    def combine_segments(self, segments: List[TranscriptSegment]) -> str:
-        texts = []
-        for segment in segments:
-            text = segment.get("text", "")
-            texts.append(text)
-        return " ".join(texts)
-
-
-
-    # Calculate words per minute
-    # Formula: (total words) / (total seconds / 60)
-    def calculate_wpm(self, segments: List[TranscriptSegment]) -> float:
-        total_words = 0
-        total_seconds = 0.0
-
-        for segment in segments:
-            total_words += self.count_words(segment.get("text", ""))
-            total_seconds += float(segment.get("duration", 0.0))
-
-        if total_seconds <= 0:
-            return 0.0
-
-        return total_words / (total_seconds / 60.0)
-    
-    def wpm_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
-        groupedSegments = self.group_by_speaker(segments)
-        result = {}
-        
-        for speaker, speaker_segments in groupedSegments.items():
-            wpm = self.calculate_wpm(speaker_segments)
-            result[speaker] = round(wpm, 2)
-        
-        return result
-
-
-
-    # Calculate mean utterance length
-    # Formula: (total words) / (number of utterances)
-    def calculate_mul(self, segments: List[TranscriptSegment]) -> float:
-        if not segments:
-            return 0.0
-
-        total_words = 0
-        for segment in segments:
-            total_words += self.count_words(segment.get("text", ""))
-
-        return total_words / len(segments)
-
-    def mul_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
-        groupedSegments = self.group_by_speaker(segments)
-        result = {}
-        
-        for speaker, speaker_segments in groupedSegments.items():
-            mul = self.calculate_mul(speaker_segments)
-            result[speaker] = round(mul, 2)
-        
-        return result
-    
-
-
-    # Calculate average word length
-    # Formula: (total characters) / (total words)
-    def calculate_avg_word_length(self, segments: List[TranscriptSegment]) -> float:
-        text = self.combine_segments(segments)
-        words = text.split()
-        
-        # Catch empty segments
-        if len(words) == 0:
-            return 0.0
-        
-        total_characters = 0
-        for word in words:
-            total_characters += len(word)
-        
-        return total_characters / len(words)
-    
-    def avg_word_length_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
-        groupedSegments = self.group_by_speaker(segments)
-        result = {}
-        
-        for speaker, speaker_segments in groupedSegments.items():
-            avg_length = self.calculate_avg_word_length(speaker_segments)
-            result[speaker] = round(avg_length, 2)
-            
-        return result
-
 
 
 
@@ -133,9 +42,9 @@ class ConversationAnalytics:
         ai_features = extract_features(segments)
 
         # Extract NLP features
-        wpm = self.wpm_per_speaker(segments)
-        mul = self.mul_per_speaker(segments)
-        avg_word_length = self.avg_word_length_per_speaker(segments)
+        wpm = self.nlp_extractor.wpm_per_speaker(segments, self.group_by_speaker)
+        mul = self.nlp_extractor.mul_per_speaker(segments, self.group_by_speaker)
+        avg_word_length = self.nlp_extractor.avg_word_length_per_speaker(segments, self.group_by_speaker)
         adverb_ratio = self.nlp_extractor.adverb_ratio_per_speaker(segments, self.group_by_speaker)
         flesch_kincaid = self.nlp_extractor.flesch_kincaid_per_speaker(segments, self.group_by_speaker)
         prp_ratio = self.nlp_extractor.prp_ratio_per_speaker(segments, self.group_by_speaker)
