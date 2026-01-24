@@ -109,7 +109,7 @@ export default function ConversationScreen() {
 					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
 				</View>
 			) : (
-				<ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					{segments.map((segment, index) => (
 						<SpeakerSegment
 							key={index}
@@ -127,9 +127,9 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-	scrollContent: {
-		flexGrow: 1,
+	content: {
 		paddingVertical: 20,
+		flexGrow: 1,
 	},
 	header: {
 		padding: 20,

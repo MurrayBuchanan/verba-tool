@@ -108,11 +108,7 @@ export function MetricChart({ data, xAxisLabel, title}: MetricChartProps) {
     }
 
     return (
-        <ThemedView 
-            style={styles.container} 
-            lightColor={Colors.light.secondaryBackground} 
-            darkColor={Colors.dark.secondaryBackground}
-        >
+        <ThemedView style={styles.container} lightColor={Colors.light.secondaryBackground} darkColor={Colors.dark.secondaryBackground}>
             <Text align="center" style={styles.title}>{title}</Text>
             <CartesianChart
                 data={chartData}

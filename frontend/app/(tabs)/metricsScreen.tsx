@@ -42,70 +42,68 @@ export default function MetricsScreen() {
 
   	return (
 		<View style={styles.container}>
-			<ScrollView 
-				style={styles.scrollView} 
-				contentContainerStyle={styles.scrollContent}
-				showsVerticalScrollIndicator={false}
-			>
-				{loading ? (
-					<View style={styles.center}>
-						<ActivityIndicator size="large" color={Colors.light.tint} />
-						<Text align="center">Loading...</Text>
+			{loading ? (
+				<View style={styles.center}>
+					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<Text align="center">Loading...</Text>
+				</View>
+			) : error ? (
+				<View style={styles.center}>
+					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+				</View>
+			) : (!hasConversations) ? (
+				<View style={styles.center}>
+					<Text align="center">No metrics exist, record a conversation to see metrics!</Text>
+				</View>
+			) : (
+				<>
+				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+				<List>
+					<View style={styles.categorySection}>
+						<Text type="heading" style={styles.categoryHeader}>Speech Rate & Fluency</Text>
+						<View style={styles.metricsRow}>
+							<Item metricId="wpm_per_speaker" onPress={() => router.push(`/metricScreen/wpm_per_speaker`)} />
+							<Item metricId="mean_utterance_length" onPress={() => router.push(`/metricScreen/mean_utterance_length`)} />
+						</View>
 					</View>
-				) : error ? (
-					<View style={styles.center}>
-						<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					
+					<View style={styles.categorySection}>
+						<Text type="heading" style={styles.categoryHeader}>Lexical & Vocabulary</Text>
+						<View style={styles.metricsRow}>
+							<Item metricId="num_unique_words" onPress={() => router.push(`/metricScreen/num_unique_words`)} />
+							<Item metricId="avg_word_length" onPress={() => router.push(`/metricScreen/avg_word_length`)} />
+							<Item metricId="impoverished_vocabulary" onPress={() => router.push(`/metricScreen/impoverished_vocabulary`)} />
+							<Item metricId="word_finding_difficulties" onPress={() => router.push(`/metricScreen/word_finding_difficulties`)} />
+						</View>
 					</View>
-				) : (!hasConversations) ? (
-					<View style={styles.center}>
-						<Text align="center">No metrics exist, record a conversation to see metrics!</Text>
+					
+					<View style={styles.categorySection}>
+						<Text type="heading" style={styles.categoryHeader}>Grammatical & Syntactic</Text>
+						<View style={styles.metricsRow}>
+							<Item metricId="prp_ratio" onPress={() => router.push(`/metricScreen/prp_ratio`)} />
+							<Item metricId="adverb_ratio" onPress={() => router.push(`/metricScreen/adverb_ratio`)} />
+							<Item metricId="syntactic_simplification" onPress={() => router.push(`/metricScreen/syntactic_simplification`)} />
+						</View>
 					</View>
-				) : (
-					<List>
-						<View style={styles.categorySection}>
-							<Text type="heading" style={styles.categoryHeader}>Speech Rate & Fluency</Text>
-							<View style={styles.metricsRow}>
-								<Item metricId="wpm_per_speaker" onPress={() => router.push(`/metricScreen/wpm_per_speaker`)} />
-								<Item metricId="mean_utterance_length" onPress={() => router.push(`/metricScreen/mean_utterance_length`)} />
-							</View>
+					
+					<View style={styles.categorySection}>
+						<Text type="heading" style={styles.categoryHeader}>Semantic Integrity</Text>
+						<View style={styles.metricsRow}>
+							<Item metricId="semantic_paraphasias" onPress={() => router.push(`/metricScreen/semantic_paraphasias`)} />
 						</View>
-						
-						<View style={styles.categorySection}>
-							<Text type="heading" style={styles.categoryHeader}>Lexical & Vocabulary</Text>
-							<View style={styles.metricsRow}>
-								<Item metricId="num_unique_words" onPress={() => router.push(`/metricScreen/num_unique_words`)} />
-								<Item metricId="avg_word_length" onPress={() => router.push(`/metricScreen/avg_word_length`)} />
-								<Item metricId="impoverished_vocabulary" onPress={() => router.push(`/metricScreen/impoverished_vocabulary`)} />
-								<Item metricId="word_finding_difficulties" onPress={() => router.push(`/metricScreen/word_finding_difficulties`)} />
-							</View>
+					</View>
+					
+					<View style={styles.categorySection}>
+						<Text type="heading" style={styles.categoryHeader}>Discourse & Cognitive Load</Text>
+						<View style={styles.metricsRow}>
+							<Item metricId="flesch_kincaid" onPress={() => router.push(`/metricScreen/flesch_kincaid`)} />
+							<Item metricId="discourse_impairment" onPress={() => router.push(`/metricScreen/discourse_impairment`)} />
 						</View>
-						
-						<View style={styles.categorySection}>
-							<Text type="heading" style={styles.categoryHeader}>Grammatical & Syntactic</Text>
-							<View style={styles.metricsRow}>
-								<Item metricId="prp_ratio" onPress={() => router.push(`/metricScreen/prp_ratio`)} />
-								<Item metricId="adverb_ratio" onPress={() => router.push(`/metricScreen/adverb_ratio`)} />
-								<Item metricId="syntactic_simplification" onPress={() => router.push(`/metricScreen/syntactic_simplification`)} />
-							</View>
-						</View>
-						
-						<View style={styles.categorySection}>
-							<Text type="heading" style={styles.categoryHeader}>Semantic Integrity</Text>
-							<View style={styles.metricsRow}>
-								<Item metricId="semantic_paraphasias" onPress={() => router.push(`/metricScreen/semantic_paraphasias`)} />
-							</View>
-						</View>
-						
-						<View style={styles.categorySection}>
-							<Text type="heading" style={styles.categoryHeader}>Discourse & Cognitive Load</Text>
-							<View style={styles.metricsRow}>
-								<Item metricId="flesch_kincaid" onPress={() => router.push(`/metricScreen/flesch_kincaid`)} />
-								<Item metricId="discourse_impairment" onPress={() => router.push(`/metricScreen/discourse_impairment`)} />
-							</View>
-						</View>
-					</List>
-				)}
-			</ScrollView>
+					</View>
+				</List>
+				</ScrollView>
+				</>
+			)}
 		</View>
 	);
 }
@@ -115,12 +113,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingHorizontal: 20,
 	},
-	scrollView: {
-		flex: 1,
-	},
-	scrollContent: {
-		flexGrow: 1,
+	content: {
 		paddingVertical: 20,
+		flexGrow: 1,
 	},
 	center: {
 		flex: 1,

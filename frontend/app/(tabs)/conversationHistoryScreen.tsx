@@ -39,7 +39,6 @@ export default function ConversationHistoryScreen() {
 		useCallback(() => {
 			async function fetchTranscripts() {
 				try {
-					// Only show loading on initial load
 					if (!hasInitiallyLoaded.current) {
 						setLoading(true);
 					}
@@ -60,25 +59,22 @@ export default function ConversationHistoryScreen() {
 
 	return (
 		<View style={styles.container}>
-			<ScrollView 
-				style={styles.scrollView} 
-				contentContainerStyle={styles.scrollContent}
-				showsVerticalScrollIndicator={false}
-			>
-				{loading ? (
-					<View style={styles.center}>
-						<ActivityIndicator size="large" color={Colors.light.tint} />
-						<Text align="center">Loading...</Text>
-					</View>
-				) : error ? (
-					<View style={styles.center}>
-						<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
-					</View>
-				) : transcripts.length === 0 ? (
-					<View style={styles.center}>
-						<Text align="center">No conversations, try starting a new chat!</Text>
-					</View>
-				) : (
+			{loading ? (
+				<View style={styles.center}>
+					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<Text align="center">Loading...</Text>
+				</View>
+			) : error ? (
+				<View style={styles.center}>
+					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+				</View>
+			) : transcripts.length === 0 ? (
+				<View style={styles.center}>
+					<Text align="center">No conversations, try starting a new chat!</Text>
+				</View>
+			) : (
+				<>
+				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<List divider={true}>
 						{transcripts.map((transcript) => {
 							return (
@@ -92,8 +88,9 @@ export default function ConversationHistoryScreen() {
 							);
 						})}
 					</List>
-				)}
-			</ScrollView>
+				</ScrollView>
+				</>
+			)}
 		</View>
 	);
 }
@@ -103,12 +100,8 @@ const styles = StyleSheet.create({
     	flex: 1,
 		paddingHorizontal: 20,
   	},
-	scrollView: {
-		flex: 1,
-	},
-	scrollContent: {
+	content: {
 		flexGrow: 1,
-		paddingVertical: 20,
 	},
 	center: {
 		flex: 1,

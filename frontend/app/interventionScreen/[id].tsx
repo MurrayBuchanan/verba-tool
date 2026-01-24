@@ -150,7 +150,7 @@ export default function InterventionDetailScreen() {
 					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
 				</View>
 			) : (
-				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<Selector
 						options={metricKeys}
 						selectedValue={selectedMetric}
@@ -179,24 +179,22 @@ export default function InterventionDetailScreen() {
 							<Text type="heading">Intervention Details</Text>
 							
 							<View style={styles.spacer}>
-								<Text type="caption">Start Date</Text>
+								<Text>Start Date</Text>
 								<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
 							</View>
 							
 							<View style={styles.spacer}>
-								<Text type="caption">End Date</Text>
+								<Text>End Date</Text>
 								<Text type="caption">{formatDisplayDate(intervention.end_date)}</Text>
 							</View>
 							
-							{intervention.description && (
-								<View style={styles.spacer}>
-									<Text type="caption">Description</Text>
-									<Text type="caption">{intervention.description}</Text>
-								</View>
-							)}
+							
+							<View style={styles.spacer}>
+								<Text>Description</Text>
+								<Text type="caption">{intervention.description || "No description"}</Text>
+							</View>
 						</View>
 					)}
-					
 				</ScrollView>
 			)}
 		</ThemedView>

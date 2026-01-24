@@ -46,25 +46,24 @@ export default function InterventionScreen() {
 
 	return (
 		<View style={styles.container}>
-			<ScrollView 
-				style={styles.scrollView} 
-				contentContainerStyle={styles.scrollContent}
-				showsVerticalScrollIndicator={false}
-			>
-				{loading ? (
-					<View style={styles.center}>
-						<ActivityIndicator size="large" color={Colors.light.tint} />
-						<Text align="center">Loading...</Text>
-					</View>
-				) : error ? (
-					<View style={styles.center}>
-						<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
-					</View>
-				) : interventions.length === 0 ? (
-					<View style={styles.center}>
-						<Text align="center">No interventions, try creating a new intervention!</Text>
-					</View>
-				) : (
+			
+			
+			{loading ? (
+				<View style={styles.center}>
+					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<Text align="center">Loading...</Text>
+				</View>
+			) : error ? (
+				<View style={styles.center}>
+					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+				</View>
+			) : interventions.length === 0 ? (
+				<View style={styles.center}>
+					<Text align="center">No interventions, try creating a new intervention!</Text>
+				</View>
+			) : (
+				<>
+					<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<List divider={true}>
 						{interventions.map((intervention) => {
 							return (
@@ -75,13 +74,14 @@ export default function InterventionScreen() {
 									dateRange={`${formatDisplayDate(intervention.start_date)} - ${formatDisplayDate(intervention.end_date)}`}
 								/>
 							);
-						})}
-					</List>
+							})}
+						</List>
+					</ScrollView>
+					<TouchableOpacity style={[styles.button, { backgroundColor: Colors[colorScheme].tint }]} onPress={() => router.push("/interventionModal")}>
+						<IconSymbol name="plus" size={28} color="#FFF"/>
+					</TouchableOpacity>
+					</>
 				)}
-			</ScrollView>
-			<TouchableOpacity style={[styles.buttonContainer, { backgroundColor: Colors[colorScheme].tint }]} onPress={() => router.push("/interventionModal")}>
-				<IconSymbol name="plus" size={28} color="#FFF"/>
-			</TouchableOpacity>
 		</View>
 	);
 }
@@ -91,14 +91,11 @@ const styles = StyleSheet.create({
     	flex: 1,
 		paddingHorizontal: 20,
   	},
-	scrollView: {
-		flex: 1,
-	},
-	scrollContent: {
-		flexGrow: 1,
+	content: {
 		paddingVertical: 20,
+		flexGrow: 1,
 	},
-	buttonContainer: {
+	button: {
 		position: 'absolute',
 		justifyContent: 'center',
 		alignItems: 'center',
