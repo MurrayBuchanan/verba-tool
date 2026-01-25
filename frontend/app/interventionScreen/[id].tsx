@@ -174,27 +174,32 @@ export default function InterventionDetailScreen() {
 						</View>
 					)}
 					
-					{intervention && (
-						<View style={styles.section}>
-							<Text type="heading">Intervention Details</Text>
-							
-							<View style={styles.spacer}>
-								<Text>Start Date</Text>
-								<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
-							</View>
-							
-							<View style={styles.spacer}>
-								<Text>End Date</Text>
-								<Text type="caption">{formatDisplayDate(intervention.end_date)}</Text>
-							</View>
-							
-							
-							<View style={styles.spacer}>
-								<Text>Description</Text>
-								<Text type="caption">{intervention.description || "No description"}</Text>
-							</View>
+					<View style={styles.section}>
+						<Text type="heading">Intervention Details</Text>
+						
+						<View style={styles.spacer}>
+							<Text>Start Date</Text>
+							<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
 						</View>
-					)}
+						
+						<View style={styles.spacer}>
+							<Text>End Date</Text>
+							<Text type="caption">{formatDisplayDate(intervention.end_date)}</Text>
+						</View>
+						
+						
+						<View style={styles.spacer}>
+							<Text>Description</Text>
+							<Text type="caption">{intervention.description || "No description"}</Text>
+						</View>
+					</View>
+				
+					<View style={styles.section}>
+						<Text type="heading">Metric Description</Text>
+						<View style={styles.spacer}>
+							<Text>{metricDetails.description}</Text>
+						</View>
+					</View>
 				</ScrollView>
 			)}
 		</ThemedView>

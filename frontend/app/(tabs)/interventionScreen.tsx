@@ -46,8 +46,6 @@ export default function InterventionScreen() {
 
 	return (
 		<View style={styles.container}>
-			
-			
 			{loading ? (
 				<View style={styles.center}>
 					<ActivityIndicator size="large" color={Colors.light.tint} />
@@ -62,8 +60,7 @@ export default function InterventionScreen() {
 					<Text align="center">No interventions, try creating a new intervention!</Text>
 				</View>
 			) : (
-				<>
-					<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<List divider={true}>
 						{interventions.map((intervention) => {
 							return (
@@ -75,13 +72,14 @@ export default function InterventionScreen() {
 								/>
 							);
 							})}
-						</List>
-					</ScrollView>
-					<TouchableOpacity style={[styles.button, { backgroundColor: Colors[colorScheme].tint }]} onPress={() => router.push("/interventionModal")}>
-						<IconSymbol name="plus" size={28} color="#FFF"/>
-					</TouchableOpacity>
-					</>
-				)}
+					</List>
+				</ScrollView>
+			)}
+			{!loading && !error && (
+				<TouchableOpacity style={[styles.button, { backgroundColor: Colors[colorScheme].tint }]} onPress={() => router.push("/interventionModal")}>
+					<IconSymbol name="plus" size={28} color="#FFF"/>
+				</TouchableOpacity>
+			)}
 		</View>
 	);
 }

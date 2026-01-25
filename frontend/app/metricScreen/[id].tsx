@@ -7,7 +7,8 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { MetricChart as Chart} from "@/components/metric-chart";
 import { MetricSelector as Selector } from "@/components/metric-selector";
 import { getTranscripts } from "@/services/transcript-service";
-import { TranscriptWithFeatures } from "@/constants/transcript";
+import { getInterventions } from "@/services/intervention-service";
+import { TranscriptWithFeatures, Intervention } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { Colors } from "@/constants/theme";
@@ -15,6 +16,7 @@ import { Colors } from "@/constants/theme";
 export default function MetricScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
+	const [interventions, setInterventions] = useState<Intervention[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>(id || "wpm_per_speaker");
@@ -28,12 +30,17 @@ export default function MetricScreen() {
 
 	useFocusEffect(
 		useCallback(() => {
-			async function fetchTranscripts() {
+			async function fetchData() {
 				try {
 					setLoading(true);
 					
-					const data = await getTranscripts();
-					setTranscripts(data);
+					const [transcriptsData, interventionsData] = await Promise.all([
+						getTranscripts(),
+						getInterventions()
+					]);
+					
+					setTranscripts(transcriptsData);
+					setInterventions(interventionsData);
 					setError(null);
 				} catch {
 					setError("Unable to load metrics");
@@ -41,7 +48,7 @@ export default function MetricScreen() {
 					setLoading(false);
 				}
 			}
-			fetchTranscripts();
+			fetchData();
 		}, [])
 	);
 
@@ -82,6 +89,7 @@ export default function MetricScreen() {
 									return point?.label || "";
 								}}
 								title={`Changes to ${metricDetails.name}`}
+								interventions={interventions}
 							/>
 						</View>
 					) : (

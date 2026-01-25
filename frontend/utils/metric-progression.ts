@@ -7,7 +7,7 @@ export type MetricDataPoint = {
 	label: string;
 	transcriptId: number;
 	date: Date;
-	grouping?: "day" | "week" | "month";
+	grouping?: "Day" | "Week" | "Month";
 };
 
 type DateGroup = {
@@ -19,16 +19,16 @@ function getDaysDifference(startDate: Date, endDate: Date): number {
 	return Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / MILLISECONDS_PER_DAY);
 }
 
-function getTimeGrouping(startDate: Date, endDate: Date): "day" | "week" | "month" {
+function getTimeGrouping(startDate: Date, endDate: Date): "Day" | "Week" | "Month" {
 	const days = getDaysDifference(startDate, endDate);
 	
 	if (days <= MAX_DAYS_FOR_DAILY_VIEW) {
-		return "day";
+		return "Day";
 	}
 	if (days <= MAX_DAYS_FOR_WEEKLY_VIEW) {
-		return "week";
+		return "Week";
 	}
-	return "month";
+	return "Month";
 }
 
 function getWeekNumber(date: Date): number {
@@ -40,23 +40,23 @@ function getWeekNumber(date: Date): number {
 	return Math.floor(adjusted / 7);
 }
 
-function getGroupKey(date: Date, grouping: "day" | "week" | "month"): string {
+function getGroupKey(date: Date, grouping: "Day" | "Week" | "Month"): string {
 	const year = date.getFullYear();
 	const month = String(date.getMonth() + 1).padStart(2, "0");
 	
 	switch (grouping) {
-		case "day":
+		case "Day":
 			const day = String(date.getDate()).padStart(2, "0");
 			return `${year}-${month}-${day}`;
-		case "week":
+		case "Week":
 			const week = String(getWeekNumber(date)).padStart(2, "0");
 			return `${year}-W${week}`;
-		case "month":
+		case "Month":
 			return `${year}-${month}`;
 	}
 }
 
-function groupByTimePeriod(transcripts: TranscriptWithFeatures[], grouping: "day" | "week" | "month"): DateGroup[] {
+function groupByTimePeriod(transcripts: TranscriptWithFeatures[], grouping: "Day" | "Week" | "Month"): DateGroup[] {
 	const groups = new Map<string, TranscriptWithFeatures[]>();
 	
 	for (let i = 0; i < transcripts.length; i++) {
@@ -92,13 +92,13 @@ function groupByTimePeriod(transcripts: TranscriptWithFeatures[], grouping: "day
 	return result;
 }
 
-function formatGroupLabel(date: Date, grouping: "day" | "week" | "month"): string {
+function formatGroupLabel(date: Date, grouping: "Day" | "Week" | "Month"): string {
 	switch (grouping) {
-		case "day":
+		case "Day":
 			return DAY_NAMES[date.getDay()];
-		case "week":
+		case "Week":
 			return `W${getWeekNumber(date) + 1}`;
-		case "month":
+		case "Month":
 			return MONTH_NAMES[date.getMonth()];
 	}
 }
