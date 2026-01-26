@@ -1,46 +1,10 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { Tabs, router } from 'expo-router';
-
+import { Tabs } from 'expo-router';
 import { HapticFeedback } from '@/components/haptic-feedback';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { signOut } from '@/services/authentication-service';
-
-export function LogoutButton() {
-	const colorScheme = useColorScheme();
-
-	const handleLogout = () => {
-		Alert.alert(
-			"Logout",
-			"Are you sure you want to logout?",
-			[
-				{
-					text: "Cancel",
-					style: "cancel"
-				},
-				{
-					text: "Logout",
-					style: "destructive",
-					onPress: async () => {
-						try {
-							await signOut();
-							router.replace("/");
-						} catch (error) {
-							console.error("Error signing out:", error);
-						}
-					}
-				}
-			]
-		);
-	};
-	return (
-		<TouchableOpacity onPress={handleLogout} style={styles.button}>
-			<IconSymbol name="rectangle.portrait.and.arrow.right" size={24} color={Colors[colorScheme ?? 'light'].text} />
-		</TouchableOpacity>
-	);
-}
+import { LogoutButton } from '@/components/logout-button';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
@@ -84,9 +48,3 @@ export default function TabLayout() {
 		</Tabs>
 	);
 }
-
-const styles = StyleSheet.create({
-	button: {
-		marginRight: 20,
-	},
-});
