@@ -7,6 +7,7 @@ import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { MetricChart as Chart } from "@/components/metric-chart";
 import { MetricSelector as Selector } from "@/components/metric-selector";
+import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { getIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
@@ -41,6 +42,8 @@ export default function InterventionDetailScreen() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
+	const [showMean, setShowMean] = useState<boolean>(true);
+	const [showRange, setShowRange] = useState<boolean>(true);
 	const loadedId = useRef<string | undefined>(undefined);
 
 	const handleDelete = useCallback(async () => {
@@ -166,6 +169,9 @@ export default function InterventionDetailScreen() {
 									return point?.label || "";
 								}}
 								title={`Changes to ${metricDetails.name} During Intervention`}
+								showMean={showMean}
+								showRange={showRange}
+								showInterventions={false}
 							/>
 						</View>
 					) : (
@@ -200,6 +206,13 @@ export default function InterventionDetailScreen() {
 							<Text>{metricDetails.description}</Text>
 						</View>
 					</View>
+
+					{metricData.length > 0 && (
+						<View style={styles.section}>
+							<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
+							<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
+						</View>
+					)}
 				</ScrollView>
 			)}
 		</ThemedView>

@@ -22,6 +22,9 @@ type MetricChartProps = {
     xAxisLabel?: (value: number) => string;
     title?: string;
     interventions?: Intervention[];
+    showMean: boolean;
+    showRange: boolean;
+    showInterventions: boolean;
 };
 
 function calculateMean(values: number[]): number {
@@ -53,7 +56,7 @@ function calculateStandardDeviation(values: number[], mean: number): number {
 }
 
 
-export function MetricChart({ data, xAxisLabel, title, interventions = []}: MetricChartProps) {
+export function MetricChart({ data, xAxisLabel, title, interventions = [], showMean = true, showRange = true, showInterventions = true }: MetricChartProps) {
     const colorScheme = useColorScheme() ?? "light"; 
     const font = useCustomFont("500", 12);
     const labelColour = useThemeColor({}, "text");
@@ -172,17 +175,21 @@ export function MetricChart({ data, xAxisLabel, title, interventions = []}: Metr
 
                         return (
                             <>
-                                {interventionOverlay}
-                                <AreaRange
-                                    upperPoints={points.upperBound}
-                                    lowerPoints={points.lowerBound}
-                                    color={standardDeviationColour}
-                                />
-                                <Line
-                                    points={points.mean}
-                                    color={meanColour}
-                                    strokeWidth={2}
-                                />
+                            {showInterventions && interventionOverlay}
+                                {showRange && (
+                                    <AreaRange
+                                        upperPoints={points.upperBound}
+                                        lowerPoints={points.lowerBound}
+                                        color={standardDeviationColour}
+                                    />
+                                )}
+                                {showMean && (
+                                    <Line
+                                        points={points.mean}
+                                        color={meanColour}
+                                        strokeWidth={2}
+                                    />
+                                )}
                                 <Line 
                                     points={points.value}
                                     color={dataColour}
@@ -200,15 +207,19 @@ export function MetricChart({ data, xAxisLabel, title, interventions = []}: Metr
                     <View style={[styles.labelLine, { backgroundColor: dataColour, height: 3 }]} />
                     <Text style={styles.labelText}>Recorded Values</Text>
                 </View>
-                <View style={styles.labelItem}>
-                    <View style={[styles.labelLine, { backgroundColor: meanColour, opacity: 0.6 }]} />
-                    <Text style={styles.labelText}>Mean</Text>
-                </View>
-                <View style={styles.labelItem}>
-                    <View style={[styles.labelSquare, { backgroundColor: standardDeviationColour }]} />
-                    <Text style={styles.labelText}>Range</Text>
-                </View>
-                {interventionPeriods.length > 0 && (
+                {showMean && (
+                    <View style={styles.labelItem}>
+                        <View style={[styles.labelLine, { backgroundColor: meanColour, opacity: 0.6 }]} />
+                        <Text style={styles.labelText}>Mean</Text>
+                    </View>
+                )}
+                {showRange && (
+                    <View style={styles.labelItem}>
+                        <View style={[styles.labelSquare, { backgroundColor: standardDeviationColour }]} />
+                        <Text style={styles.labelText}>Range</Text>
+                    </View>
+                )}
+                {showInterventions && interventionPeriods.length > 0 && (
                     <View style={styles.labelItem}>
                         <View style={[styles.labelSquare, { backgroundColor: interventionColour }]} />
                         <Text style={styles.labelText}>Intervention Period</Text>
