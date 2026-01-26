@@ -59,7 +59,7 @@ export default function ConversationScreen() {
 					<IconSymbol 
 						name="trash" 
 						size={24} 
-						color={Colors[colorScheme].text} 
+						color={Colors[colorScheme].warning} 
 					/>
 				</TouchableOpacity>
 			),
@@ -76,7 +76,6 @@ export default function ConversationScreen() {
 				}
 				
 				try {
-					// Only show loading on initial load or when id changes
 					if (loadedId.current === id) {
 						return;
 					}
@@ -106,7 +105,7 @@ export default function ConversationScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

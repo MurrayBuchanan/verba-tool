@@ -23,7 +23,7 @@ export default function RecordAudioScreen() {
 		</View>
 	</View>
 	);
-	}
+}
 
 const styles = StyleSheet.create({
 	container: {

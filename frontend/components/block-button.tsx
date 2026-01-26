@@ -3,25 +3,28 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 
 import { ThemedText as Text } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export type BlockButtonProps = {
     onPress: () => void;
     title?: string;
-    lightBackgroundColor?: string;
-    darkBackgroundColor?: string;
+    lightBackgroundColour?: string;
+    darkBackgroundColour?: string;
 };
 
-export function BlockButton({ onPress, title, lightBackgroundColor='#7F4178', darkBackgroundColor='#371B34' }: BlockButtonProps) {
-    const background = useThemeColor({ light: lightBackgroundColor, dark: darkBackgroundColor, }, 'tint');
-    const text = useThemeColor({ light: '#FFF', dark: '#FFF' }, 'text');
+export function BlockButton({ onPress, title, lightBackgroundColour, darkBackgroundColour }: BlockButtonProps) {
+    const colorScheme = useColorScheme() ?? 'light';
+    const background = useThemeColor({ light: lightBackgroundColour, dark: darkBackgroundColour, }, 'tint');
+    
+    const textColour = (lightBackgroundColour || darkBackgroundColour) ? Colors[colorScheme].text : '#FFF';
 
     return (
-        < TouchableOpacity onPress={onPress}>
-            <View
-                style={[ styles.container, { backgroundColor: background } ]}>
-                    <Text type="button" style={{ color: text }}>{title}</Text>
+        <TouchableOpacity onPress={onPress}>
+            <View style={[ styles.container, { backgroundColor: background } ]}>
+                    <Text type="button" style={{ color: textColour }}>{title}</Text>
             </View>
-        </ TouchableOpacity>
+        </TouchableOpacity>
     );
 }
 
@@ -29,7 +32,7 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         borderRadius: 14,
-        paddingVertical: 16,
+        paddingVertical: 14,
         paddingHorizontal: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

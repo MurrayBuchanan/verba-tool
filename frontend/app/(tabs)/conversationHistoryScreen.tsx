@@ -11,6 +11,7 @@ import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { formatDisplayDate } from "@/utils/date-formatting";
 import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 function formatDuration(inputSeconds: number): string {
 	const totalSeconds = Math.floor(inputSeconds);
@@ -30,6 +31,7 @@ function formatDuration(inputSeconds: number): string {
 
 export default function ConversationHistoryScreen() {
 	const router = useRouter();
+	const colorScheme = useColorScheme() ?? 'light';
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -66,7 +68,7 @@ export default function ConversationHistoryScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
 				</View>
 			) : transcripts.length === 0 ? (
 				<View style={styles.center}>

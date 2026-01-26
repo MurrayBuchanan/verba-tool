@@ -1,12 +1,11 @@
 import { useState, useLayoutEffect, useCallback } from "react";
-import { StyleSheet, TextInput, Platform, ScrollView, TouchableOpacity, KeyboardAvoidingView, Keyboard } from "react-native";
+import { StyleSheet, Platform, ScrollView, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { router, useNavigation } from "expo-router";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
-import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
-import { DatePickerInput } from "@/components/date-picker";
-import { BlockButton } from "@/components/block-button";
+import { ThemedText } from "@/components/themed-text";
+import { TextField as TextField } from "@/components/textfield";
+import { DatePicker as Picker } from "@/components/date-picker";
 import { createIntervention } from "@/services/intervention-service";
 import { formatAPIDate } from "@/utils/date-formatting";
 
@@ -16,36 +15,7 @@ export default function InterventionModal() {
 	const [description, setDescription] = useState("");
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
-	const [showStartPicker, setShowStartPicker] = useState(false);
-	const [showEndPicker, setShowEndPicker] = useState(false);
 	const [isCreating, setIsCreating] = useState(false);
-
-
-	const handleStartChange = (event: any, selectedDate?: Date) => {
-		if (Platform.OS === "android") {
-			setShowStartPicker(false);
-			if (event.type === "dismissed" || !selectedDate) {
-				return;
-			}
-		}
-		
-		if (selectedDate) {
-			setStartDate(selectedDate);
-		}
-	};
-
-	const handleEndChange = (event: any, selectedDate?: Date) => {
-		if (Platform.OS === "android") {
-			setShowEndPicker(false);
-			if (event.type === "dismissed" || !selectedDate) {
-				return;
-			}
-		}
-		
-		if (selectedDate) {
-			setEndDate(selectedDate);
-		}
-	};
 
 	const handleCreateIntervention = useCallback(async () => {
 		if (!name.trim()) {
@@ -88,72 +58,34 @@ export default function InterventionModal() {
 		<ThemedView style={styles.container}>
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-
-					<ThemedText style={styles.label}>Intervention Name</ThemedText>
-					<TextInput
-						style={styles.input}
+					<TextField
+						label="Intervention Name"
 						value={name}
 						onChangeText={setName}
 						placeholder="Enter intervention name"
 					/>
 
-					<ThemedText style={styles.label}>Description</ThemedText>
-					<TextInput
-						style={[styles.input, styles.textArea]}
+					<TextField
+						label="Description"
 						value={description}
 						onChangeText={setDescription}
 						placeholder="Enter description (optional)"
 						multiline
-						numberOfLines={4}
 					/>
 
-					<ThemedText style={styles.label}>Start Date</ThemedText>
-					<DatePickerInput
+					<Picker
+						label="Start Date"
 						value={startDate}
-						onPress={() => {
-							Keyboard.dismiss();
-							setShowEndPicker(false);
-							setShowStartPicker(!showStartPicker); }}
+						onDateChange={setStartDate}
+						maximumDate={endDate}
 					/>
-					{ showStartPicker && (
-						<ThemedView style={styles.picker}>
-							<DateTimePicker
-								value={startDate}
-								mode="date"
-								display={Platform.OS === "ios" ? "spinner" : "default"}
-								onChange={handleStartChange}
-								maximumDate={endDate}
-							/>
-							{Platform.OS === "ios" && (
-								<BlockButton onPress={() => setShowStartPicker(false)} title="Done" />
-							)}
-						</ThemedView>
-					)}
 
-					<ThemedText style={styles.label}>End Date</ThemedText>
-					<DatePickerInput
+					<Picker
+						label="End Date"
 						value={endDate}
-						onPress={() => {
-							Keyboard.dismiss();
-							setShowStartPicker(false);
-							setShowEndPicker(!showEndPicker);
-						}}
+						onDateChange={setEndDate}
+						minimumDate={startDate}
 					/>
-					{ showEndPicker && (
-						<ThemedView style={styles.picker}>
-							<DateTimePicker
-								value={endDate}
-								mode="date"
-								display={Platform.OS === "ios" ? "spinner" : "default"}
-								onChange={handleEndChange}
-								minimumDate={startDate}
-							/>
-							{Platform.OS === "ios" && (
-								<BlockButton onPress={() => setShowEndPicker(false)} title="Done" />
-							)}
-						</ThemedView>
-					)}
-
 				</ScrollView>
 			</KeyboardAvoidingView>
 		</ThemedView> 
@@ -166,21 +98,6 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		padding: 20,
-	},
-	label: {
-		marginVertical: 10,
-	},
-	input: {
-		borderWidth: 1,
-		padding: 10,
-		marginBottom: 10,
-	},
-	textArea: {
-		minHeight: 100,
-	},
-	picker: {
-		marginTop: 10,
-		marginBottom: 10,
 	},
 	button: {
 		padding: 10,

@@ -34,7 +34,7 @@ export function LogoutButton() {
 	};
 	return (
 		<TouchableOpacity onPress={handleLogout} style={styles.button}>
-			<IconSymbol name="rectangle.portrait.and.arrow.right" size={24} color={Colors[colorScheme ?? 'light'].text} />
+			<IconSymbol name="rectangle.portrait.and.arrow.right" size={24} color={Colors[colorScheme ?? 'light'].warning} />
 		</TouchableOpacity>
 	);
 }

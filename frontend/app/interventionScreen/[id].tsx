@@ -14,9 +14,13 @@ import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
-import { formatDisplayDate } from "@/utils/date-formatting";
+import { formatAPIDate } from "@/utils/date-formatting";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import { updateIntervention } from "@/services/intervention-service";
+import { Intervention } from "@/constants/transcript";
+import { TextField as TextField } from "@/components/textfield";
+import { DatePicker as Picker } from "@/components/date-picker";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
@@ -38,6 +42,7 @@ export default function InterventionDetailScreen() {
 	const navigation = useNavigation();
 	const colorScheme = useColorScheme() ?? 'light';
 	const [intervention, setIntervention] = useState<any>(null);
+	const [editingIntervention, setEditingIntervention] = useState<Intervention | null>(null);
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -46,7 +51,7 @@ export default function InterventionDetailScreen() {
 	const [showRange, setShowRange] = useState<boolean>(true);
 	const loadedId = useRef<string | undefined>(undefined);
 
-	const handleDelete = useCallback(async () => {
+	const handleDeleteIntervention = useCallback(async () => {
 		if (!id) return;
 		
 		Alert.alert(
@@ -74,22 +79,28 @@ export default function InterventionDetailScreen() {
 		);
 	}, [id]);
 
+	const handleUpdateIntervention = useCallback(async () => {
+		if (!id || !editingIntervention) return;
+		
+		try {
+			const interventionId = parseInt(id, 10);
+			await updateIntervention(interventionId, editingIntervention);
+			setIntervention(editingIntervention);
+			setEditingIntervention(null);
+		} catch (error) {
+			Alert.alert("Cannot update intervention");
+		}
+	}, [id, editingIntervention]);
+
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<TouchableOpacity 
-					style={styles.button} 
-					onPress={handleDelete}
-				>
-					<IconSymbol 
-						name="trash" 
-						size={24} 
-						color={Colors[colorScheme].text} 
-					/>
+				<TouchableOpacity style={styles.button} onPress={handleDeleteIntervention}>
+					<IconSymbol name="trash" size={24} color={Colors[colorScheme].warning} />
 				</TouchableOpacity>
 			),
 		});
-	}, [navigation, handleDelete, colorScheme]);
+	}, [navigation, handleDeleteIntervention, colorScheme]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -150,16 +161,11 @@ export default function InterventionDetailScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<Selector
-						options={metricKeys}
-						selectedValue={selectedMetric}
-						onValueChange={setSelectedMetric}
-					/>
-					
+					<Selector options={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
 					{ metricData.length > 0 ? (
 						<View style={styles.section}>
 							<Chart 
@@ -181,23 +187,57 @@ export default function InterventionDetailScreen() {
 					)}
 					
 					<View style={styles.section}>
-						<Text type="heading">Intervention Details</Text>
-						
-						<View style={styles.spacer}>
-							<Text>Start Date</Text>
-							<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
+						<View style={styles.row}>
+							<Text type="heading">Intervention Details</Text>
+							<View style={styles.buttons}>
+								{editingIntervention ? (
+									<>
+										<TouchableOpacity onPress={() => setEditingIntervention(null)}>
+											<Text>Cancel</Text>
+										</TouchableOpacity>
+										<TouchableOpacity onPress={handleUpdateIntervention}>
+											<Text style={{ color: Colors[colorScheme].tint }}>Update</Text>
+										</TouchableOpacity>
+									</>
+								) : (
+									<TouchableOpacity onPress={() => intervention && setEditingIntervention({ ...intervention })}>
+										<Text style={{ color: Colors[colorScheme].tint }}>Edit</Text>
+									</TouchableOpacity>
+								)}
+							</View>
 						</View>
+
+						<TextField
+							label="Name"
+							value={editingIntervention ? (editingIntervention.name ?? "") : intervention.name}
+							onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, name: text })}
+							editable={editingIntervention !== null}
+						/>
 						
-						<View style={styles.spacer}>
-							<Text>End Date</Text>
-							<Text type="caption">{formatDisplayDate(intervention.end_date)}</Text>
-						</View>
+						<Picker
+							label="Start Date"
+							value={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
+							onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, start_date: formatAPIDate(date)})}
+							maximumDate={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
+							editable={editingIntervention !== null}
+						/>
 						
+						<Picker
+							label="End Date"
+							value={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
+							onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, end_date: formatAPIDate(date) })}
+							minimumDate={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
+							editable={editingIntervention !== null}
+						/>
 						
-						<View style={styles.spacer}>
-							<Text>Description</Text>
-							<Text type="caption">{intervention.description || "No description"}</Text>
-						</View>
+						<TextField
+							label="Description"
+							value={editingIntervention ? (editingIntervention.description ?? "") : (intervention.description || "")}
+							onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, description: text || null })}
+							placeholder="No description"
+							multiline
+							editable={editingIntervention !== null}
+						/>
 					</View>
 				
 					<View style={styles.section}>
@@ -241,5 +281,15 @@ const styles = StyleSheet.create({
 	},
 	button: {
 		marginRight: 10,
+	},
+	row: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+	},
+	buttons: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 12,
 	},
 });

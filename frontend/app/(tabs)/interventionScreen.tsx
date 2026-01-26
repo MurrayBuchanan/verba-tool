@@ -53,7 +53,7 @@ export default function InterventionScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
 				</View>
 			) : interventions.length === 0 ? (
 				<View style={styles.center}>

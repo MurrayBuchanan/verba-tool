@@ -73,14 +73,7 @@ export const RecordButton = () => {
 		return recorderState.isRecording ? 'Stop Recording' : 'Start Recording';
 	};
 
-	const isActive = recorderState.isRecording || isProcessing;
-
 	return (
-		<BlockButton 
-			onPress={onPress} 
-			title={getLabel()}
-			lightBackgroundColor={isActive ? '#2458B8' : '#2F6FE4'}
-			darkBackgroundColor={isActive ? '#3F6FE0' : '#5A8DFF'}
-		/>
+		<BlockButton onPress={onPress}  title={getLabel()} />
 	);
 };

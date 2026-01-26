@@ -13,9 +13,11 @@ import { TranscriptWithFeatures, Intervention } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function MetricScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
+	const colorScheme = useColorScheme() ?? 'light';
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [interventions, setInterventions] = useState<Intervention[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -74,7 +76,7 @@ export default function MetricScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center">{error}</Text>
+					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
 				</View>
 			) : (
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

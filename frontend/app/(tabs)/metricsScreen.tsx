@@ -8,9 +8,11 @@ import { MetricItem as Item } from "@/components/metric-item";
 import { List } from "@/components/list";
 import { getTranscripts } from "@/services/transcript-service";
 import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export default function MetricsScreen() {
 	const router = useRouter();
+	const colorScheme = useColorScheme() ?? 'light';
 	const [loading, setLoading] = useState(true);
 	const [hasConversations, setHasConversations] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -20,7 +22,6 @@ export default function MetricsScreen() {
 		useCallback(() => {
 			async function checkConversations() {
 				try {
-					// Only show loading on initial load
 					if (!hasInitiallyLoaded.current) {
 						setLoading(true);
 					}
@@ -49,7 +50,7 @@ export default function MetricsScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" lightColor="#B00020" darkColor="#CF6679">{error}</Text>
+					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
 				</View>
 			) : (!hasConversations) ? (
 				<View style={styles.center}>
