@@ -1,7 +1,6 @@
 import { useState, useLayoutEffect, useCallback } from "react";
 import { StyleSheet, Platform, ScrollView, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { router, useNavigation } from "expo-router";
-
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText } from "@/components/themed-text";
 import { TextField as TextField } from "@/components/textfield";

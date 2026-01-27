@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-
-import { BlockButton as Button } from "@/components/block-button";
-import { ThemedText as Text } from "@/components/themed-text";
 import { ThemedView as View } from "@/components/themed-view";
+import { ThemedText as Text } from "@/components/themed-text";
+import { BlockButton as Button } from "@/components/block-button";
 import { signIn, isAuthenticated } from "@/services/authentication-service";
-import { Colors } from "@/constants/theme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function Index() {
 	const [isAuthenticating, setIsAuthenticating] = useState(true);
 	const [isSigningIn, setIsSigningIn] = useState(false);
+	const accentColour = useThemeColor({}, 'accent');
 
 	useEffect(() => { checkAuthentication(); }, []);
 
@@ -46,8 +46,9 @@ export default function Index() {
 	
 	return (
 		isAuthenticating ? (
-			<View style={styles.container}>
-				<ActivityIndicator size="large" color={Colors.light.tint} />
+			<View style={styles.center}>
+				<ActivityIndicator size="large" color={accentColour} />
+				<Text align="center">Loading...</Text>
 			</View>
 		) : (
 			<View style={styles.container}>
@@ -71,6 +72,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 40,
   	},
+	center: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		padding: 40,
+	},
 	image: {
 		width: 320,
 		height: 320,

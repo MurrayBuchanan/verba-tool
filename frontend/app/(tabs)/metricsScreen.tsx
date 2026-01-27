@@ -1,18 +1,18 @@
-import { StyleSheet, ActivityIndicator, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { useState, useCallback, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { MetricItem as Item } from "@/components/metric-item";
 import { List } from "@/components/list";
+import { MetricItem as Item } from "@/components/metric-item";
 import { getTranscripts } from "@/services/transcript-service";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function MetricsScreen() {
 	const router = useRouter();
-	const colorScheme = useColorScheme() ?? 'light';
+	const warningColour = useThemeColor({}, 'warning');
+	const accentColour = useThemeColor({}, 'accent');
 	const [loading, setLoading] = useState(true);
 	const [hasConversations, setHasConversations] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -45,12 +45,12 @@ export default function MetricsScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<ActivityIndicator size="large" color={accentColour} />
 					<Text align="center">Loading...</Text>
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
+					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (!hasConversations) ? (
 				<View style={styles.center}>

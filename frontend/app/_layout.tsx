@@ -1,8 +1,9 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-
 import { useColorScheme } from '@/hooks/use-color-scheme';
+
+// This file was generated and modified from the Expo boilerplate using 'npx create-expo-app'
 
 export const unstable_settings = {
   	anchor: 'index',

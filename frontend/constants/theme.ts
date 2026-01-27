@@ -1,35 +1,35 @@
-const tintColorLight = '#00897B';
-const tintColorDark = '#4DB6AC';
+const tintColourLight = '#00897B';
+const tintColourDark = '#4DB6AC';
 
-// TODO: Make label constant
-
-export const Colors = {
+export const Theme = {
   light: {
     text: '#1A1A1A',
+    textSecondary: '#5F6368',
     background: '#F8F9FA',
-    secondaryBackground: '#FFFFFF',
-    tint: tintColorLight,
+    backgroundSecondary: '#FFFFFF',
+    backgroundTertiary: 'rgba(26, 26, 26, 0.4)',
+    accent: tintColourLight,
+    warning: '#B00020',
     icon: '#5F6368',
     tabIconDefault: '#9AA0A6',
-    tertiary: 'rgba(26, 26, 26, 0.4)',
-    tabIconSelected: tintColorLight,
+    tabIconSelected: tintColourLight,
     meanColour: '#EF5350',
     standardDeviationColour: 'rgba(144, 202, 249, 0.3)',
-    warning: '#B00020',
     interventionColour: 'rgba(77, 182, 172, 0.25)',
   },
   dark: {
     text: '#E8EAED',
+    textSecondary: '#9AA0A6',
     background: '#121212',
-    secondaryBackground: '#1E1E1E',
-    tint: tintColorDark,
+    backgroundSecondary: '#1E1E1E',
+    backgroundTertiary: 'rgba(232, 234, 237, 0.4)',
+    accent: tintColourDark,
+    warning: '#CF6679',
     icon: '#9AA0A6',
     tabIconDefault: '#9AA0A6',
-    tertiary: 'rgba(232, 234, 237, 0.4)',
-    tabIconSelected: tintColorDark,
+    tabIconSelected: tintColourDark,
     meanColour: '#FF6E6E',
     standardDeviationColour: 'rgba(100, 181, 246, 0.35)',
-    warning: '#CF6679',
     interventionColour: 'rgba(77, 182, 172, 0.3)',
   },
 };

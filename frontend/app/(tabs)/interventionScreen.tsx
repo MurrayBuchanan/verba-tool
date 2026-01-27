@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useState, useCallback, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
@@ -7,11 +7,10 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { List } from "@/components/list";
 import { InterventionItem as Item } from "@/components/intervention-item";
-import { getInterventions } from "@/services/intervention-service";
 import { Intervention } from "@/constants/transcript";
+import { getInterventions } from "@/services/intervention-service";
 import { formatDisplayDate } from "@/utils/date-formatting";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function InterventionScreen() {
 	const router = useRouter();
@@ -19,7 +18,8 @@ export default function InterventionScreen() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
-	const colorScheme = useColorScheme() ?? 'light';
+	const warningColour = useThemeColor({}, 'warning');
+	const accentColour = useThemeColor({}, 'accent');
 
 	useFocusEffect(
 		useCallback(() => {
@@ -48,12 +48,12 @@ export default function InterventionScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<ActivityIndicator size="large" color={accentColour} />
 					<Text align="center">Loading...</Text>
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
+					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : interventions.length === 0 ? (
 				<View style={styles.center}>
@@ -76,7 +76,7 @@ export default function InterventionScreen() {
 				</ScrollView>
 			)}
 			{!loading && !error && (
-				<TouchableOpacity style={[styles.button, { backgroundColor: Colors[colorScheme].tint }]} onPress={() => router.push("/interventionModal")}>
+				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/interventionModal")}>
 					<IconSymbol name="plus" size={28} color="#FFF"/>
 				</TouchableOpacity>
 			)}

@@ -1,8 +1,8 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { IconSymbol } from "@/components//ui/icon-symbol";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export type ConversationItemProps = {
     onPress: () => void;
@@ -12,6 +12,7 @@ export type ConversationItemProps = {
 };
 
 export function ConversationItem({ onPress, id, datetime, duration }: ConversationItemProps) {
+	const iconColour = useThemeColor({}, 'icon');
   	return (
     	<TouchableOpacity onPress={onPress} style={styles.container}>
 			<View style={styles.row}>
@@ -21,7 +22,7 @@ export function ConversationItem({ onPress, id, datetime, duration }: Conversati
 						<Text type="caption" style={styles.date}>{datetime} • {duration}</Text>
 					</View>
 				</View>
-				<IconSymbol name="chevron.right" size={18} color="#666" />
+				<IconSymbol name="chevron.right" size={18} color={iconColour} />
 			</View>
       	</TouchableOpacity>
   	);

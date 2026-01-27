@@ -1,14 +1,15 @@
 import { View, type ViewProps } from 'react-native';
-
 import { useThemeColor } from '@/hooks/use-theme-color';
 
+// This file was generated and modified from the Expo boilerplate using 'npx create-expo-app'
+
 export type ThemedViewProps = ViewProps & {
-    lightColor?: string;
-  	darkColor?: string;
+    lightColour?: string;
+  	darkColour?: string;
 };
 
-export function ThemedView({ style, lightColor, darkColor, ...otherProps }: ThemedViewProps) {
-  	const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+export function ThemedView({ style, lightColour, darkColour, ...otherProps }: ThemedViewProps) {
+  	const backgroundColour = useThemeColor({ light: lightColour, dark: darkColour }, 'background');
 
-  	return <View style={[{ backgroundColor }, style]} {...otherProps} />;
+  	return <View style={[{ backgroundColor: backgroundColour }, style]} {...otherProps} />;
 }

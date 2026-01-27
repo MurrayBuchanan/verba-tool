@@ -1,21 +1,20 @@
-import { StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useState, useCallback, useRef, useLayoutEffect } from "react";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
-
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { SpeakerSegment } from "@/components/speaker-segment";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { getTranscript, deleteTranscript } from "@/services/transcript-service";
+import { SpeakerSegment } from "@/components/speaker-segment";
 import { TranscriptSegment } from "@/constants/transcript";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { getTranscript, deleteTranscript } from "@/services/transcript-service";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function ConversationScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const navigation = useNavigation();
-	const colorScheme = useColorScheme() ?? 'light';
+	const warningColour = useThemeColor({}, 'warning');
+	const accentColour = useThemeColor({}, 'accent');
 	const [segments, setSegments] = useState<TranscriptSegment[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -52,19 +51,12 @@ export default function ConversationScreen() {
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<TouchableOpacity 
-					style={styles.button} 
-					onPress={handleDelete}
-				>
-					<IconSymbol 
-						name="trash" 
-						size={24} 
-						color={Colors[colorScheme].warning} 
-					/>
+				<TouchableOpacity style={styles.button} onPress={handleDelete}>
+					<IconSymbol name="trash" size={24} color={warningColour} />
 				</TouchableOpacity>
 			),
 		});
-	}, [navigation, handleDelete, colorScheme]);
+	}, [navigation, handleDelete, warningColour]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -100,12 +92,12 @@ export default function ConversationScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<ActivityIndicator size="large" color={accentColour} />
 					<Text align="center">Loading...</Text>
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
+					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

@@ -1,6 +1,6 @@
-import { StyleSheet, ScrollView, TouchableOpacity, View } from 'react-native';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
 import { ThemedText as Text } from '@/components/themed-text';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export type MetricOption = {
 	label: string;
@@ -14,10 +14,10 @@ export type MetricSelectorProps = {
 };
 
 export function MetricSelector({ options, selectedValue, onValueChange }: MetricSelectorProps) {
-	const textColor = useThemeColor({}, 'text');
-	const backgroundColor = useThemeColor({}, 'background');
-	const tintColor = useThemeColor({}, 'tint');
-	const iconColor = useThemeColor({}, 'icon');
+	const backgroundColour = useThemeColor({}, 'background');
+	const accentColour = useThemeColor({}, 'accent');
+	const iconColour = useThemeColor({}, 'icon');
+	const textColour = useThemeColor({}, 'text');
 
 	return (
 		<View style={styles.container}>
@@ -29,9 +29,9 @@ export function MetricSelector({ options, selectedValue, onValueChange }: Metric
 						<TouchableOpacity
 							key={option.value}
 							onPress={() => onValueChange(option.value)}
-							style={[styles.item, { backgroundColor: isSelected ? tintColor : backgroundColor, borderColor: isSelected ? tintColor : iconColor }]}
+							style={[styles.item, { backgroundColor: isSelected ? accentColour : backgroundColour, borderColor: isSelected ? accentColour : iconColour }]}
                         >
-							<Text type="caption" style={[styles.text, { color: isSelected ? '#FFF' : textColor, fontWeight: isSelected ? '500' : '400' }]}>
+							<Text type="caption" style={[styles.text, { color: isSelected ? '#FFF' : textColour, fontWeight: isSelected ? '500' : '400' }]}>
 								{option.label}
 							</Text>
 						</TouchableOpacity>

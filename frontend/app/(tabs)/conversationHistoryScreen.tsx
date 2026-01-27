@@ -1,17 +1,15 @@
 import { useState, useCallback, useRef } from "react";
-import { ActivityIndicator, StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
-
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { List } from "@/components/list";
-import { ConversationItem as Item} from "@/components/conversation-item";
+import { ConversationItem as Item } from "@/components/conversation-item";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { formatDisplayDate } from "@/utils/date-formatting";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 function formatDuration(inputSeconds: number): string {
 	const totalSeconds = Math.floor(inputSeconds);
@@ -31,7 +29,8 @@ function formatDuration(inputSeconds: number): string {
 
 export default function ConversationHistoryScreen() {
 	const router = useRouter();
-	const colorScheme = useColorScheme() ?? 'light';
+	const warningColour = useThemeColor({}, 'warning');
+	const accentColour = useThemeColor({}, 'accent');
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -63,12 +62,12 @@ export default function ConversationHistoryScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<ActivityIndicator size="large" color={accentColour} />
 					<Text align="center">Loading...</Text>
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
+					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : transcripts.length === 0 ? (
 				<View style={styles.center}>

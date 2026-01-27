@@ -1,10 +1,8 @@
 import { StyleSheet, View } from "react-native";
 import { ThemedText as Text } from "@/components/themed-text";
 import { CartesianChart, Line, AreaRange } from "victory-native";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { useCustomFont } from "@/hooks/use-custom-font";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 import { useMemo } from "react";
 import { Intervention } from "@/constants/transcript";
 import { Rect } from "@shopify/react-native-skia";
@@ -57,13 +55,12 @@ function calculateStandardDeviation(values: number[], mean: number): number {
 
 
 export function MetricChart({ data, xAxisLabel, title, interventions = [], showMean = true, showRange = true, showInterventions = true }: MetricChartProps) {
-    const colorScheme = useColorScheme() ?? "light"; 
     const font = useCustomFont("500", 12);
-    const labelColour = useThemeColor({}, "text");
-    const dataColour = Colors[colorScheme].tint;
-    const meanColour = Colors[colorScheme].meanColour;
-    const standardDeviationColour = Colors[colorScheme].standardDeviationColour;
-    const interventionColour = Colors[colorScheme].interventionColour;
+    const labelColour = useThemeColor({}, 'text');
+    const dataColour = useThemeColor({}, 'accent');
+    const meanColour = useThemeColor({}, 'meanColour');
+    const standardDeviationColour = useThemeColor({}, 'standardDeviationColour');
+    const interventionColour = useThemeColor({}, 'interventionColour');
 
     const chartData = useMemo(() => {
         const result = [];

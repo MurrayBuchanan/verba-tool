@@ -1,8 +1,8 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { IconSymbol } from "@/components//ui/icon-symbol";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export type InterventionItemProps = {
     onPress: () => void;
@@ -11,6 +11,8 @@ export type InterventionItemProps = {
 };
 
 export function InterventionItem({ onPress, name, dateRange }: InterventionItemProps) {
+	const iconColour = useThemeColor({}, 'icon');
+	
   	return (
     	<TouchableOpacity onPress={onPress} style={styles.container}>
 			<View style={styles.row}>
@@ -20,7 +22,7 @@ export function InterventionItem({ onPress, name, dateRange }: InterventionItemP
 						<Text type="caption" style={styles.date}>{dateRange}</Text>
 					</View>
 				</View>
-				<IconSymbol name="chevron.right" size={18} color="#666" />
+				<IconSymbol name="chevron.right" size={18} color={iconColour} />
 			</View>
       	</TouchableOpacity>
   	);

@@ -7,8 +7,7 @@ import { ThemedView as View } from "@/components/themed-view";
 import { BlockButton } from "@/components/block-button";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { formatDisplayDate } from "@/utils/date-formatting";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export type DatePickerProps = {
 	label: string;
@@ -21,7 +20,9 @@ export type DatePickerProps = {
 
 export function DatePicker({ label, value, onDateChange, minimumDate, maximumDate, editable = true }: DatePickerProps) {
 	const [showPicker, setShowPicker] = useState(false);
-	const colorScheme = useColorScheme() ?? 'light';
+	const borderColour = useThemeColor({}, 'backgroundTertiary');
+	const iconColour = useThemeColor({}, 'icon');
+	const backgroundColour = useThemeColor({}, 'backgroundSecondary');
 
 	const handleDateChange = (event: any, selectedDate?: Date) => {
 		if (Platform.OS === "android") {
@@ -51,15 +52,13 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 		);
 	}
 
-	const borderColour = Colors[colorScheme].tertiary;
-
 	return (
 		<View style={styles.container}>
 			<Text style={styles.label}>{label}</Text>
 			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: borderColour }]}>
 				<View style={styles.row}>
 					<Text type='caption'>{formatDisplayDate(value)}</Text>
-					<IconSymbol name="calendar" size={20} color={Colors[colorScheme].icon} />
+					<IconSymbol name="calendar" size={20} color={iconColour} />
 				</View>
 			</TouchableOpacity>
 			<Collapsible collapsed={!showPicker}>	
@@ -75,8 +74,8 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 					<BlockButton 
 						onPress={() => setShowPicker(false)} 
 						title="Select"
-						lightBackgroundColour={Colors.light.secondaryBackground}
-						darkBackgroundColour={Colors.dark.secondaryBackground}
+						lightBackgroundColour={backgroundColour}
+						darkBackgroundColour={backgroundColour}
 					/>
 				)}
 			</Collapsible>

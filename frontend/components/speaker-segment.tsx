@@ -1,9 +1,9 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Colors } from "@/constants/theme";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { Theme } from "@/constants/theme";
 
 export type SpeakerSegmentProps = {
     speaker: string;
@@ -11,18 +11,21 @@ export type SpeakerSegmentProps = {
 };
 
 export function SpeakerSegment({ speaker, text }: SpeakerSegmentProps) {
+    const backgroundColour = useThemeColor({}, 'backgroundSecondary');
+    const textColour = useThemeColor({}, 'text');
+
     // If primary speaker (Guest-1) is speaking the message is left aligned, otherwise it is right aligned
     const isPrimarySpeaker = speaker === "Guest-1";
     
     return (
         <View style={[ styles.messageContainer, isPrimarySpeaker ? styles.isLeftAligned : styles.isRightAligned]}>
             { isPrimarySpeaker ? (
-                <View lightColor={Colors.light.secondaryBackground} darkColor={Colors.dark.secondaryBackground} style={styles.bubble}>
-                    <Text lightColor="#0B1220" darkColor="#FFFFFF">{text}</Text>
+                <View lightColour={backgroundColour} darkColour={backgroundColour} style={styles.bubble}>
+                    <Text lightColour={textColour} darkColour={textColour}>{text}</Text>
                 </View>
             ) : (
-                <View lightColor={Colors.light.tint} darkColor={Colors.dark.tint} style={styles.bubble}>
-                    <Text lightColor="#FFFFFF" darkColor="#0B1220">{text}</Text>
+                <View lightColour={backgroundColour} darkColour={backgroundColour} style={styles.bubble}>
+                    <Text lightColour={Theme.light.text} darkColour={Theme.light.text}>{text}</Text>
                 </View>
             )}
         </View>

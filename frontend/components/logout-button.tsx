@@ -1,12 +1,11 @@
 import { StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
 import { signOut } from '@/services/authentication-service';
 import { router } from 'expo-router';
 
 export function LogoutButton() {
-	const colorScheme = useColorScheme();
+	const warningColour = useThemeColor({}, 'warning');
 
 	const handleLogout = () => {
 		Alert.alert(
@@ -34,7 +33,7 @@ export function LogoutButton() {
 	};
 	return (
 		<TouchableOpacity onPress={handleLogout} style={styles.button}>
-			<IconSymbol name="rectangle.portrait.and.arrow.right" size={24} color={Colors[colorScheme ?? 'light'].warning} />
+			<IconSymbol name="rectangle.portrait.and.arrow.right" size={24} color={warningColour} />
 		</TouchableOpacity>
 	);
 }

@@ -1,6 +1,5 @@
 import { Image } from 'react-native';
 import { StyleSheet } from 'react-native';
-
 import { RecordButton } from '@/components/record-button';
 import { ThemedText as Text } from '@/components/themed-text';
 import { ThemedView as View } from '@/components/themed-view';

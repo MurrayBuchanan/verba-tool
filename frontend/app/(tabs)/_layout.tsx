@@ -2,17 +2,18 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { HapticFeedback } from '@/components/haptic-feedback';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { LogoutButton } from '@/components/logout-button';
 
+// This file was generated and modified from the Expo boilerplate using 'npx create-expo-app'
+
 export default function TabLayout() {
-	const colorScheme = useColorScheme();
+	const accentColour = useThemeColor({}, 'accent');
 
 	return (
 		<Tabs
 			screenOptions={{
-			tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+			tabBarActiveTintColor: accentColour,
 			headerShown: true,
 			tabBarButton: HapticFeedback,
 			headerRight: () => (<LogoutButton />)

@@ -1,23 +1,22 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { StyleSheet, ActivityIndicator, ScrollView, View } from "react-native";
+import { StyleSheet, View, ScrollView, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
-
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { MetricChart as Chart} from "@/components/metric-chart";
 import { MetricSelector as Selector } from "@/components/metric-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
+import { TranscriptWithFeatures, Intervention } from "@/constants/transcript";
 import { getTranscripts } from "@/services/transcript-service";
 import { getInterventions } from "@/services/intervention-service";
-import { TranscriptWithFeatures, Intervention } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function MetricScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
-	const colorScheme = useColorScheme() ?? 'light';
+	const warningColour = useThemeColor({}, 'warning');
+	const accentColour = useThemeColor({}, 'accent');
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [interventions, setInterventions] = useState<Intervention[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -71,12 +70,12 @@ export default function MetricScreen() {
 		<ThemedView style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<ActivityIndicator size="large" color={accentColour} />
 					<Text align="center">Loading data...</Text>
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
+					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

@@ -1,20 +1,20 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
+// This file was generated and modified from the Expo boilerplate using 'npx create-expo-app'
+
 export type ThemedTextProps = TextProps & {
-	lightColor?: string;
-	darkColor?: string;
+	lightColour?: string;
+	darkColour?: string;
 	type?: 'default' | 'caption' | 'heading' | 'title' | 'button';
 	align?: 'left' | 'center' | 'right';
 };
 
-export function ThemedText({style, lightColor, darkColor, type = 'default', align = 'left', ...rest}: ThemedTextProps) {
-	const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+export function ThemedText({style, lightColour, darkColour, type = 'default', align = 'left', ...rest}: ThemedTextProps) {
+	const textColour = useThemeColor({ light: lightColour, dark: darkColour }, 'text');
 
 	return (
-		<Text
-		style={[
-			{ color },
+		<Text style={[{ color: textColour },
 			type === 'default' ? styles.default : undefined,
 			type === 'caption' ? styles.caption : undefined,
 			type === 'heading' ? styles.heading : undefined,

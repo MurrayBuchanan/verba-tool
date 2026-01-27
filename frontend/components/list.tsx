@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { ThemedView as View } from "@/components/themed-view";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export type ListProps = {
 	children: React.ReactNode;
@@ -8,6 +9,7 @@ export type ListProps = {
 };
 
 export function List({ children, divider = false }: ListProps) {
+	const dividerColour = useThemeColor({}, 'backgroundTertiary');
   	const items = React.Children.toArray(children);
 
   	return (
@@ -16,7 +18,7 @@ export function List({ children, divider = false }: ListProps) {
         		<View key={index}>
           			<View style={styles.item}>{child}</View>
           			{divider && index < items.length - 1 && (
-            			<View lightColor="#E0E0E0" darkColor="#424242" style={styles.divider} />
+            			<View lightColour={dividerColour} darkColour={dividerColour} style={styles.divider} />
           			)}
         		</View>
       		))}

@@ -1,7 +1,6 @@
 import { StyleSheet, Switch, View } from "react-native";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export type ChartToggleProps = {
 	label: string;
@@ -10,8 +9,8 @@ export type ChartToggleProps = {
 };
 
 export function ChartToggle({ label, value, onValueChange }: ChartToggleProps) {
-	const colorScheme = useColorScheme() ?? "light";
-	const tintColour = Colors[colorScheme].tint;
+	const textColour = useThemeColor({}, 'text');
+	const accentColour = useThemeColor({}, 'accent');
 
 	return (
 		<View style={styles.container}>
@@ -19,7 +18,7 @@ export function ChartToggle({ label, value, onValueChange }: ChartToggleProps) {
 			<Switch
 				value={value}
 				onValueChange={onValueChange}
-				trackColor={{ false: "#767577", true: tintColour }}
+				trackColor={{ false: textColour, true: accentColour }}
 				thumbColor={value ? "#FFF" : "#F4F3F4"}
 			/>
 		</View>

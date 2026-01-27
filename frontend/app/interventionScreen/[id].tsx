@@ -1,26 +1,24 @@
-import { StyleSheet, ActivityIndicator, ScrollView, View, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { useState, useCallback, useRef, useMemo, useLayoutEffect } from "react";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
-
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { MetricChart as Chart } from "@/components/metric-chart";
 import { MetricSelector as Selector } from "@/components/metric-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { getIntervention, deleteIntervention } from "@/services/intervention-service";
+import { TextField as TextField } from "@/components/textfield";
+import { DatePicker as Picker } from "@/components/date-picker";
+import { Intervention } from "@/constants/transcript";
+import { getIntervention, updateIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatAPIDate } from "@/utils/date-formatting";
-import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { updateIntervention } from "@/services/intervention-service";
-import { Intervention } from "@/constants/transcript";
-import { TextField as TextField } from "@/components/textfield";
-import { DatePicker as Picker } from "@/components/date-picker";
+import { useThemeColor } from "@/hooks/use-theme-color";
+
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
@@ -40,7 +38,8 @@ function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, 
 export default function InterventionDetailScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const navigation = useNavigation();
-	const colorScheme = useColorScheme() ?? 'light';
+	const warningColour = useThemeColor({}, 'warning');
+	const accentColour = useThemeColor({}, 'accent');
 	const [intervention, setIntervention] = useState<any>(null);
 	const [editingIntervention, setEditingIntervention] = useState<Intervention | null>(null);
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
@@ -96,11 +95,11 @@ export default function InterventionDetailScreen() {
 		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity style={styles.button} onPress={handleDeleteIntervention}>
-					<IconSymbol name="trash" size={24} color={Colors[colorScheme].warning} />
+					<IconSymbol name="trash" size={24} color={warningColour} />
 				</TouchableOpacity>
 			),
 		});
-	}, [navigation, handleDeleteIntervention, colorScheme]);
+	}, [navigation, handleDeleteIntervention, warningColour]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -156,12 +155,12 @@ export default function InterventionDetailScreen() {
 		<ThemedView style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={Colors.light.tint} />
+					<ActivityIndicator size="large" color={accentColour} />
 					<Text align="center">Loading...</Text>
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<Text align="center" style={{ color: Colors[colorScheme].warning }}>{error}</Text>
+					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -196,12 +195,12 @@ export default function InterventionDetailScreen() {
 											<Text>Cancel</Text>
 										</TouchableOpacity>
 										<TouchableOpacity onPress={handleUpdateIntervention}>
-											<Text style={{ color: Colors[colorScheme].tint }}>Update</Text>
+											<Text style={{ color: accentColour }}>Update</Text>
 										</TouchableOpacity>
 									</>
 								) : (
 									<TouchableOpacity onPress={() => intervention && setEditingIntervention({ ...intervention })}>
-										<Text style={{ color: Colors[colorScheme].tint }}>Edit</Text>
+										<Text style={{ color: accentColour }}>Edit</Text>
 									</TouchableOpacity>
 								)}
 							</View>
