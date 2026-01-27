@@ -8,10 +8,6 @@ try:
 except OSError:
     nlp = spacy.blank("en")
 
-
-# TODO: This should be happening concurrently, and could use a helper
-
-
 class NLPFeatureExtraction:
     def __init__(self):
         self.nlp = nlp
@@ -20,7 +16,7 @@ class NLPFeatureExtraction:
     def combine_segments(self, segments: List[TranscriptSegment]) -> str:
         texts = []
         for segment in segments:
-            text = segment.get("text", "")
+            text = segment.text or ""
             texts.append(text)
         return " ".join(texts)
 
@@ -35,8 +31,8 @@ class NLPFeatureExtraction:
         total_seconds = 0.0
 
         for segment in segments:
-            total_words += self.count_words(segment.get("text", ""))
-            total_seconds += float(segment.get("duration", 0.0))
+            total_words += self.count_words(segment.text or "")
+            total_seconds += float(segment.duration or 0.0)
 
         if total_seconds <= 0:
             return 0.0
@@ -61,7 +57,7 @@ class NLPFeatureExtraction:
 
         total_words = 0
         for segment in segments:
-            total_words += self.count_words(segment.get("text", ""))
+            total_words += self.count_words(segment.text or "")
 
         return total_words / len(segments)
 

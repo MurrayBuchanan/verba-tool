@@ -51,12 +51,12 @@ class SpeechService:
         def conversation_transcriber_transcribed_cb(evt: speechsdk.SpeechRecognitionEventArgs):
             result = evt.result
             if result and result.text:
-                segment: TranscriptSegment = {
-                    "speaker": result.speaker_id,
-                    "text": result.text,
-                    "offset": result.offset / 10_000_000,
-                    "duration": result.duration / 10_000_000,
-                }
+                segment = TranscriptSegment(
+                    speaker=result.speaker_id,
+                    text=result.text,
+                    offset=result.offset / 10_000_000,
+                    duration=result.duration / 10_000_000,
+                )
                 segments.append(segment)
 
         # Event handler for session stopped

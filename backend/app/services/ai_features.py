@@ -1,4 +1,4 @@
-from typing import List, cast
+from typing import List
 import json
 from openai import AzureOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
@@ -18,10 +18,10 @@ def format_transcript(segments: List[TranscriptSegment]) -> str:
     lines: List[str] = []
     
     for segment in segments:
-        offset = segment["offset"]
-        duration = segment["duration"]
-        speaker = segment["speaker"]
-        text = segment["text"]
+        offset = segment.offset
+        duration = segment.duration
+        speaker = segment.speaker
+        text = segment.text
         
         line = (
             f"[{offset:.2f}s +{duration:.2f}s] "
@@ -39,7 +39,7 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     # Extract unique speakers
     speaker_set = set()
     for segment in segments:
-        speaker = segment["speaker"]
+        speaker = segment.speaker
         if speaker:
             speaker_set.add(speaker)
 
@@ -110,4 +110,4 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
         if field not in parsed:
             parsed[field] = {}
     
-    return cast(AIFeatures, parsed)
+    return AIFeatures(**parsed)

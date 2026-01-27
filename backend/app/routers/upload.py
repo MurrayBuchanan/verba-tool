@@ -9,7 +9,7 @@ from sqlalchemy import select, func
 from app.core.database import get_db
 from app.core.authentication import get_user_id
 from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, User
-from app.schemas.schemas import CAResult
+from app.schemas.schemas import Transcript
 from app.services.audio_converter import AudioConverter
 from app.services.speech_service import SpeechService
 from app.services.conversation_analytics import ConversationAnalytics
@@ -67,13 +67,13 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         segments = speech_service.diarise_audio(temp_wav)
 
         # Perform conversation feature extraction
-        analytics: CAResult = conversation_analytics.analyse(segments)
+        analytics: Transcript = conversation_analytics.analyse(segments)
 
         # Get next transcript id for the user
         transcript_id = await get_next_transcript_id(db, user_id)
 
         # Calculate total duration with safe type conversion
-        total_duration = sum(float(segment.get("duration", 0.0) or 0.0) for segment in segments)
+        total_duration = sum(float(segment.duration or 0.0) for segment in segments)
 
         # Add the transcript metadata to the database
         transcript_metadata = TranscriptMetadata(
@@ -88,18 +88,18 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         # Add the transcript features to the database
         transcript_features = TranscriptFeatures(
             transcript_metadata_id=transcript_metadata.id,
-            wpm_per_speaker=json.dumps(analytics.get("wpm_per_speaker", {}) or {}),
-            mean_utterance_length=json.dumps(analytics.get("mean_utterance_length_per_speaker", {}) or {}),
-            avg_word_length=json.dumps(analytics.get("avg_word_length", {}) or {}),
-            adverb_ratio=json.dumps(analytics.get("adverb_ratio", {}) or {}),
-            flesch_kincaid=json.dumps(analytics.get("flesch_kincaid", {}) or {}),
-            prp_ratio=json.dumps(analytics.get("prp_ratio", {}) or {}),
-            num_unique_words=json.dumps(analytics.get("num_unique_words", {}) or {}),
-            impoverished_vocabulary=json.dumps(analytics.get("impoverished_vocabulary", {}) or {}),
-            word_finding_difficulties=json.dumps(analytics.get("word_finding_difficulties", {}) or {}),
-            semantic_paraphasias=json.dumps(analytics.get("semantic_paraphasias", {}) or {}),
-            syntactic_simplification=json.dumps(analytics.get("syntactic_simplification", {}) or {}),
-            discourse_impairment=json.dumps(analytics.get("discourse_impairment", {}) or {})
+            wpm_per_speaker=json.dumps(analytics.wpm_per_speaker or {}),
+            mean_utterance_length=json.dumps(analytics.mean_utterance_length_per_speaker or {}),
+            avg_word_length=json.dumps(analytics.avg_word_length or {}),
+            adverb_ratio=json.dumps(analytics.adverb_ratio or {}),
+            flesch_kincaid=json.dumps(analytics.flesch_kincaid or {}),
+            prp_ratio=json.dumps(analytics.prp_ratio or {}),
+            num_unique_words=json.dumps(analytics.num_unique_words or {}),
+            impoverished_vocabulary=json.dumps(analytics.impoverished_vocabulary or {}),
+            word_finding_difficulties=json.dumps(analytics.word_finding_difficulties or {}),
+            semantic_paraphasias=json.dumps(analytics.semantic_paraphasias or {}),
+            syntactic_simplification=json.dumps(analytics.syntactic_simplification or {}),
+            discourse_impairment=json.dumps(analytics.discourse_impairment or {})
         )
         db.add(transcript_features)
         await db.flush()
@@ -108,14 +108,15 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         for segment in segments:
             transcript_segment = TranscriptSegment(
                 transcript_metadata_id=transcript_metadata.id,
-                duration=float(segment.get("duration", 0.0) or 0.0),
-                offset=float(segment.get("offset", 0.0) or 0.0),
-                speaker=segment.get("speaker", ""),
-                text=segment.get("text", "")
+                duration=float(segment.duration or 0.0),
+                offset=float(segment.offset or 0.0),
+                speaker=segment.speaker or "",
+                text=segment.text or ""
             )
             db.add(transcript_segment)
         await db.commit()
         
+        analytics = analytics.model_dump()
         analytics["transcript_id"] = transcript_id
         analytics["db_transcript_id"] = transcript_metadata.id
         

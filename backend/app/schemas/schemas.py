@@ -1,24 +1,23 @@
-from typing import TypedDict, List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional
 from datetime import date
+from pydantic import BaseModel
 
 Feature = Dict[str, Any]
 
-# TODO: Change to pydantic models
-
-class TranscriptSegment(TypedDict):
+class TranscriptSegment(BaseModel):
     speaker: str
     text: str
     duration: float
     offset: float
 
-class AIFeatures(TypedDict):
+class AIFeatures(BaseModel):
     impoverished_vocabulary: Feature
     word_finding_difficulties: Feature
     semantic_paraphasias: Feature
     syntactic_simplification: Feature
     discourse_impairment: Feature
 
-class NLPFeatures(TypedDict):
+class NLPFeatures(BaseModel):
     wpm_per_speaker: Feature
     mean_utterance_length_per_speaker: Feature
     avg_word_length: Feature
@@ -27,13 +26,13 @@ class NLPFeatures(TypedDict):
     prp_ratio: Feature
     num_unique_words: Feature
 
-class CAResult(AIFeatures, NLPFeatures, TypedDict, total=False):
-    raw_segments: List[TranscriptSegment]
-    turns: Feature
+class Transcript(AIFeatures, NLPFeatures):
+    raw_segments: Optional[List[TranscriptSegment]] = None
+    turns: Optional[Feature] = None
 
-class Intervention(TypedDict, total=False):
-    id: int
+class Intervention(BaseModel):
+    id: Optional[int] = None
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
     start_date: date
     end_date: date

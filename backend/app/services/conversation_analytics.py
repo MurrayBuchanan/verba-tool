@@ -1,7 +1,7 @@
 from typing import List, Dict
 from app.services.ai_features import extract_features
 from app.services.nlp_features import NLPFeatureExtraction
-from app.schemas.schemas import Feature, NLPFeatures, TranscriptSegment, CAResult
+from app.schemas.schemas import Feature, NLPFeatures, TranscriptSegment, Transcript, AIFeatures
 
 class ConversationAnalytics:
     def __init__(self):
@@ -11,7 +11,7 @@ class ConversationAnalytics:
     def group_by_speaker(self, segments: List[TranscriptSegment]) -> Dict[str, List[TranscriptSegment]]:
         groupedSegmentsSegments = {}
         for segment in segments:
-            speaker = segment.get("speaker")
+            speaker = segment.speaker
             if speaker not in groupedSegmentsSegments:
                 groupedSegmentsSegments[speaker] = []
             groupedSegmentsSegments[speaker].append(segment)
@@ -26,7 +26,7 @@ class ConversationAnalytics:
         last_speaker = None
 
         for segment in segments:
-            speaker = segment.get("speaker")
+            speaker = segment.speaker
             if speaker != last_speaker:
                 if speaker not in counts:
                     counts[speaker] = 0
@@ -37,7 +37,7 @@ class ConversationAnalytics:
 
 
 
-    def analyse(self, segments: List[TranscriptSegment]) -> CAResult:
+    def analyse(self, segments: List[TranscriptSegment]) -> Transcript:
         # Extract AI features
         ai_features = extract_features(segments)
 
@@ -60,12 +60,13 @@ class ConversationAnalytics:
         }
 
         # Combine all features
-        result = {
-            "raw_segments": segments,
-            "turns": self.count_turns_per_speaker(segments),
-        }
+        nlp_features = NLPFeatures(**established_features)
         
-        result.update(ai_features)
-        result.update(established_features)
+        result = Transcript(
+            **ai_features.model_dump(),
+            **nlp_features.model_dump(),
+            raw_segments=segments,
+            turns=self.count_turns_per_speaker(segments),
+        )
         
         return result
