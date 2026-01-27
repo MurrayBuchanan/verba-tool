@@ -45,9 +45,7 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 		- `app/schemas/models.py`: SQLAlchemy database models
 		- `app/schemas/schemas.py`: Pydantic schemas
 	- `app/tests`
-		- `app/tests/sample-data.m4a`: Sample audio file
-		- `app/tests/sample-transcript.json`: Sample transcript data
-
+		- `...`
 - `Dockerfile`: Docker container configuration
 - `requirements.txt`: Python dependencies
 - `...`
@@ -75,8 +73,8 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 	**PostgreSQL Database**
 	<br>DATABASE_USER=
 	<br>DATABASE_PASSWORD=
-	<br>DATABASE_HOST=localhost
-	<br>DATABASE_PORT=5432
+	<br>DATABASE_HOST=
+	<br>DATABASE_PORT=
 	<br>DATABASE_NAME=
 
 2. Create virutal environment
@@ -107,14 +105,5 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 ## How to run
 1. Run the application
 	```bash
-	uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
-	```
-
-2. To be deleted <br>
-	**MUST REMEMBER TO CHANGE TEMP TOKEN**
-	```bash
-	curl -X POST "http://127.0.0.1:8001/upload-audio" \
- 		-H "Authorization: Bearer CS408_SECRET_API_TOKEN" \
- 		-H "User-ID: 1" \
- 		-F "file=@app/tests/sample-data.m4a;type=audio/mp4"
+	uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 	```

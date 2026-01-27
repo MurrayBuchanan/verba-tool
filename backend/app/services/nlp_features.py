@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List
 import spacy
 import textstat
 from app.schemas.schemas import Feature, TranscriptSegment

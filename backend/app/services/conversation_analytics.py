@@ -9,13 +9,13 @@ class ConversationAnalytics:
     
     # Group segments by speaker before applying each calculation
     def group_by_speaker(self, segments: List[TranscriptSegment]) -> Dict[str, List[TranscriptSegment]]:
-        groupedSegmentsSegments = {}
+        groupedSegments = {}
         for segment in segments:
             speaker = segment.speaker
-            if speaker not in groupedSegmentsSegments:
-                groupedSegmentsSegments[speaker] = []
-            groupedSegmentsSegments[speaker].append(segment)
-        return groupedSegmentsSegments
+            if speaker not in groupedSegments:
+                groupedSegments[speaker] = []
+            groupedSegments[speaker].append(segment)
+        return groupedSegments
 
     # Count turns per speaker
     def count_turns_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
@@ -33,9 +33,6 @@ class ConversationAnalytics:
                 counts[speaker] = counts[speaker] + 1
                 last_speaker = speaker
         return counts
-
-
-
 
     def analyse(self, segments: List[TranscriptSegment]) -> Transcript:
         # Extract AI features

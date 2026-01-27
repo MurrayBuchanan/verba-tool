@@ -3,8 +3,6 @@ from typing import List
 import azure.cognitiveservices.speech as speechsdk
 from app.schemas.schemas import TranscriptSegment
 
-# Azure Speech Service documentation: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-stt-diarization?tabs=macos&pivots=programming-language-python
-
 class SpeechService:
     def __init__(self, speechKey: str, speechRegion: str) -> None:
         if not speechKey or not speechRegion:

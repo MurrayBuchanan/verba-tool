@@ -152,7 +152,7 @@ export function getMetricProgression(transcripts: TranscriptWithFeatures[], metr
 			x: i + 1,
 			value: calculateAverage(values),
 			label: formatGroupLabel(group.date, grouping),
-			transcriptId: group.transcripts[0].transcript_id,
+			transcriptId: group.transcripts[0].id,
 			date: group.date,
 			grouping,
 		});

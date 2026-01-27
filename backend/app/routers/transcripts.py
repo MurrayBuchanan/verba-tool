@@ -23,13 +23,13 @@ def get_feature(features, feature):
 async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         # Get all transcripts with their metadata, features but not segments
-        result = await db.execute(select(TranscriptMetadata, TranscriptFeatures).join(TranscriptFeatures, TranscriptMetadata.id == TranscriptFeatures.transcript_metadata_id).filter(TranscriptMetadata.user_id == user_id).order_by(desc(TranscriptMetadata.transcript_id)))
+        result = await db.execute(select(TranscriptMetadata, TranscriptFeatures).join(TranscriptFeatures, TranscriptMetadata.id == TranscriptFeatures.transcript_metadata_id).filter(TranscriptMetadata.user_id == user_id).order_by(desc(TranscriptMetadata.id)))
         rows = result.all()
         
         transcript_list = []
         for transcript, features in rows:
             transcript_dict = {
-                "transcript_id": transcript.transcript_id,
+                "id": transcript.id,
                 "user_id": transcript.user_id,
                 "total_duration": transcript.total_duration,
                 "created_at": transcript.created_at.isoformat(),
@@ -44,8 +44,7 @@ async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession 
                 "word_finding_difficulties": get_feature(features, "word_finding_difficulties"),
                 "semantic_paraphasias": get_feature(features, "semantic_paraphasias"),
                 "syntactic_simplification": get_feature(features, "syntactic_simplification"),
-                "discourse_impairment": get_feature(features, "discourse_impairment"),
-                "db_id": transcript.id
+                "discourse_impairment": get_feature(features, "discourse_impairment")
             }
             transcript_list.append(transcript_dict)
         
@@ -57,7 +56,7 @@ async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession 
 @router.get("/{transcript_id}")
 async def get_transcript(transcript_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        transcript = await db.execute(select(TranscriptMetadata).filter(TranscriptMetadata.user_id == user_id, TranscriptMetadata.transcript_id == transcript_id))
+        transcript = await db.execute(select(TranscriptMetadata).filter(TranscriptMetadata.user_id == user_id, TranscriptMetadata.id == transcript_id))
         transcript = transcript.scalar_one_or_none()
         
         if transcript is None:
@@ -78,7 +77,7 @@ async def get_transcript(transcript_id: int, user_id: str = Depends(get_user_id)
             })
         
         return JSONResponse(content={
-            "transcript_id": transcript.transcript_id,
+            "id": transcript.id,
             "user_id": transcript.user_id,
             "created_at": transcript.created_at.isoformat(),
             "total_duration": transcript.total_duration,
@@ -92,7 +91,7 @@ async def get_transcript(transcript_id: int, user_id: str = Depends(get_user_id)
 @router.delete("/{transcript_id}")
 async def delete_transcript(transcript_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        transcript = await db.execute(select(TranscriptMetadata).filter(TranscriptMetadata.user_id == user_id, TranscriptMetadata.transcript_id == transcript_id))
+        transcript = await db.execute(select(TranscriptMetadata).filter(TranscriptMetadata.user_id == user_id, TranscriptMetadata.id == transcript_id))
         transcript = transcript.scalar_one_or_none()
         
         if transcript is None:

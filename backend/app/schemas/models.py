@@ -9,7 +9,6 @@ class TranscriptMetadata(Base):
     __tablename__ = "transcript_metadata"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    transcript_id = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False)
     total_duration = Column(Float, nullable=False)
 

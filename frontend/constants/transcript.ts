@@ -1,7 +1,6 @@
 export interface TranscriptMetadata {
-	transcript_id: number;
+	id: number;
 	user_id: string;
-	db_id: number;
 	created_at: string;
 	total_duration: number;
 }

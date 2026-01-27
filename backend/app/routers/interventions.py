@@ -14,10 +14,10 @@ async def create_intervention(intervention: InterventionSchema, user_id: str = D
     try:
         db_intervention = InterventionModel(
             user_id=user_id,
-            name=intervention["name"],
-            description=intervention.get("description"),
-            start_date=intervention["start_date"],
-            end_date=intervention["end_date"]
+            name=intervention.name,
+            description=intervention.description,
+            start_date=intervention.start_date,
+            end_date=intervention.end_date
         )
         
         db.add(db_intervention)
@@ -95,10 +95,10 @@ async def update_intervention(intervention_id: int, intervention: InterventionSc
         if db_intervention is None:
             raise HTTPException(status_code=404, detail="Intervention not found")
         
-        db_intervention.name = intervention["name"]
-        db_intervention.description = intervention.get("description")
-        db_intervention.start_date = intervention["start_date"]
-        db_intervention.end_date = intervention["end_date"]
+        db_intervention.name = intervention.name
+        db_intervention.description = intervention.description
+        db_intervention.start_date = intervention.start_date
+        db_intervention.end_date = intervention.end_date
         
         await db.commit()
         await db.refresh(db_intervention)

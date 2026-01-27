@@ -4,8 +4,6 @@ import os
 import json
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
-
 from app.core.database import get_db
 from app.core.authentication import get_user_id
 from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, User
@@ -20,21 +18,6 @@ router = APIRouter(prefix="/upload", tags=["upload"])
 audio_converter = AudioConverter()
 speech_service = SpeechService(SPEECH_KEY, SPEECH_REGION)
 conversation_analytics = ConversationAnalytics()
-
-async def get_next_transcript_id(db: AsyncSession, user_id: str) -> int:
-
-    # Get the highest transcript id for the user
-    query = select(func.max(TranscriptMetadata.transcript_id)).filter(TranscriptMetadata.user_id == user_id)
-    result = await db.execute(query)
-    
-    highest_transcript_id = result.scalar_one_or_none()
-    
-    # Add 1 to the highest ID otherwise its the first transcript
-    if highest_transcript_id is not None:
-        return highest_transcript_id + 1
-    else:
-        return 1
-
 
 @router.post("")
 async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..., alias="Created-At"), user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
@@ -69,16 +52,12 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         # Perform conversation feature extraction
         analytics: Transcript = conversation_analytics.analyse(segments)
 
-        # Get next transcript id for the user
-        transcript_id = await get_next_transcript_id(db, user_id)
-
         # Calculate total duration with safe type conversion
         total_duration = sum(float(segment.duration or 0.0) for segment in segments)
 
         # Add the transcript metadata to the database
         transcript_metadata = TranscriptMetadata(
             user_id=user_id,
-            transcript_id=transcript_id,
             created_at=created_at,
             total_duration=total_duration,
         )
@@ -117,8 +96,7 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         await db.commit()
         
         analytics = analytics.model_dump()
-        analytics["transcript_id"] = transcript_id
-        analytics["db_transcript_id"] = transcript_metadata.id
+        analytics["id"] = transcript_metadata.id
         
         return JSONResponse(content=analytics)
 
