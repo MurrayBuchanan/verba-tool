@@ -1,11 +1,11 @@
 import { StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { signOut } from '@/services/authentication-service';
-import { router } from 'expo-router';
+import { useAuthentication } from '@/hooks/use-authentication';
 
 export function LogoutButton() {
 	const warningColour = useThemeColor({}, 'warning');
+	const { signOut } = useAuthentication();
 
 	const handleLogout = () => {
 		Alert.alert(
@@ -19,13 +19,8 @@ export function LogoutButton() {
 				{
 					text: "Logout",
 					style: "destructive",
-					onPress: async () => {
-						try {
-							await signOut();
-							router.replace("/");
-						} catch (error) {
-							console.error("Error signing out:", error);
-						}
+					onPress: () => {
+						signOut();
 					}
 				}
 			]

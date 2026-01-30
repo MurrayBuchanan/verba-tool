@@ -1,66 +1,40 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, ActivityIndicator } from "react-native";
+import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { BlockButton as Button } from "@/components/block-button";
-import { signIn, isAuthenticated } from "@/services/authentication-service";
+import { useAuthentication } from "@/hooks/use-authentication";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function Index() {
-	const [isAuthenticating, setIsAuthenticating] = useState(true);
-	const [isSigningIn, setIsSigningIn] = useState(false);
-	const accentColour = useThemeColor({}, 'accent');
-
-	useEffect(() => { checkAuthentication(); }, []);
-
-	const checkAuthentication = async () => {
-		try {
-			const authenticated = await isAuthenticated();
-			if (authenticated) {
-				router.replace("/(tabs)/recordAudioScreen");
-			} else {
-				setIsAuthenticating(false);
-			}
-		} catch (error) {
-			console.error("Error checking authentication:", error);
-			setIsAuthenticating(false);
-		}
-	};
+	const { signIn } = useAuthentication();
+	const textColour = useThemeColor({}, 'textSecondary');
 
 	const handleSignIn = async () => {
-		setIsSigningIn(true);
 		try {
-			const result = await signIn();
-			if (result) {
-				router.replace("/(tabs)/recordAudioScreen");
-			} else {
-				setIsSigningIn(false);
-			}
-		} catch (error) {
-			console.error("Error during sign in:", error);
-			setIsSigningIn(false);
+			await signIn();
+		} catch (error: any) {
+			console.error("Cannot sign in:", error);
 		}
 	};
 	
 	return (
-		isAuthenticating ? (
-			<View style={styles.center}>
-				<ActivityIndicator size="large" color={accentColour} />
-				<Text align="center">Loading...</Text>
-			</View>
-		) : (
-			<View style={styles.container}>
-				<Text type='title' align='center'>Here to help you monitor conversation!</Text>
+		<View style={styles.container}>
+			<View style={styles.content}>
 				<Image
 					source={require('../assets/images/conversation-placeholder.png')}
 					style={styles.image}
 					contentFit="contain"
 				/>
-				<Button title={isSigningIn ? "Signing In" : "Secure Sign In"} onPress={handleSignIn} />
+				<Text type='title' align='center' style={styles.title}>Conversation Insights</Text>
+				<Text align='center'>Monitor and understand changes in communication patterns over time</Text>
 			</View>
-		)
+
+			<View style={styles.footer}>
+				<Button title="Get Started" onPress={handleSignIn} />
+				<Text align='center' type='caption' style={{color: textColour}}>Your data stays private and secure</Text>
+			</View>
+		</View>
 	);
 };
 
@@ -69,19 +43,25 @@ const styles = StyleSheet.create({
     	flex: 1,
 		padding: 20,
 		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 40,
-  	},
-	center: {
+	},
+	content: {
 		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		padding: 40,
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingVertical: 40,
+	},
+	title: {
+		marginTop: 24,
+		marginBottom: 12,
 	},
 	image: {
-		width: 320,
-		height: 320,
+		width: 280,
+		height: 280,
 		objectFit: 'contain',
-		alignSelf: 'center',
+	},
+	footer: {
+		width: '100%',
+		paddingBottom: 20,
+		gap: 12,
 	},
 });
