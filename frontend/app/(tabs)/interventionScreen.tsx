@@ -9,7 +9,7 @@ import { List } from "@/components/list";
 import { InterventionItem as Item } from "@/components/intervention-item";
 import { Intervention } from "@/constants/transcript";
 import { getInterventions } from "@/services/intervention-service";
-import { formatDisplayDate } from "@/utils/date-formatting";
+import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Explaination } from "@/components/explaination";
 

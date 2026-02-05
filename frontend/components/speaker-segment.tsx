@@ -6,12 +6,8 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 
 function calculateTimestamp(recordingStartedAt: string, offsetSeconds: number): string {
     const start = new Date(recordingStartedAt.replace("Z", "+00:00")).getTime();
-    const timeSaid = new Date(start + offsetSeconds * 1000);
-    return timeSaid.toLocaleTimeString(undefined, {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true
-    });
+    const timestamp = new Date(start + offsetSeconds * 1000);
+    return timestamp.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", hour12: true });
 }
 
 type Props = {
@@ -30,27 +26,26 @@ export function SpeakerSegment({ speaker, text, createdAt, offsetSeconds }: Prop
     const isPrimarySpeaker = speaker === "Guest-1";
     const timestamp = createdAt != null && offsetSeconds != null ? calculateTimestamp(createdAt, offsetSeconds) : null;
 
-    const content = (
-        <>
+    const message = (
+        <View>
             <Text lightColour={textColour} darkColour={textColour}>{text}</Text>
-
             { timestamp && (
                 <View style={styles.timestamp}>
                     <Text type="caption" lightColour={textSecondaryColour} darkColour={textSecondaryColour}>{timestamp}</Text>
                 </View>
             )}
-        </>
+        </View>
     );
 
     return (
-        <ThemedView style={[styles.container, isPrimarySpeaker ? styles.isLeftAligned : styles.isRightAligned]}>
+        <ThemedView style={[styles.container, isPrimarySpeaker ? styles.left : styles.right]}>
             {isPrimarySpeaker ? (
                 <ThemedView lightColour={activeColour} darkColour={activeColour} style={styles.bubble}>
-                    {content}
+                    {message}
                 </ThemedView>
             ) : (
                 <ThemedView lightColour={backgroundColour} darkColour={backgroundColour} style={styles.bubble}>
-                    {content}
+                    {message}
                 </ThemedView>
             )}
         </ThemedView>
@@ -63,10 +58,10 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         paddingHorizontal: 20,
     },
-    isLeftAligned: {
+    left: {
         justifyContent: "flex-start",
     },
-    isRightAligned: {
+    right: {
         justifyContent: "flex-end",
     },
     bubble: {

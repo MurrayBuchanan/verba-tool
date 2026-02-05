@@ -23,3 +23,19 @@ export function formatDisplayDateTime(date: Date | string): string {
 	const displayTime = validDate.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true });
 	return `${displayDate}, ${displayTime}`;
 }
+
+export function formatDuration(inputSeconds: number): string {
+	const totalSeconds = Math.floor(inputSeconds);
+
+	const minutes = Math.floor(totalSeconds / 60);
+	const seconds = totalSeconds % 60;
+
+	if (minutes === 0) {
+		return `${seconds} seconds`;
+	}
+	if (seconds === 0) {
+		return `${minutes} minutes`;
+	}	
+
+	return `${minutes} minutes ${seconds} seconds`;
+}

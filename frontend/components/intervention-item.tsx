@@ -4,13 +4,13 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { ChevronRight, Calendar } from 'lucide-react-native';
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export type InterventionItemProps = {
+type Props = {
     onPress: () => void;
 	name: string;
 	dateRange: string;
 };
 
-export function InterventionItem({ onPress, name, dateRange }: InterventionItemProps) {
+export function InterventionItem({ onPress, name, dateRange }: Props) {
 	const iconColour = useThemeColor({}, 'icon');
 	
   	return (

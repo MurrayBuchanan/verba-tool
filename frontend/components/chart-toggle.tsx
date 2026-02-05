@@ -2,13 +2,13 @@ import { StyleSheet, Switch, View } from "react-native";
 import { ThemedText as Text } from "@/components/themed-text";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export type ChartToggleProps = {
+type Props = {
 	label: string;
 	value: boolean;
 	onValueChange: (value: boolean) => void;
 };
 
-export function ChartToggle({ label, value, onValueChange }: ChartToggleProps) {
+export function ChartToggle({ label, value, onValueChange }: Props) {
 	const textColour = useThemeColor({}, 'text');
 	const accentColour = useThemeColor({}, 'accent');
 

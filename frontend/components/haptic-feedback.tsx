@@ -5,11 +5,11 @@ import * as Haptics from 'expo-haptics';
 
 // This file was generated and modified from the Expo boilerplate using 'npx create-expo-app'
 
-type HapticFeedbackProps = BottomTabBarButtonProps & {
+type Props = BottomTabBarButtonProps & {
 	hapticsEnabled?: boolean;
 };
 
-export function HapticFeedback({ hapticsEnabled = true, onPressIn, ...rest }: HapticFeedbackProps) {
+export function HapticFeedback({ hapticsEnabled = true, onPressIn, ...rest }: Props) {
   	return (
     	<PlatformPressable
       	{...rest}

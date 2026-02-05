@@ -18,7 +18,7 @@ import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
-import { formatAPIDate } from "@/utils/date-formatting";
+import { formatAPIDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { IconButton } from "@/components/icon-button";
 

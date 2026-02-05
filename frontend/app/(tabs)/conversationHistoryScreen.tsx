@@ -8,24 +8,9 @@ import { List } from "@/components/list";
 import { ConversationItem as Item } from "@/components/conversation-item";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
-import { formatDisplayDateTime } from "@/utils/date-formatting";
+import { formatDisplayDateTime } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
-
-function formatDuration(inputSeconds: number): string {
-	const totalSeconds = Math.floor(inputSeconds);
-
-	const minutes = Math.floor(totalSeconds / 60);
-	const seconds = totalSeconds % 60;
-
-	if (minutes === 0) {
-		return `${seconds} seconds`;
-	}
-	if (seconds === 0) {
-		return `${minutes} minutes`;
-	}	
-
-	return `${minutes} minutes ${seconds} seconds`;
-}
+import { formatDuration } from "@/utils/datetime-formatting";
 
 export default function ConversationHistoryScreen() {
 	const router = useRouter();
@@ -75,20 +60,20 @@ export default function ConversationHistoryScreen() {
 				</View>
 			) : (
 				<>
-				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<List divider={true}>
-						{transcripts.map((transcript) => {
-							return (
-								<Item
-									key={transcript.id}
-									onPress={() => router.push(`/conversationScreen/${transcript.id}`)}
-									datetime={formatDisplayDateTime(transcript.created_at)}
-									duration={formatDuration(transcript.total_duration)}
-								/>
-							);
-						})}
-					</List>
-				</ScrollView>
+					<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+						<List divider={true}>
+							{transcripts.map((transcript) => {
+								return (
+									<Item
+										key={transcript.id}
+										onPress={() => router.push(`/conversationScreen/${transcript.id}`)}
+										datetime={formatDisplayDateTime(transcript.created_at)}
+										duration={formatDuration(transcript.total_duration)}
+									/>
+								);
+							})}
+						</List>
+					</ScrollView>
 				</>
 			)}
 		</View>

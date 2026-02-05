@@ -1,7 +1,7 @@
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { MAX_DAYS_FOR_DAILY_VIEW, MAX_DAYS_FOR_WEEKLY_VIEW, MILLISECONDS_PER_DAY, DAY_NAMES, MONTH_NAMES } from "@/constants/time";
 
-export type MetricDataPoint = {
+type DataPoint = {
 	x: number;
 	value: number;
 	label: string;
@@ -128,7 +128,7 @@ function getDates(transcripts: TranscriptWithFeatures[]): Date[] {
 	return dates;
 }
 
-export function getMetricProgression(transcripts: TranscriptWithFeatures[], metricKey: string): MetricDataPoint[] {
+export function getMetricProgression(transcripts: TranscriptWithFeatures[], metricKey: string): DataPoint[] {
 	if (transcripts.length === 0) {
 		return [];
 	}

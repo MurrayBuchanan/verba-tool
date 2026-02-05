@@ -5,7 +5,7 @@ import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
 import { DatePicker as Picker } from "@/components/date-picker";
 import { createIntervention } from "@/services/intervention-service";
-import { formatAPIDate } from "@/utils/date-formatting";
+import { formatAPIDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { X, Check } from "lucide-react-native";
 import { IconButton } from "@/components/icon-button";

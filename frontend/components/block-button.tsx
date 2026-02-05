@@ -3,21 +3,21 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { ThemedText as Text } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
-export type BlockButtonProps = {
+type Props = {
     onPress: () => void;
     title?: string;
     lightBackgroundColour?: string;
     darkBackgroundColour?: string;
 };
 
-export function BlockButton({ onPress, title, lightBackgroundColour, darkBackgroundColour }: BlockButtonProps) {
+export function BlockButton({ onPress, title, lightBackgroundColour, darkBackgroundColour }: Props) {
     const backgroundColour = useThemeColor({ light: lightBackgroundColour, dark: darkBackgroundColour, }, 'accent');
     const textColour = (lightBackgroundColour || darkBackgroundColour) ? useThemeColor({}, 'text') : '#FFF';
 
     return (
         <TouchableOpacity onPress={onPress}>
-            <View style={[ styles.container, { backgroundColor: backgroundColour } ]}>
-                    <Text type="button" style={{ color: textColour }}>{title}</Text>
+            <View style={[ styles.container, { backgroundColor: backgroundColour }]}>
+                <Text type="button" style={{ color: textColour }}>{title}</Text>
             </View>
         </TouchableOpacity>
     );

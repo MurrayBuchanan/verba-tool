@@ -4,10 +4,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import Collapsible from "react-native-collapsible";
 import { ThemedText as Text } from "@/components/themed-text";
 import { Calendar } from 'lucide-react-native';
-import { formatDisplayDate } from "@/utils/date-formatting";
+import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export type Props = {
+type Props = {
 	label: string;
 	value: Date;
 	onDateChange: (date: Date) => void;

@@ -4,7 +4,7 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { ThemedView as View } from "@/components/themed-view";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export type TextFieldProps = {
+type Props = {
 	label: string;
 	value: string;
 	onChangeText: (text: string) => void;
@@ -13,7 +13,7 @@ export type TextFieldProps = {
 	editable?: boolean;
 };
 
-export function TextField({ label, value, onChangeText, placeholder, multiline = false, editable = true }: TextFieldProps) {
+export function TextField({ label, value, onChangeText, placeholder, multiline = false, editable = true }: Props) {
 	const [focused, setFocused] = useState(false);
 	const accentColour = useThemeColor({}, 'accent');
 	const textColour = useThemeColor({}, 'text');

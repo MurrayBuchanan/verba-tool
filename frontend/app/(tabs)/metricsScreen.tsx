@@ -1,8 +1,8 @@
-import { StyleSheet, ScrollView, ActivityIndicator, View } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { useState, useCallback, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { ThemedView } from "@/components/themed-view";
+import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { MetricItem as Item } from "@/components/metric-item";
 import { getTranscripts } from "@/services/transcript-service";
@@ -43,7 +43,7 @@ export default function MetricsScreen() {
 	);
 
 	return (
-		<ThemedView style={styles.container}>
+		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
 					<ActivityIndicator size="large" color={accentColour} />
@@ -60,49 +60,49 @@ export default function MetricsScreen() {
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<Text type="heading" style={styles.categoryHeader}>Speech Rate & Fluency</Text>
-					<ThemedView style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
+					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
 							<Item metricId="wpm_per_speaker" onPress={() => router.push(`/metricScreen/wpm_per_speaker`)} />
 							<Item metricId="mean_utterance_length" onPress={() => router.push(`/metricScreen/mean_utterance_length`)} />
 						</List>
-					</ThemedView>
+					</View>
 					
 					<Text type="heading" style={styles.categoryHeader}>Lexical & Vocabulary</Text>
-					<ThemedView style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
+					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
 							<Item metricId="num_unique_words" onPress={() => router.push(`/metricScreen/num_unique_words`)} />
 							<Item metricId="avg_word_length" onPress={() => router.push(`/metricScreen/avg_word_length`)} />
 							<Item metricId="impoverished_vocabulary" onPress={() => router.push(`/metricScreen/impoverished_vocabulary`)} />
 							<Item metricId="word_finding_difficulties" onPress={() => router.push(`/metricScreen/word_finding_difficulties`)} />
 						</List>
-					</ThemedView>
+					</View>
 					
 					<Text type="heading" style={styles.categoryHeader}>Grammatical & Syntactic</Text>
-					<ThemedView style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
+					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
 							<Item metricId="prp_ratio" onPress={() => router.push(`/metricScreen/prp_ratio`)} />
 							<Item metricId="adverb_ratio" onPress={() => router.push(`/metricScreen/adverb_ratio`)} />
 							<Item metricId="syntactic_simplification" onPress={() => router.push(`/metricScreen/syntactic_simplification`)} />
 						</List>
-					</ThemedView>
+					</View>
 					
 					<Text type="heading" style={styles.categoryHeader}>Semantic Integrity</Text>
-					<ThemedView style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
+					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
 							<Item metricId="semantic_paraphasias" onPress={() => router.push(`/metricScreen/semantic_paraphasias`)} />
 						</List>
-					</ThemedView>
+					</View>
 					
 					<Text type="heading" style={styles.categoryHeader}>Discourse & Cognitive Load</Text>
-					<ThemedView style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
+					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
 							<Item metricId="flesch_kincaid" onPress={() => router.push(`/metricScreen/flesch_kincaid`)} />
 							<Item metricId="discourse_impairment" onPress={() => router.push(`/metricScreen/discourse_impairment`)} />
 						</List>
-					</ThemedView>
+					</View>
 				</ScrollView>
 			)}
-		</ThemedView>
+		</View>
 	);
 }
 
