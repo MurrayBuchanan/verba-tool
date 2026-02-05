@@ -1,12 +1,14 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { StyleSheet, View, ScrollView, TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import { useState, useCallback, useRef, useMemo, useLayoutEffect } from "react";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Trash, Pencil, X, Check } from "lucide-react-native";
+import { Divider } from "@/components/divider"
 import { MetricChart as Chart } from "@/components/metric-chart";
-import { MetricSelector as Selector } from "@/components/metric-selector";
+import { MetricSelector } from "@/components/metric-selector";
+import { AnnotationSelector } from "@/components/annotation-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { TextField as TextField } from "@/components/textfield";
 import { DatePicker as Picker } from "@/components/date-picker";
@@ -18,7 +20,7 @@ import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatAPIDate } from "@/utils/date-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
-
+import { IconButton } from "@/components/icon-button";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
@@ -46,6 +48,7 @@ export default function InterventionDetailScreen() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
+	const [annotationView, setAnnotationView] = useState<string>("details");
 	const [showMean, setShowMean] = useState<boolean>(true);
 	const [showRange, setShowRange] = useState<boolean>(true);
 	const loadedId = useRef<string | undefined>(undefined);
@@ -54,8 +57,8 @@ export default function InterventionDetailScreen() {
 		if (!id) return;
 		
 		Alert.alert(
-			"Delete Intervention",
-			"Are you sure you want to delete this intervention?",
+			"Delete Annotation",
+			"Are you sure you want to delete this annotation?",
 			[
 				{
 					text: "Cancel",
@@ -70,7 +73,7 @@ export default function InterventionDetailScreen() {
 							await deleteIntervention(interventionId);
 							router.back();
 						} catch (error) {
-							Alert.alert("Failed to delete intervention");
+							Alert.alert("Failed to delete annotation");
 						}
 					}
 				}
@@ -87,16 +90,14 @@ export default function InterventionDetailScreen() {
 			setIntervention(editingIntervention);
 			setEditingIntervention(null);
 		} catch (error) {
-			Alert.alert("Cannot update intervention");
+			Alert.alert("Cannot update annotation");
 		}
 	}, [id, editingIntervention]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<TouchableOpacity style={styles.button} onPress={handleDeleteIntervention}>
-					<IconSymbol name="trash" size={24} color={warningColour} />
-				</TouchableOpacity>
+				<IconButton icon={<Trash size={24} color={warningColour} />} onPress={handleDeleteIntervention} />
 			),
 		});
 	}, [navigation, handleDeleteIntervention, warningColour]);
@@ -119,7 +120,7 @@ export default function InterventionDetailScreen() {
 					setError(null);
 					loadedId.current = id;
 				} catch {
-					setError("Unable to load intervention");
+					setError("Unable to load annotation");
 				} finally {
 					setLoading(false);
 				}
@@ -150,6 +151,11 @@ export default function InterventionDetailScreen() {
 			value: metricKey,
 		}));
 	}, []);
+
+	const annotationViewOptions = useMemo(() => [
+		{ label: "Annotation", value: "details" },
+		{ label: "What This Shows", value: "description" },
+	], []);
 	
 	return (
 		<ThemedView style={styles.container}>
@@ -163,8 +169,9 @@ export default function InterventionDetailScreen() {
 					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (
-				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<Selector options={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
+				<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
+					<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+						<MetricSelector views={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
 					{ metricData.length > 0 ? (
 						<View style={styles.section}>
 							<Chart 
@@ -173,7 +180,7 @@ export default function InterventionDetailScreen() {
 									const point = metricData.find(d => d.x === value);
 									return point?.label || "";
 								}}
-								title={`Changes to ${metricDetails.name} During Intervention`}
+								title={`Changes to ${metricDetails.name}\nDuring Annotation`}
 								showMean={showMean}
 								showRange={showRange}
 								showInterventions={false}
@@ -181,78 +188,86 @@ export default function InterventionDetailScreen() {
 						</View>
 					) : (
 						<View style={styles.center}>
-							<Text align="center">No data available for this metric within this intervention period.</Text>
+							<Text align="center">No data available for this metric within this annotation period.</Text>
 						</View>
 					)}
+
+					<View style={styles.section}>
+					<AnnotationSelector options={annotationViewOptions} selectedValue={annotationView} onValueChange={setAnnotationView} />
 					
-					<View style={styles.section}>
-						<View style={styles.row}>
-							<Text type="heading">Intervention Details</Text>
-							<View style={styles.buttons}>
-								{editingIntervention ? (
-									<>
-										<TouchableOpacity onPress={() => setEditingIntervention(null)}>
-											<Text>Cancel</Text>
-										</TouchableOpacity>
-										<TouchableOpacity onPress={handleUpdateIntervention}>
-											<Text style={{ color: accentColour }}>Update</Text>
-										</TouchableOpacity>
-									</>
-								) : (
-									<TouchableOpacity onPress={() => intervention && setEditingIntervention({ ...intervention })}>
-										<Text style={{ color: accentColour }}>Edit</Text>
-									</TouchableOpacity>
-								)}
+					<View style={styles.annotationViewContainer}>
+						{annotationView === "details" && (
+							<>
+								<View style={styles.row}>
+									<Text type="heading">Annotation Details</Text>
+									<View style={styles.buttons}>
+										{editingIntervention ? (
+											<>
+												<IconButton icon={<X size={22} color={warningColour} />} onPress={() => setEditingIntervention(null)} accessibilityLabel="Cancel" />
+												<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Update" />
+											</>
+										) : (
+											<IconButton icon={<Pencil size={22} color={accentColour} />} onPress={() => intervention && setEditingIntervention({ ...intervention })} accessibilityLabel="Edit" />
+										)}
+									</View>
+								</View>
+
+								<TextField
+									label="Name"
+									value={editingIntervention ? (editingIntervention.name ?? "") : intervention.name}
+									onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, name: text })}
+									editable={editingIntervention !== null}
+								/>
+								
+								<Picker
+									label="Start Date"
+									value={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
+									onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, start_date: formatAPIDate(date)})}
+									maximumDate={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
+									editable={editingIntervention !== null}
+								/>
+								
+								<Picker
+									label="End Date"
+									value={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
+									onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, end_date: formatAPIDate(date) })}
+									minimumDate={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
+									editable={editingIntervention !== null}
+								/>
+								
+								<TextField
+									label="Description"
+									value={editingIntervention ? (editingIntervention.description ?? "") : (intervention.description || "")}
+									onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, description: text || null })}
+									placeholder="No description"
+									multiline
+									editable={editingIntervention !== null}
+								/>
+							</>
+						)}
+
+						{annotationView === "description" && (
+							<>
+								<Text type="heading">Annotation Description</Text>
+								<View>
+									<Text>{metricDetails.alias}</Text>
+									<Text>{metricDetails.description}</Text>
+								</View>
+							</>
+						)}
+					</View>
+
+						<Divider />
+
+						{metricData.length > 0 && (
+							<View>
+								<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
+								<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
 							</View>
-						</View>
-
-						<TextField
-							label="Name"
-							value={editingIntervention ? (editingIntervention.name ?? "") : intervention.name}
-							onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, name: text })}
-							editable={editingIntervention !== null}
-						/>
-						
-						<Picker
-							label="Start Date"
-							value={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
-							onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, start_date: formatAPIDate(date)})}
-							maximumDate={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
-							editable={editingIntervention !== null}
-						/>
-						
-						<Picker
-							label="End Date"
-							value={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
-							onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, end_date: formatAPIDate(date) })}
-							minimumDate={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
-							editable={editingIntervention !== null}
-						/>
-						
-						<TextField
-							label="Description"
-							value={editingIntervention ? (editingIntervention.description ?? "") : (intervention.description || "")}
-							onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, description: text || null })}
-							placeholder="No description"
-							multiline
-							editable={editingIntervention !== null}
-						/>
+						)}
 					</View>
-				
-					<View style={styles.section}>
-						<Text type="heading">Metric Description</Text>
-						<View style={styles.spacer}>
-							<Text>{metricDetails.description}</Text>
-						</View>
-					</View>
-
-					{metricData.length > 0 && (
-						<View style={styles.section}>
-							<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
-							<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
-						</View>
-					)}
-				</ScrollView>
+					</ScrollView>
+				</KeyboardAvoidingView>
 			)}
 		</ThemedView>
 	);
@@ -265,18 +280,14 @@ const styles = StyleSheet.create({
 	content: {
 		flexGrow: 1,
 	},
-	section: {
-		paddingHorizontal: 20,
-		paddingVertical: 10,
+	annotationViewContainer: {
+		minHeight: 420,
 	},
 	center: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
-	},
-	spacer: {
-		paddingVertical: 12,
 	},
 	button: {
 		marginRight: 10,
@@ -288,7 +299,9 @@ const styles = StyleSheet.create({
 	},
 	buttons: {
 		flexDirection: "row",
-		alignItems: "center",
-		gap: 12,
+	},
+	section: {
+		paddingVertical: 10,
+		marginHorizontal: 20,
 	},
 });

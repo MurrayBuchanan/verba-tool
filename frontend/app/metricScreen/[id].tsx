@@ -4,7 +4,7 @@ import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { MetricChart as Chart} from "@/components/metric-chart";
-import { MetricSelector as Selector } from "@/components/metric-selector";
+import { MetricSelector } from "@/components/metric-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { TranscriptWithFeatures, Intervention } from "@/constants/transcript";
 import { getTranscripts } from "@/services/transcript-service";
@@ -13,7 +13,7 @@ import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export default function MetricScreen() {
+export default function MetricDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
@@ -79,12 +79,12 @@ export default function MetricScreen() {
 				</View>
 			) : (
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<Selector
-						options={metricKeys}
+					<MetricSelector
+						views={metricKeys}
 						selectedValue={selectedMetric}
 						onValueChange={setSelectedMetric}
 					/>
-					
+
 					{ metricData.length > 0 ? (
 						<View style={styles.section}>
 							<Chart 
@@ -108,6 +108,7 @@ export default function MetricScreen() {
 
 					<View style={styles.section}>
 						<Text type="heading">Description</Text>
+						<Text>{metricDetails.alias}</Text>
 						<Text>{metricDetails.description}</Text>
 					</View>
 
@@ -115,7 +116,7 @@ export default function MetricScreen() {
 						<View style={styles.section}>
 							<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
 							<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
-							<Switch label="Show Interventions" value={showInterventions} onValueChange={setShowInterventions} />
+							<Switch label="Show Annotations" value={showInterventions} onValueChange={setShowInterventions} />
 						</View>
 					)}
 				</ScrollView>

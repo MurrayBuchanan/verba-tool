@@ -8,7 +8,7 @@ import { List } from "@/components/list";
 import { ConversationItem as Item } from "@/components/conversation-item";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
-import { formatDisplayDate } from "@/utils/date-formatting";
+import { formatDisplayDateTime } from "@/utils/date-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 function formatDuration(inputSeconds: number): string {
@@ -18,13 +18,13 @@ function formatDuration(inputSeconds: number): string {
 	const seconds = totalSeconds % 60;
 
 	if (minutes === 0) {
-		return `${seconds}s`;
+		return `${seconds} seconds`;
 	}
 	if (seconds === 0) {
-		return `${minutes}m`;
+		return `${minutes} minutes`;
 	}	
 
-	return `${minutes}m ${seconds}s`;
+	return `${minutes} minutes ${seconds} seconds`;
 }
 
 export default function ConversationHistoryScreen() {
@@ -81,9 +81,8 @@ export default function ConversationHistoryScreen() {
 							return (
 								<Item
 									key={transcript.id}
-									id={transcript.id}
 									onPress={() => router.push(`/conversationScreen/${transcript.id}`)}
-									datetime={formatDisplayDate(transcript.created_at)}
+									datetime={formatDisplayDateTime(transcript.created_at)}
 									duration={formatDuration(transcript.total_duration)}
 								/>
 							);

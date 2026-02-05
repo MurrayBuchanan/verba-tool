@@ -1,15 +1,13 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { ThemedView as View } from "@/components/themed-view";
-import { useThemeColor } from "@/hooks/use-theme-color";
+import { View, StyleSheet } from "react-native";
+import { Divider } from "@/components/divider";
 
-export type ListProps = {
+type Props = {
 	children: React.ReactNode;
 	divider?: boolean;
 };
 
-export function List({ children, divider = false }: ListProps) {
-	const dividerColour = useThemeColor({}, 'backgroundTertiary');
+export function List({ children, divider = false }: Props) {
   	const items = React.Children.toArray(children);
 
   	return (
@@ -18,7 +16,7 @@ export function List({ children, divider = false }: ListProps) {
         		<View key={index}>
           			<View style={styles.item}>{child}</View>
           			{divider && index < items.length - 1 && (
-            			<View lightColour={dividerColour} darkColour={dividerColour} style={styles.divider} />
+            			<Divider />
           			)}
         		</View>
       		))}
@@ -32,8 +30,5 @@ const styles = StyleSheet.create({
   	},
   	item: {
     	paddingVertical: 4,
-  	},
-  	divider: {
-    	height: StyleSheet.hairlineWidth,
   	},
 });

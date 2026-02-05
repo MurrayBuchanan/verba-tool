@@ -1,21 +1,22 @@
-import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator, Alert } from "react-native";
 import { useState, useCallback, useRef, useLayoutEffect } from "react";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Trash } from 'lucide-react-native';
 import { SpeakerSegment } from "@/components/speaker-segment";
-import { TranscriptSegment } from "@/constants/transcript";
+import { TranscriptWithSegments } from "@/constants/transcript";
 import { getTranscript, deleteTranscript } from "@/services/transcript-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { IconButton } from "@/components/icon-button";
 
-export default function ConversationScreen() {
+export default function ConversationDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const navigation = useNavigation();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
-	const [segments, setSegments] = useState<TranscriptSegment[]>([]);
+	const [transcript, setTranscript] = useState<TranscriptWithSegments | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const loadedId = useRef<string | undefined>(undefined);
@@ -51,9 +52,7 @@ export default function ConversationScreen() {
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<TouchableOpacity style={styles.button} onPress={handleDelete}>
-					<IconSymbol name="trash" size={24} color={warningColour} />
-				</TouchableOpacity>
+				<IconButton icon={<Trash size={24} color={warningColour} />} onPress={handleDelete} />
 			),
 		});
 	}, [navigation, handleDelete, warningColour]);
@@ -75,7 +74,7 @@ export default function ConversationScreen() {
 					
 					const transcriptId = parseInt(id, 10);
 					const data = await getTranscript(transcriptId);
-					setSegments(data.segments || []);
+					setTranscript(data);
 					setError(null);
 					loadedId.current = id;
 				} catch {
@@ -101,11 +100,13 @@ export default function ConversationScreen() {
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					{segments.map((segment, index) => (
+					{(transcript?.segments ?? []).map((segment, index) => (
 						<SpeakerSegment
 							key={index}
 							speaker={segment.speaker}
 							text={segment.text}
+							createdAt={transcript?.created_at}
+							offsetSeconds={segment.offset}
 						/>
 					))}
 				</ScrollView>

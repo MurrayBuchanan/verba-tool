@@ -1,31 +1,34 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { IconSymbol } from "@/components//ui/icon-symbol";
+import { Clock, ChevronRight } from 'lucide-react-native';
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export type ConversationItemProps = {
+type Props = {
     onPress: () => void;
-	id: number;
 	datetime: string;
 	duration: string;
 };
 
-export function ConversationItem({ onPress, id, datetime, duration }: ConversationItemProps) {
+export function ConversationItem({ onPress, datetime, duration }: Props) {
 	const iconColour = useThemeColor({}, 'icon');
-  	return (
-    	<TouchableOpacity onPress={onPress} style={styles.container}>
+
+	return (
+		<TouchableOpacity onPress={onPress} style={styles.container}>
 			<View style={styles.row}>
 				<View style={styles.left}>
 					<View style={styles.content}>
-						<Text style={styles.label}>Conversation {id}</Text>
-						<Text type="caption" style={styles.date}>{datetime} • {duration}</Text>
+						<Text type="strong">{datetime}</Text>
+						<View style={styles.dateRow}>
+							<Clock size={14} color={iconColour} style={styles.icon}/>
+							<Text type="caption">{duration}</Text>
+						</View>
 					</View>
 				</View>
-				<IconSymbol name="chevron.right" size={18} color={iconColour} />
+				<ChevronRight size={18} color={iconColour} />
 			</View>
-      	</TouchableOpacity>
-  	);
+		</TouchableOpacity>
+	);
 }
 
 const styles = StyleSheet.create({
@@ -46,11 +49,11 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 	},
-	label: {
-		fontWeight: "600",
-		marginBottom: 2,
+	dateRow: {
+		flexDirection: "row",
+		alignItems: "center",
 	},
-	date: {
-		opacity: 0.7,
+	icon: {
+		marginRight: 6,
 	},
 });

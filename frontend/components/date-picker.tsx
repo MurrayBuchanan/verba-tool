@@ -1,15 +1,13 @@
 import { useState } from "react";
-import { TouchableOpacity, StyleSheet, Platform, Keyboard } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Platform, Keyboard } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Collapsible from "react-native-collapsible";
 import { ThemedText as Text } from "@/components/themed-text";
-import { ThemedView as View } from "@/components/themed-view";
-import { BlockButton } from "@/components/block-button";
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Calendar } from 'lucide-react-native';
 import { formatDisplayDate } from "@/utils/date-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export type DatePickerProps = {
+export type Props = {
 	label: string;
 	value: Date;
 	onDateChange: (date: Date) => void;
@@ -18,9 +16,9 @@ export type DatePickerProps = {
 	editable?: boolean;
 };
 
-export function DatePicker({ label, value, onDateChange, minimumDate, maximumDate, editable = true }: DatePickerProps) {
+export function DatePicker({ label, value, onDateChange, minimumDate, maximumDate, editable = true }: Props) {
 	const [showPicker, setShowPicker] = useState(false);
-	const borderColour = useThemeColor({}, 'backgroundTertiary');
+	const accentColour = useThemeColor({}, 'accent');
 	const iconColour = useThemeColor({}, 'icon');
 	const backgroundColour = useThemeColor({}, 'backgroundSecondary');
 
@@ -46,39 +44,49 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 	if (!editable) {
 		return (
 			<View style={styles.container}>
-				<Text style={styles.label}>{label}</Text>
-				<Text type="caption">{value.toLocaleDateString()}</Text>
+				<Text type="strong">{label}</Text>
+				<Text>{value.toLocaleDateString()}</Text>
 			</View>
 		);
 	}
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.label}>{label}</Text>
-			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: borderColour }]}>
+			<Text type="strong">{label}</Text>
+			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: showPicker ? accentColour : 'transparent', backgroundColor: backgroundColour }]}>
 				<View style={styles.row}>
-					<Text type='caption'>{formatDisplayDate(value)}</Text>
-					<IconSymbol name="calendar" size={20} color={iconColour} />
+					<Text>{formatDisplayDate(value)}</Text>
+					<Calendar size={20} color={iconColour} />
 				</View>
 			</TouchableOpacity>
-			<Collapsible collapsed={!showPicker}>	
-				<DateTimePicker
-					value={value}
-					mode="date"
-					display={Platform.OS === "ios" ? "spinner" : "default"}
-					onChange={handleDateChange}
-					minimumDate={minimumDate}
-					maximumDate={maximumDate}
-				/>
-				{Platform.OS === "ios" && (
-					<BlockButton 
-						onPress={() => setShowPicker(false)} 
-						title="Select"
-						lightBackgroundColour={backgroundColour}
-						darkBackgroundColour={backgroundColour}
+			{Platform.OS === "android" ? (
+				showPicker && (
+					<DateTimePicker
+						value={value}
+						mode="date"
+						display="default"
+						onChange={handleDateChange}
+						minimumDate={minimumDate}
+						maximumDate={maximumDate}
 					/>
-				)}
-			</Collapsible>
+				)
+			) : (
+				<Collapsible collapsed={!showPicker}>
+					<View style={[styles.collapsible, { backgroundColor: backgroundColour }]}>
+						<DateTimePicker
+							value={value}
+							mode="date"
+							display="spinner"
+							onChange={handleDateChange}
+							minimumDate={minimumDate}
+							maximumDate={maximumDate}
+						/>
+						<TouchableOpacity onPress={() => setShowPicker(false)} style={styles.select}>
+							<Text>Select</Text>
+						</TouchableOpacity>
+					</View>
+				</Collapsible>
+			)}
 		</View>
 	);
 }
@@ -87,19 +95,29 @@ const styles = StyleSheet.create({
 	container: {
 		marginVertical: 20,
 	},
-	label: {
-		marginBottom: 8,
-		fontSize: 16,
-		fontWeight: '500',
-	},
 	input: {
 		borderWidth: 1,
-		borderRadius: 8,
+		borderRadius: 10,
 		padding: 12,
 	},
 	row: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
+	},
+	collapsible: {
+		borderRadius: 16,
+		overflow: 'hidden',
+		marginTop: 4,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.15,
+		shadowRadius: 4,
+	},
+	select: {
+		alignItems: 'center',
+		paddingVertical: 12,
+		paddingHorizontal: 20,
+		borderRadius: 8,
 	},
 });

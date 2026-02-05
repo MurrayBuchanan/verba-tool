@@ -1,15 +1,19 @@
 import { useState, useLayoutEffect, useCallback } from "react";
-import { StyleSheet, Platform, ScrollView, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
 import { router, useNavigation } from "expo-router";
-import { ThemedView } from "@/components/themed-view";
-import { ThemedText } from "@/components/themed-text";
+import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
 import { DatePicker as Picker } from "@/components/date-picker";
 import { createIntervention } from "@/services/intervention-service";
 import { formatAPIDate } from "@/utils/date-formatting";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { X, Check } from "lucide-react-native";
+import { IconButton } from "@/components/icon-button";
 
 export default function InterventionModal() {
 	const navigation = useNavigation();
+	const warningColour = useThemeColor({}, "warning");
+	const accentColour = useThemeColor({}, "accent");
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [startDate, setStartDate] = useState(new Date());
@@ -41,27 +45,23 @@ export default function InterventionModal() {
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerLeft: () => (
-				<TouchableOpacity style={styles.button} onPress={() => router.back()}>
-					<ThemedText>Cancel</ThemedText>
-				</TouchableOpacity>
+				<IconButton icon={<X size={22} color={warningColour} />} onPress={() => router.back()} accessibilityLabel="Cancel" />
 			),
 			headerRight: () => (
-				<TouchableOpacity style={styles.button} onPress={handleCreateIntervention} disabled={isCreating || !name.trim()}>
-					<ThemedText>{isCreating ? "Creating" : "Create"}</ThemedText>
-				</TouchableOpacity>
+				<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleCreateIntervention} accessibilityLabel="Create" />
 			),
 		});
-	}, [navigation, handleCreateIntervention, isCreating]);
+	}, [navigation, handleCreateIntervention, isCreating, warningColour, accentColour, name.trim()]);
 
 	return (
-		<ThemedView style={styles.container}>
+		<View style={styles.container}>
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 					<TextField
-						label="Intervention Name"
+						label="Annotation Name"
 						value={name}
 						onChangeText={setName}
-						placeholder="Enter intervention name"
+						placeholder="Enter annotation name"
 					/>
 
 					<TextField
@@ -87,7 +87,7 @@ export default function InterventionModal() {
 					/>
 				</ScrollView>
 			</KeyboardAvoidingView>
-		</ThemedView> 
+		</View> 
 	);
 }
 
@@ -97,8 +97,5 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		padding: 20,
-	},
-	button: {
-		padding: 10,
 	},
 });

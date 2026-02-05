@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { IconSymbol } from "@/components//ui/icon-symbol";
+import { ChevronRight, Calendar } from 'lucide-react-native';
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export type InterventionItemProps = {
@@ -18,11 +18,14 @@ export function InterventionItem({ onPress, name, dateRange }: InterventionItemP
 			<View style={styles.row}>
 				<View style={styles.left}>
 					<View style={styles.content}>
-						<Text style={styles.label}>{name}</Text>
-						<Text type="caption" style={styles.date}>{dateRange}</Text>
+						<Text type="strong">{name}</Text>
+						<View style={styles.dateRow}>
+							<Calendar size={14} color={iconColour} style={styles.icon}/>
+							<Text type="caption">{dateRange}</Text>
+						</View>
 					</View>
 				</View>
-				<IconSymbol name="chevron.right" size={18} color={iconColour} />
+				<ChevronRight size={18} color={iconColour} />
 			</View>
       	</TouchableOpacity>
   	);
@@ -55,11 +58,11 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1,
 	},
-	label: {
-		fontWeight: "600",
-		marginBottom: 2,
+	dateRow: {
+		flexDirection: "row",
+		alignItems: "center",
 	},
-	date: {
-		opacity: 0.7,
+	icon: {
+		marginRight: 6,
 	},
 });

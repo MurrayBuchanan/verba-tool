@@ -1,42 +1,50 @@
-const tintColourLight = '#00897B';
-const tintColourDark = '#4DB6AC';
+const tintColourLight = '#4A90E2';
+const tintColourDark = '#80CFFF';
 
 export const Theme = {
-  light: {
-    text: '#1A1A1A',
-    textSecondary: '#5F6368',
-    background: '#F8F9FA',
-    backgroundSecondary: '#FFFFFF',
-    backgroundTertiary: 'rgba(26, 26, 26, 0.4)',
-    accent: tintColourLight,
-    warning: '#B00020',
-    icon: '#5F6368',
-    tabIconDefault: '#9AA0A6',
-    tabIconSelected: tintColourLight,
-    meanColour: '#EF5350',
-    standardDeviationColour: 'rgba(144, 202, 249, 0.3)',
-    interventionColour: 'rgba(77, 182, 172, 0.25)',
-  },
-  dark: {
-    text: '#E8EAED',
-    textSecondary: '#9AA0A6',
-    background: '#121212',
-    backgroundSecondary: '#1E1E1E',
-    backgroundTertiary: 'rgba(232, 234, 237, 0.4)',
-    accent: tintColourDark,
-    warning: '#CF6679',
-    icon: '#9AA0A6',
-    tabIconDefault: '#9AA0A6',
-    tabIconSelected: tintColourDark,
-    meanColour: '#FF6E6E',
-    standardDeviationColour: 'rgba(100, 181, 246, 0.35)',
-    interventionColour: 'rgba(77, 182, 172, 0.3)',
-  },
+	light: {
+		text: '#1A1A1A',
+		textSecondary: '#757575',
+		background: '#F5F5F5',
+		backgroundSecondary: '#FFF',
+		backgroundTertiary: 'rgba(26, 26, 26, 0.3)',
+
+		active: '#E0E0E0',
+		accent: tintColourLight,
+		warning: '#D32F2F',
+		icon: '#757575',
+
+		tabIconDefault: '#9AA0A6',
+		tabIconSelected: tintColourLight,
+
+		standardDeviationColour: 'rgba(74, 144, 226, 0.2)',
+		meanColour: '#43A047',
+		interventionColour: 'rgba(74, 144, 226, 0.15)',
+	},
+	dark: {
+		text: '#E8EAED',
+		textSecondary: '#999999',
+		background: '#131313',
+		backgroundSecondary: '#212121',
+		backgroundTertiary: '#616161',
+
+		accent: tintColourDark,
+		active: '#424242',
+		warning: '#EF5350',
+		icon: '#9E9E9E',
+
+		tabIconDefault: '#9E9E9E',
+		tabIconSelected: tintColourDark,
+
+		meanColour: '#66BB6A',
+		standardDeviationColour: 'rgba(107, 163, 216, 0.25)',
+		interventionColour: 'rgba(107, 163, 216, 0.2)',
+	},
 };
 
 export const Fonts = {
-    sans: 'Inter',
-    serif: 'Inter',
-    rounded: 'Inter',
-    mono: 'Inter',
+	sans: 'Inter_400Regular',
+	sansMedium: 'Inter_500Medium',
+	sansSemiBold: 'Inter_600SemiBold',
+	sansBold: 'Inter_700Bold'
 };

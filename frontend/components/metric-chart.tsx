@@ -15,7 +15,7 @@ type DataPoint = {
     date?: Date;
 };
 
-type MetricChartProps = {
+type Props = {
     data: DataPoint[];
     xAxisLabel?: (value: number) => string;
     title?: string;
@@ -54,10 +54,11 @@ function calculateStandardDeviation(values: number[], mean: number): number {
 }
 
 
-export function MetricChart({ data, xAxisLabel, title, interventions = [], showMean = true, showRange = true, showInterventions = true }: MetricChartProps) {
+export function MetricChart({ data, xAxisLabel, title, interventions = [], showMean = true, showRange = true, showInterventions = true }: Props) {
     const font = useCustomFont("500", 12);
     const labelColour = useThemeColor({}, 'text');
     const dataColour = useThemeColor({}, 'accent');
+    const chartBackground = useThemeColor({}, 'backgroundSecondary');
     const meanColour = useThemeColor({}, 'meanColour');
     const standardDeviationColour = useThemeColor({}, 'standardDeviationColour');
     const interventionColour = useThemeColor({}, 'interventionColour');
@@ -133,15 +134,15 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
     }
     
     return (
-        <View>
+        <View style={[styles.container, { backgroundColor: chartBackground }]}>
             <Text style={styles.title} align="center">{title}</Text>
-            <View style={styles.container}>
+            <View style={styles.chart}>
                 <CartesianChart
                     data={chartData}
                     xKey="x"
                     yKeys={["value", "mean", "upperBound", "lowerBound"]}
                     domainPadding={{ left: 50, right: 50, top: 20, bottom: 40 }}
-                    axisOptions={{ font, labelColor: labelColour, formatXLabel }}>
+                    axisOptions={{ font, labelColor: labelColour, formatXLabel, lineWidth: { grid: 0, frame: 1 }}}>
                     {({ points, chartBounds }) => {
                         const valuePoints = points.value;
 
@@ -197,29 +198,28 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                     }}
                 </CartesianChart>
             </View>
-            <Text style={styles.xAxisLabel} align="center">{data[0].grouping}</Text>
-        
+
             <View style={styles.labelsContainer}>
                 <View style={styles.labelItem}>
                     <View style={[styles.labelLine, { backgroundColor: dataColour, height: 3 }]} />
-                    <Text style={styles.labelText}>Recorded Values</Text>
+                    <Text type="caption">Recorded Values</Text>
                 </View>
                 {showMean && (
                     <View style={styles.labelItem}>
                         <View style={[styles.labelLine, { backgroundColor: meanColour, opacity: 0.6 }]} />
-                        <Text style={styles.labelText}>Mean</Text>
+                        <Text type="caption">Mean</Text>
                     </View>
                 )}
                 {showRange && (
                     <View style={styles.labelItem}>
-                        <View style={[styles.labelSquare, { backgroundColor: standardDeviationColour }]} />
-                        <Text style={styles.labelText}>Range</Text>
+                        <View style={[styles.labelDot, { backgroundColor: standardDeviationColour }]} />
+                        <Text type="caption">Range</Text>
                     </View>
                 )}
                 {showInterventions && interventionPeriods.length > 0 && (
                     <View style={styles.labelItem}>
-                        <View style={[styles.labelSquare, { backgroundColor: interventionColour }]} />
-                        <Text style={styles.labelText}>Intervention Period</Text>
+                        <View style={[styles.labelDot, { backgroundColor: interventionColour }]} />
+                        <Text type="caption">Annotated Period</Text>
                     </View>
                 )}
             </View>
@@ -233,13 +233,14 @@ const styles = StyleSheet.create({
         marginVertical: 16,
     },
     container: {
+        flex: 1,
+        padding: 16,
+        borderRadius: 20,
+    },
+    chart: {
         position: "relative",
         width: "100%",
         height: 300,
-    },
-    xAxisLabel: {
-        fontSize: 12,
-        marginTop: 16,
     },
     labelsContainer: {
         flexDirection: "row",
@@ -255,19 +256,13 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     labelLine: {
-        width: 18,
+        width: 10,
         height: 3,
         borderRadius: 2,
     },
-    labelSquare: {
+    labelDot: {
         width: 10,
         height: 10,
-        borderRadius: 3,
-    },
-    labelText: {
-        fontSize: 13,
-        fontWeight: "500",
-        letterSpacing: 0.1,
-        opacity: 0.85,
-    },
+        borderRadius: 5,
+    }
 });

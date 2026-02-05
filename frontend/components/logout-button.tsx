@@ -1,10 +1,12 @@
-import { StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { Alert, View, StyleSheet } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+
 import { useAuthentication } from '@/hooks/use-authentication';
+import { IconButton } from '@/components/icon-button';
+import { LogOut } from 'lucide-react-native';
 
 export function LogoutButton() {
-	const warningColour = useThemeColor({}, 'warning');
+	const iconColour = useThemeColor({}, 'icon');
 	const { signOut } = useAuthentication();
 
 	const handleLogout = () => {
@@ -27,14 +29,14 @@ export function LogoutButton() {
 		);
 	};
 	return (
-		<TouchableOpacity onPress={handleLogout} style={styles.button}>
-			<IconSymbol name="rectangle.portrait.and.arrow.right" size={24} color={warningColour} />
-		</TouchableOpacity>
+		<View style={styles.container}>
+			<IconButton icon={<LogOut size={22} color={iconColour} />} onPress={handleLogout} accessibilityLabel='Logout' />
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	button: {
-		padding: 10,
+	container: {
+		marginRight: 16,
 	},
 });

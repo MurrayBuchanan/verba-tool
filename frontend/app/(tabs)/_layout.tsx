@@ -1,49 +1,59 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
+import { Mic, ChartLine, ClipboardList, History } from 'lucide-react-native';
 import { HapticFeedback } from '@/components/haptic-feedback';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { LogoutButton } from '@/components/logout-button';
-
-// This file was generated and modified from the Expo boilerplate using 'npx create-expo-app'
+import { Fonts } from '@/constants/theme';
 
 export default function TabLayout() {
 	const accentColour = useThemeColor({}, 'accent');
+	const backgroundColour = useThemeColor({}, 'background');
+	const backgroundSecondaryColour = useThemeColor({}, 'backgroundSecondary');
+	const textColour = useThemeColor({}, 'text');
+	const tabIconDefaultColour = useThemeColor({}, 'tabIconDefault');
 
 	return (
 		<Tabs
 			screenOptions={{
-			tabBarActiveTintColor: accentColour,
-			headerShown: true,
-			tabBarButton: HapticFeedback,
-			headerRight: () => (<LogoutButton />)
-		}}>
+				tabBarActiveTintColor: accentColour,
+				tabBarInactiveTintColor: tabIconDefaultColour,
+				headerShown: true,
+				headerStyle: { backgroundColor: backgroundColour },
+				headerTintColor: textColour,
+				tabBarButton: HapticFeedback,
+				headerRight: () => (<LogoutButton />),
+				headerShadowVisible: false,
+				tabBarStyle: { backgroundColor: backgroundSecondaryColour, borderTopWidth: 0 },
+				tabBarLabelStyle: { fontFamily: Fonts.sansSemiBold, fontSize: 12 }
+			}}
+		>
 			<Tabs.Screen
-				name="recordAudioScreen"
+				name='recordAudioScreen'
 				options={{
 					title: 'Record',
-					tabBarIcon: ({ color }) => <IconSymbol size={28} name="record.circle" color={color} />,
+					tabBarIcon: ({ color }) => <Mic size={22} color={color} />,
 				}}
 			/>
 			<Tabs.Screen
-				name="metricsScreen"
+				name='metricsScreen'
 				options={{
 					title: 'Metrics',
-					tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.line.uptrend.xyaxis" color={color} />,
+					tabBarIcon: ({ color }) => <ChartLine size={22} color={color} />,
 				}}
 			/>
 			<Tabs.Screen
-				name="interventionScreen"
+				name='interventionScreen'
 				options={{
-					title: 'Interventions',
-					tabBarIcon: ({ color }) => <IconSymbol size={28} name="chart.line.text.clipboard" color={color} />,
+					title: 'Annotations',
+					tabBarIcon: ({ color }) => <ClipboardList size={22} color={color} />,
 				}}
 			/>
 			<Tabs.Screen
-				name="conversationHistoryScreen"
+				name='conversationHistoryScreen'
 				options={{
 					title: 'Chat History',
-					tabBarIcon: ({ color }) => <IconSymbol size={28} name="clock" color={color} />,
+					tabBarIcon: ({ color }) => <History size={22} color={color} />,
 				}}
 			/>
 		</Tabs>

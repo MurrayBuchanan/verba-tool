@@ -4,13 +4,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Plus } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { InterventionItem as Item } from "@/components/intervention-item";
 import { Intervention } from "@/constants/transcript";
 import { getInterventions } from "@/services/intervention-service";
 import { formatDisplayDate } from "@/utils/date-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { Explaination } from "@/components/explaination";
 
 export default function InterventionScreen() {
 	const router = useRouter();
@@ -34,7 +35,7 @@ export default function InterventionScreen() {
 					setError(null);
 					hasInitiallyLoaded.current = true;
 				} catch (error) {
-					setError("Unable to load interventions");
+					setError("Unable to load annotations");
 				} finally {
 					setLoading(false);
 				}
@@ -57,12 +58,15 @@ export default function InterventionScreen() {
 				</View>
 			) : interventions.length === 0 ? (
 				<View style={styles.center}>
-					<Text align="center">No interventions, try creating a new intervention!</Text>
+					<Text align="center">No annotations, try creating a new annotation!</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+					
+					<Explaination text="Annotations are used to document and view changes to language over set periods of time." />
+					
 					<List divider={true}>
-						{interventions.map((intervention) => {
+						{ interventions.map((intervention) => {
 							return (
 								<Item
 									key={intervention.id}
@@ -71,13 +75,13 @@ export default function InterventionScreen() {
 									dateRange={`${formatDisplayDate(intervention.start_date)} - ${formatDisplayDate(intervention.end_date)}`}
 								/>
 							);
-							})}
+						})}
 					</List>
 				</ScrollView>
 			)}
 			{!loading && !error && (
 				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/interventionModal")}>
-					<IconSymbol name="plus" size={28} color="#FFF"/>
+					<Plus size={28} color="#FFF"/>
 				</TouchableOpacity>
 			)}
 		</View>
