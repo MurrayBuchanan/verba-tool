@@ -107,3 +107,6 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 	```bash
 	uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 	```
+
+## How to test
+```python -m pytest```
