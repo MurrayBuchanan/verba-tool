@@ -1,11 +1,13 @@
+import { useState, useMemo, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
+import Animated, { useAnimatedReaction, runOnJS, useDerivedValue, useAnimatedStyle } from "react-native-reanimated";
+import type { SharedValue } from "react-native-reanimated";
 import { ThemedText as Text } from "@/components/themed-text";
-import { CartesianChart, Line, AreaRange } from "victory-native";
-import { useCustomFont } from "@/hooks/use-custom-font";
-import { useThemeColor } from "@/hooks/use-theme-color";
-import { useMemo } from "react";
 import { Intervention } from "@/constants/transcript";
-import { Rect } from "@shopify/react-native-skia";
+import { CartesianChart, Line, AreaRange, useChartPressState } from "victory-native";
+import { useFont, Circle, Line as LinePath, Rect, vec } from "@shopify/react-native-skia";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { Inter_500Medium } from "@expo-google-fonts/inter";
 
 type DataPoint = {
     x: number;
@@ -53,15 +55,61 @@ function calculateStandardDeviation(values: number[], mean: number): number {
     return Math.sqrt(variance);
 }
 
+function findPointAtX<T extends { x: number }>(points: T[], x: number): T | null {
+    if (points.length === 0) {
+        return null;
+    } 
+    const exact = points.find((d) => d.x === x);
+    if (exact) {
+        return exact;
+    }
+    let closest = points[0];
+    for (let i = 1; i < points.length; i++) {
+        if (Math.abs(points[i].x - x) < Math.abs(closest.x - x)) closest = points[i];
+    }
+    return closest;
+}
+
+type ToolTipAxisProps = {
+    xPosition: SharedValue<number>;
+    top: number;
+    bottom: number;
+    colour: string;
+};
+
+function ToolTipLine({ xPosition, top, bottom, colour }: ToolTipAxisProps) {
+    const bottomPoint = useDerivedValue(() => vec(xPosition.value, bottom));
+    const topPoint = useDerivedValue(() => vec(xPosition.value, top));
+    return <LinePath p1={bottomPoint} p2={topPoint} color={colour} strokeWidth={1.5} />;
+}
+
+function ToolTip({ x, y, color = "black" }: { x: SharedValue<number>; y: SharedValue<number>; color?: string }) {
+    return <Circle cx={x} cy={y} r={8} color={color} />;
+}
 
 export function MetricChart({ data, xAxisLabel, title, interventions = [], showMean = true, showRange = true, showInterventions = true }: Props) {
-    const font = useCustomFont("500", 12);
     const labelColour = useThemeColor({}, 'text');
+    const gridColour = useThemeColor({}, 'backgroundTertiary');
     const dataColour = useThemeColor({}, 'accent');
-    const chartBackground = useThemeColor({}, 'backgroundSecondary');
     const meanColour = useThemeColor({}, 'meanColour');
     const standardDeviationColour = useThemeColor({}, 'standardDeviationColour');
     const interventionColour = useThemeColor({}, 'interventionColour');
+
+    const { state, isActive } = useChartPressState({
+        x: 0,
+        y: { value: 0, mean: 0, upperBound: 0, lowerBound: 0 },
+    });
+
+    const [pressedX, setPressedX] = useState<number | null>(null);
+    const syncPressToJs = useCallback((active: boolean | number, x: number | boolean) => { setPressedX(active ? (x as number) : null) }, []);
+
+    useAnimatedReaction(
+        () => [state.isActive.value, state.x.value.value],
+        ([active, x]) => {
+            runOnJS(syncPressToJs)(active, x);
+        },
+        []
+    );
 
     const chartData = useMemo(() => {
         const result = [];
@@ -81,11 +129,22 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                 mean,
                 upperBound: mean + standardDeviation,
                 lowerBound: mean - standardDeviation,
-                label: point.label
+                label: point.label,
+                date: point.date,
             });
         }
         return result;
     }, [data]);
+
+    const tooltipPoint = useMemo(() => (pressedX == null ? null : findPointAtX(chartData, pressedX)), [pressedX, chartData]);
+
+    const valueLabelStyle = useAnimatedStyle(() => ({
+        position: "absolute",
+        left: state.x.position.value - 24,
+        top: -24,
+        width: 48,
+        opacity: state.isActive.value ? 1 : 0,
+    }));
 
     const interventionPeriods = useMemo(() => {
         if (!data.length || !interventions.length) {
@@ -134,15 +193,34 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
     }
     
     return (
-        <View style={[styles.container, { backgroundColor: chartBackground }]}>
-            <Text style={styles.title} align="center">{title}</Text>
+        <View style={styles.container}>
+            <Text type='strong' align='center' style={styles.title}>{title}</Text>
             <View style={styles.chart}>
+
+                <Animated.View style={valueLabelStyle} pointerEvents="none">
+                    { tooltipPoint != null && (
+                        <Text type="caption" align='center'>{tooltipPoint.value.toFixed(2)}</Text>
+                    )}
+                </Animated.View>
+
                 <CartesianChart
                     data={chartData}
                     xKey="x"
                     yKeys={["value", "mean", "upperBound", "lowerBound"]}
                     domainPadding={{ left: 50, right: 50, top: 20, bottom: 40 }}
-                    axisOptions={{ font, labelColor: labelColour, formatXLabel, lineWidth: { grid: 0, frame: 1 }}}>
+                    chartPressState={state}
+                    frame={{
+                        lineWidth: { top: 0.5, right: 0, bottom: 0.5, left: 0 },
+                        lineColor: gridColour,
+                    }}
+                    axisOptions={{
+                        font: useFont(Inter_500Medium, 12),
+                        labelColor: labelColour,
+                        formatXLabel,
+                        lineWidth: { grid: 0.5, frame: 0 },
+                        lineColor: { grid: gridColour, frame: gridColour },
+                    }}>
+                        
                     {({ points, chartBounds }) => {
                         const valuePoints = points.value;
 
@@ -174,6 +252,17 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                         return (
                             <>
                             {showInterventions && interventionOverlay}
+                                {isActive && (
+                                    <>
+                                        <ToolTipLine
+                                            xPosition={state.x.position}
+                                            top={chartBounds.top}
+                                            bottom={chartBounds.bottom}
+                                            colour={dataColour}
+                                        />
+                                        <ToolTip x={state.x.position} y={state.y.value.position} color={dataColour} />
+                                    </>
+                                )}
                                 {showRange && (
                                     <AreaRange
                                         upperPoints={points.upperBound}
@@ -185,13 +274,17 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                                     <Line
                                         points={points.mean}
                                         color={meanColour}
-                                        strokeWidth={2}
+                                        strokeWidth={3}
+                                        strokeCap="round"
+                                        strokeJoin="round"
                                     />
                                 )}
                                 <Line 
                                     points={points.value}
                                     color={dataColour}
                                     strokeWidth={3}
+                                    strokeCap="round"
+                                    strokeJoin="round"
                                 />
                             </>
                         );
@@ -201,12 +294,12 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
 
             <View style={styles.labelsContainer}>
                 <View style={styles.labelItem}>
-                    <View style={[styles.labelLine, { backgroundColor: dataColour, height: 3 }]} />
+                    <View style={[styles.labelLine, { backgroundColor: dataColour }]} />
                     <Text type="caption">Recorded Values</Text>
                 </View>
                 {showMean && (
                     <View style={styles.labelItem}>
-                        <View style={[styles.labelLine, { backgroundColor: meanColour, opacity: 0.6 }]} />
+                        <View style={[styles.labelLine, { backgroundColor: meanColour }]} />
                         <Text type="caption">Mean</Text>
                     </View>
                 )}
@@ -230,12 +323,11 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         fontWeight: "600",
-        marginVertical: 16,
+        marginTop: 20,
+        marginBottom: 30,
     },
     container: {
         flex: 1,
-        padding: 16,
-        borderRadius: 20,
     },
     chart: {
         position: "relative",
@@ -243,12 +335,12 @@ const styles = StyleSheet.create({
         height: 300,
     },
     labelsContainer: {
+        marginVertical: 20,
         flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 16,
-        gap: 24,
         flexWrap: "wrap",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 16,
     },
     labelItem: {
         flexDirection: "row",
