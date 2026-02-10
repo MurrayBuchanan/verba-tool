@@ -9,6 +9,7 @@ import { getTranscripts } from "@/services/transcript-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { List } from "@/components/list";
 import { Theme } from "@/constants/theme";
+import { AlertCircle } from "lucide-react-native";
 
 export default function MetricsScreen() {
 	const router = useRouter();
@@ -51,6 +52,7 @@ export default function MetricsScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
+					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
 					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (!hasConversations) ? (
@@ -121,6 +123,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
+	},
+	placeholder: {
+		marginBottom: 16,
 	},
 	section: {
 		paddingHorizontal: 20,

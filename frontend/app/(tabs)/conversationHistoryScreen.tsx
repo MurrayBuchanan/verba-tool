@@ -10,6 +10,7 @@ import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/transcript";
 import { formatDisplayDateTime } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { AlertCircle } from "lucide-react-native";
 import { formatDuration } from "@/utils/datetime-formatting";
 
 export default function ConversationHistoryScreen() {
@@ -52,6 +53,7 @@ export default function ConversationHistoryScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
+					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
 					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : transcripts.length === 0 ? (
@@ -93,5 +95,8 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
+	},
+	placeholder: {
+		marginBottom: 16,
 	},
 });

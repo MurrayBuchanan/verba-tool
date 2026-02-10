@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Plus } from 'lucide-react-native';
+import { Plus, AlertCircle } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { InterventionItem as Item } from "@/components/intervention-item";
 import { Intervention } from "@/constants/transcript";
@@ -54,6 +54,7 @@ export default function InterventionScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
+					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
 					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : interventions.length === 0 ? (
@@ -103,14 +104,21 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		right: 20,
 		bottom: 20,
-		width: 70,
-		height: 70,
-		borderRadius: 35,
+		width: 68,
+		height: 68,
+		borderRadius: 34,
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.2,
+		shadowRadius: 4,
 	},
 	center: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
-	}
+	},
+	placeholder: {
+		marginBottom: 16,
+	},
 });

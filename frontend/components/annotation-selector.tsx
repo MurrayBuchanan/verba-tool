@@ -8,45 +8,43 @@ type Views = {
 };
 
 type Props = {
-	options: Views[];
+	views: Views[];
 	selectedValue: string;
 	onValueChange: (value: string) => void;
 };
 
-export function AnnotationSelector({ options, selectedValue, onValueChange }: Props) {
+export function AnnotationSelector({ views, selectedValue, onValueChange }: Props) {
 	const accentColour = useThemeColor({}, 'accent');
 	const textColour = useThemeColor({}, 'text');
-	const secondaryBackgroundColour = useThemeColor({}, 'backgroundSecondary');
+	const backgroundSecondary = useThemeColor({}, 'backgroundSecondary');
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.content}>
-				{options.map((option) => (
-					<TouchableOpacity key={option.value} onPress={() => onValueChange(option.value)} style={[styles.item, { backgroundColor: option.value === selectedValue ? accentColour : secondaryBackgroundColour }]}>
-						<Text type="caption" style={{ color: option.value === selectedValue ? '#FFF' : textColour }} numberOfLines={1}>{option.label}</Text>
+			{views.map((view) => {
+				const isSelected = view.value === selectedValue;
+				return (
+					<TouchableOpacity key={view.value} onPress={() => onValueChange(view.value)} style={[styles.item, { backgroundColor: backgroundSecondary, borderWidth: 1, borderColor: isSelected ? accentColour : backgroundSecondary }]}>
+						<Text type="caption" style={{ color: textColour }} numberOfLines={1}>{view.label}</Text>
 					</TouchableOpacity>
-				))}
-			</View>
+				);
+			})}
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	container: {
-		paddingTop: 20,
-		paddingBottom: 10,
-	},
-	content: {
 		flexDirection: 'row',
-		paddingVertical: 10,
 		gap: 10,
+		marginHorizontal: 20,
+		marginVertical: 10,
 	},
 	item: {
 		flex: 1,
-		paddingHorizontal: 14,
-		paddingVertical: 12,
-		borderRadius: 14,
+		paddingHorizontal: 10,
+		paddingVertical: 10,
+		borderRadius: 10,
 		alignItems: 'center',
 		justifyContent: 'center',
-	}
+	},
 });

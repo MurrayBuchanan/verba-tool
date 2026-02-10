@@ -3,37 +3,36 @@ const tintColourDark = '#80CFFF';
 
 export const Theme = {
 	light: {
-		text: '#1A1A1A',
-		textSecondary: '#757575',
-		background: '#F5F5F5',
-		backgroundSecondary: '#FFF',
-		backgroundTertiary: 'rgba(26, 26, 26, 0.3)',
+		text: '#1C1B1F',
+		textSecondary: '#49454F',
+		background: '#FAFAFA',
+		backgroundSecondary: '#F5F5F5',
+		backgroundTertiary: '#E0E0E0',
 
-		active: '#E0E0E0',
+		active: '#EEEEEE',
 		accent: tintColourLight,
-		warning: '#D32F2F',
-		icon: '#757575',
-
-		tabIconDefault: '#9AA0A6',
+		warning: '#BA1A1A',
+		icon: '#49454F',
+		tabIconDefault: '#79747E',
 		tabIconSelected: tintColourLight,
 
 		standardDeviationColour: 'rgba(74, 144, 226, 0.2)',
 		meanColour: '#43A047',
 		interventionColour: 'rgba(74, 144, 226, 0.15)',
 	},
+
 	dark: {
-		text: '#E8EAED',
-		textSecondary: '#999999',
-		background: '#131313',
-		backgroundSecondary: '#212121',
-		backgroundTertiary: '#616161',
+		text: '#E6E1E5',
+		textSecondary: '#CAC4D0',
+		background: '#121212',
+		backgroundSecondary: '#1E1E1E',
+		backgroundTertiary: '#2D2D2D',
 
 		accent: tintColourDark,
-		active: '#424242',
-		warning: '#EF5350',
-		icon: '#9E9E9E',
-
-		tabIconDefault: '#9E9E9E',
+		active: '#363636',
+		warning: '#F2B8B5',
+		icon: '#CAC4D0',
+		tabIconDefault: '#938F99',
 		tabIconSelected: tintColourDark,
 
 		meanColour: '#66BB6A',

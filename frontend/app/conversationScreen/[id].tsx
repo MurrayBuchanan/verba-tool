@@ -4,7 +4,7 @@ import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Trash } from 'lucide-react-native';
+import { Trash, AlertCircle } from 'lucide-react-native';
 import { SpeakerSegment } from "@/components/speaker-segment";
 import { TranscriptWithSegments } from "@/constants/transcript";
 import { getTranscript, deleteTranscript } from "@/services/transcript-service";
@@ -52,7 +52,7 @@ export default function ConversationDisplayScreen() {
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<IconButton icon={<Trash size={24} color={warningColour} />} onPress={handleDelete} />
+				<IconButton icon={<Trash size={22} color={warningColour} />} onPress={handleDelete} />
 			),
 		});
 	}, [navigation, handleDelete, warningColour]);
@@ -96,6 +96,7 @@ export default function ConversationDisplayScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
+					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
 					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (
@@ -132,6 +133,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
+	},
+	placeholder: {
+		marginBottom: 16,
 	},
 	button: {
 		marginRight: 10,

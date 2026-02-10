@@ -1,16 +1,15 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from "react-native";
+import { StyleSheet, View, ScrollView, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import { useState, useCallback, useRef, useMemo, useLayoutEffect } from "react";
 import { useLocalSearchParams, router, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Trash, Pencil, X, Check } from "lucide-react-native";
-import { Divider } from "@/components/divider"
+import { Trash, Pencil, X, Check, AlertCircle } from "lucide-react-native";
 import { MetricChart as Chart } from "@/components/metric-chart";
 import { MetricSelector } from "@/components/metric-selector";
 import { AnnotationSelector } from "@/components/annotation-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
-import { TextField as TextField } from "@/components/textfield";
+import { TextField } from "@/components/textfield";
 import { DatePicker as Picker } from "@/components/date-picker";
 import { Intervention } from "@/constants/transcript";
 import { getIntervention, updateIntervention, deleteIntervention } from "@/services/intervention-service";
@@ -42,13 +41,16 @@ export default function InterventionDetailScreen() {
 	const navigation = useNavigation();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
+	const sectionBackground = useThemeColor({}, 'background');
+	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
+	const borderColour = useThemeColor({}, 'backgroundTertiary');
 	const [intervention, setIntervention] = useState<any>(null);
 	const [editingIntervention, setEditingIntervention] = useState<Intervention | null>(null);
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
-	const [annotationView, setAnnotationView] = useState<string>("details");
+	const [annotationView, setAnnotationView] = useState<string>("annotation");
 	const [showMean, setShowMean] = useState<boolean>(true);
 	const [showRange, setShowRange] = useState<boolean>(true);
 	const loadedId = useRef<string | undefined>(undefined);
@@ -97,7 +99,7 @@ export default function InterventionDetailScreen() {
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<IconButton icon={<Trash size={24} color={warningColour} />} onPress={handleDeleteIntervention} />
+				<IconButton icon={<Trash size={22} color={warningColour} />} onPress={handleDeleteIntervention} />
 			),
 		});
 	}, [navigation, handleDeleteIntervention, warningColour]);
@@ -153,10 +155,11 @@ export default function InterventionDetailScreen() {
 	}, []);
 
 	const annotationViewOptions = useMemo(() => [
-		{ label: "Annotation", value: "details" },
-		{ label: "What This Shows", value: "description" },
-	], []);
-	
+			{ label: "Annotation Details", value: "annotation" },
+			{ label: "Metric Information", value: "metric" },
+		], []
+	);
+
 	return (
 		<ThemedView style={styles.container}>
 			{loading ? (
@@ -166,109 +169,109 @@ export default function InterventionDetailScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
+					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
 					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (
 				<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
-					<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-						<MetricSelector views={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
-					{ metricData.length > 0 ? (
-						<View style={styles.section}>
-							<Chart 
-								data={metricData} 
-								xAxisLabel={(value) => {
-									const point = metricData.find(d => d.x === value);
-									return point?.label || "";
-								}}
-								title={`Changes to ${metricDetails.name}\nDuring Annotation`}
-								showMean={showMean}
-								showRange={showRange}
-								showInterventions={false}
-							/>
-						</View>
-					) : (
-						<View style={styles.center}>
-							<Text align="center">No data available for this metric within this annotation period.</Text>
-						</View>
-					)}
-
-					<View style={styles.section}>
-					<AnnotationSelector options={annotationViewOptions} selectedValue={annotationView} onValueChange={setAnnotationView} />
-					
-					<View style={styles.annotationViewContainer}>
-						{annotationView === "details" && (
-							<>
-								<View style={styles.row}>
-									<Text type="heading">Annotation Details</Text>
-									<View style={styles.buttons}>
-										{editingIntervention ? (
-											<>
-												<IconButton icon={<X size={22} color={warningColour} />} onPress={() => setEditingIntervention(null)} accessibilityLabel="Cancel" />
-												<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Update" />
-											</>
-										) : (
-											<IconButton icon={<Pencil size={22} color={accentColour} />} onPress={() => intervention && setEditingIntervention({ ...intervention })} accessibilityLabel="Edit" />
-										)}
-									</View>
-								</View>
-
-								<TextField
-									label="Name"
-									value={editingIntervention ? (editingIntervention.name ?? "") : intervention.name}
-									onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, name: text })}
-									editable={editingIntervention !== null}
-								/>
-								
-								<Picker
-									label="Start Date"
-									value={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
-									onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, start_date: formatAPIDate(date)})}
-									maximumDate={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
-									editable={editingIntervention !== null}
-								/>
-								
-								<Picker
-									label="End Date"
-									value={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
-									onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, end_date: formatAPIDate(date) })}
-									minimumDate={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
-									editable={editingIntervention !== null}
-								/>
-								
-								<TextField
-									label="Description"
-									value={editingIntervention ? (editingIntervention.description ?? "") : (intervention.description || "")}
-									onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, description: text || null })}
-									placeholder="No description"
-									multiline
-									editable={editingIntervention !== null}
-								/>
-							</>
-						)}
-
-						{annotationView === "description" && (
-							<>
-								<Text type="heading">Annotation Description</Text>
-								<View>
-									<Text>{metricDetails.alias}</Text>
-									<Text>{metricDetails.description}</Text>
-								</View>
-							</>
-						)}
+					<View style={[styles.quickSelectHeader, { backgroundColor: sectionBackground, borderTopColor: borderColour, borderBottomColor: borderColour }]}>
+						<MetricSelector
+							views={metricKeys}
+							selectedValue={selectedMetric}
+							onValueChange={setSelectedMetric}
+						/>
 					</View>
+					<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+						{metricData.length > 0 ? (
+							<View style={styles.section}>
+								<Chart
+									data={metricData}
+									xAxisLabel={(value) => {
+										const point = metricData.find(d => d.x === value);
+										return point?.label || "";
+									}}
+									title={`Changes to ${metricDetails.name} during annotation`}
+									showMean={showMean}
+									showRange={showRange}
+									showInterventions={false}
+								/>
+							</View>
+						) : (
+							<View style={styles.center}>
+								<Text align="center">No data available for this metric within this annotation period.</Text>
+							</View>
+						)}
 
-						<Divider />
+						<View>
+							<AnnotationSelector views={annotationViewOptions} selectedValue={annotationView} onValueChange={setAnnotationView} />
+								{annotationView === "annotation" ? (
+								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
+									<View style={styles.detailsRow}>
+										<Text type="heading">Annotation Details</Text>
+										<View style={styles.detailsRowRight}>
+											{editingIntervention ? (
+												<View style={styles.buttons}>
+													<IconButton icon={<X size={22} color={warningColour} />} onPress={() => setEditingIntervention(null)} accessibilityLabel="Cancel" />
+													<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Update" />
+												</View>
+											) : (
+												<IconButton icon={<Pencil size={22} color={accentColour} />} onPress={() => intervention && setEditingIntervention({ ...intervention })} accessibilityLabel="Edit" />
+											)}
+										</View>
+									</View>
+									<TextField
+										label="Annotation Name"
+										value={editingIntervention ? (editingIntervention.name ?? "") : intervention.name}
+										onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, name: text })}
+										editable={editingIntervention !== null}
+									/>
+									<TextField
+										label="Description"
+										value={editingIntervention ? (editingIntervention.description ?? "") : (intervention.description || "")}
+										onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, description: text || null })}
+										placeholder="No description"
+										multiline
+										editable={editingIntervention !== null}
+									/>
+									<Picker
+										label="Start Date"
+										value={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
+										onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, start_date: formatAPIDate(date) })}
+										maximumDate={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
+										editable={editingIntervention !== null}
+									/>
+									<Picker
+										label="End Date"
+										value={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
+										onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, end_date: formatAPIDate(date) })}
+										minimumDate={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
+										editable={editingIntervention !== null}
+									/>
+								</View>
+							) : (
+								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
+									<View style={styles.detailsRow}>
+										<Text type="heading">Metric Information</Text>
+										<View style={styles.detailsRowRight} />
+									</View>
+									<Text type="strong">What Does this Mean?</Text>
+									<Text type="caption">{metricDetails.alias}</Text>
+									<Text type="strong">Description</Text>
+									<Text type="caption">{metricDetails.description}</Text>
+								</View>
+							)}
+						</View>
 
 						{metricData.length > 0 && (
-							<View>
+							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
+								<Text type="heading">Chart Controls</Text>
 								<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
 								<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
 							</View>
 						)}
-					</View>
 					</ScrollView>
 				</KeyboardAvoidingView>
-			)}
+			)}	
 		</ThemedView>
 	);
 }
@@ -277,11 +280,23 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
+	quickSelectHeader: {
+		paddingVertical: 8,
+		borderTopWidth: StyleSheet.hairlineWidth,
+		borderBottomWidth: StyleSheet.hairlineWidth,
+	},
 	content: {
 		flexGrow: 1,
+		paddingBottom: 10,
 	},
-	annotationViewContainer: {
-		minHeight: 420,
+	section: {
+		marginHorizontal: 20,
+		marginVertical: 10,
+		paddingHorizontal: 20,
+		paddingTop: 20,
+		paddingBottom: 10,
+		gap: 12,
+		borderRadius: 16
 	},
 	center: {
 		flex: 1,
@@ -289,19 +304,28 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		padding: 40,
 	},
-	button: {
-		marginRight: 10,
+	placeholder: {
+		marginBottom: 16,
 	},
 	row: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
 	},
+	detailsRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		minHeight: 44,
+	},
+	detailsRowRight: {
+		minWidth: 88,
+		height: 44,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-end",
+	},
 	buttons: {
 		flexDirection: "row",
-	},
-	section: {
-		paddingVertical: 10,
-		marginHorizontal: 20,
 	},
 });

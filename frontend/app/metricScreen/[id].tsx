@@ -12,11 +12,16 @@ import { getInterventions } from "@/services/intervention-service";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { AlertCircle } from "lucide-react-native";
 
 export default function MetricDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
+	const sectionBackground = useThemeColor({}, 'background');
+	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
+	const borderColour = useThemeColor({}, 'backgroundTertiary');
+
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [interventions, setInterventions] = useState<Intervention[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -75,51 +80,58 @@ export default function MetricDisplayScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
+					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
 					<Text align="center" style={{ color: warningColour }}>{error}</Text>
 				</View>
 			) : (
-				<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<MetricSelector
-						views={metricKeys}
-						selectedValue={selectedMetric}
-						onValueChange={setSelectedMetric}
-					/>
-
-					{ metricData.length > 0 ? (
-						<View style={styles.section}>
-							<Chart 
-								data={metricData} 
-								xAxisLabel={(value) => {
-									const point = metricData.find(d => d.x === value);
-									return point?.label || "";
-								}}
-								title={`Changes to ${metricDetails.name}`}
-								interventions={interventions}
-								showMean={showMean}
-								showRange={showRange}
-								showInterventions={showInterventions}
-							/>
-						</View>
-					) : (
-						<View style={styles.center}>
-							<Text align="center">No data available for this metric yet. Record conversations to see progress over time.</Text>
-						</View>
-					)}
-
-					<View style={styles.section}>
-						<Text type="heading">Description</Text>
-						<Text>{metricDetails.alias}</Text>
-						<Text>{metricDetails.description}</Text>
+				<>
+					<View style={[styles.quickSelectHeader, { backgroundColor: sectionBackground, borderTopColor: borderColour, borderBottomColor: borderColour }]}>
+						<MetricSelector
+							views={metricKeys}
+							selectedValue={selectedMetric}
+							onValueChange={setSelectedMetric}
+						/>
 					</View>
+					<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+						{ metricData.length > 0 ? (
+							<View style={styles.section}>
+								<Chart 
+									data={metricData} 
+									xAxisLabel={(value) => {
+										const point = metricData.find(d => d.x === value);
+										return point?.label || "";
+									}}
+									title={`Changes to ${metricDetails.name}`}
+									interventions={interventions}
+									showMean={showMean}
+									showRange={showRange}
+									showInterventions={showInterventions}
+								/>
+							</View>
+						) : (
+							<View style={styles.center}>
+								<Text align="center">No data available for this metric yet. Record conversations to see progress over time.</Text>
+							</View>
+						)}
 
-					{metricData.length > 0 && (
-						<View style={styles.section}>
-							<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
-							<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
-							<Switch label="Show Annotations" value={showInterventions} onValueChange={setShowInterventions} />
+						<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
+								<Text type="heading">Metric Information</Text>
+								<Text type="strong">What Does this Mean?</Text>
+								<Text type="caption">{metricDetails.alias}</Text>
+								<Text type="strong">Description</Text>
+								<Text type="caption">{metricDetails.description}</Text>
 						</View>
-					)}
-				</ScrollView>
+
+						{metricData.length > 0 && (
+							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
+								<Text type="heading">Chart Controls</Text>
+								<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
+								<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
+								<Switch label="Show Annotations" value={showInterventions} onValueChange={setShowInterventions} />
+							</View>
+						)}
+					</ScrollView>
+				</>
 			)}
 		</ThemedView>
 	);
@@ -129,17 +141,32 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
+	quickSelectHeader: {
+		paddingVertical: 8,
+		borderTopWidth: StyleSheet.hairlineWidth,
+		borderBottomWidth: StyleSheet.hairlineWidth,
+	},
 	content: {
 		flexGrow: 1,
+		paddingBottom: 10,
 	},
 	section: {
-		paddingHorizontal: 20,
-		paddingVertical: 10,
+		marginHorizontal: 20,
+		paddingHorizontal:20,
+		marginTop: 8,
+		marginBottom: 10,
+		borderRadius: 16,
+		padding: 20,
+		gap: 16,
 	},
+
 	center: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
+	},
+	placeholder: {
+		marginBottom: 16,
 	},
 });

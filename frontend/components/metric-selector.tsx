@@ -20,7 +20,6 @@ export function MetricSelector({ views, selectedValue, onValueChange }: Props) {
 
 	return (
 		<>
-			<Text type='heading' style={styles.heading}>Select Metric</Text>
 			<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.content}>
 				{views.map((view) => {
 					const isSelected = view.value === selectedValue;
@@ -42,10 +41,8 @@ export function MetricSelector({ views, selectedValue, onValueChange }: Props) {
 const styles = StyleSheet.create({
 	heading: {
 		paddingHorizontal: 20,
-		paddingVertical: 10,
 	},
 	content: {
-		paddingVertical: 10,
 		paddingHorizontal: 20,
 		gap: 10,
 	},

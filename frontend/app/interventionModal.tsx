@@ -14,6 +14,7 @@ export default function InterventionModal() {
 	const navigation = useNavigation();
 	const warningColour = useThemeColor({}, "warning");
 	const accentColour = useThemeColor({}, "accent");
+	const secondaryBackground = useThemeColor({}, "backgroundSecondary");
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [startDate, setStartDate] = useState(new Date());
@@ -44,6 +45,7 @@ export default function InterventionModal() {
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
+			headerStyle: { backgroundColor: secondaryBackground },
 			headerLeft: () => (
 				<IconButton icon={<X size={22} color={warningColour} />} onPress={() => router.back()} accessibilityLabel="Cancel" />
 			),
@@ -51,10 +53,10 @@ export default function InterventionModal() {
 				<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleCreateIntervention} accessibilityLabel="Create" />
 			),
 		});
-	}, [navigation, handleCreateIntervention, isCreating, warningColour, accentColour, name.trim()]);
+	}, [navigation, handleCreateIntervention, warningColour, accentColour, secondaryBackground]);
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: secondaryBackground }]}>
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 					<TextField

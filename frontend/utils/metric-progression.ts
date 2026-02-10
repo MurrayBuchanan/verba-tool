@@ -1,5 +1,5 @@
 import { TranscriptWithFeatures } from "@/constants/transcript";
-import { MAX_DAYS_FOR_DAILY_VIEW, MAX_DAYS_FOR_WEEKLY_VIEW, MILLISECONDS_PER_DAY, DAY_NAMES, MONTH_NAMES } from "@/constants/time";
+import { MAX_DAYS_FOR_DAILY_VIEW, MAX_DAYS_FOR_WEEKLY_VIEW, MILLISECONDS_PER_DAY, MONTH_NAMES } from "@/constants/time";
 
 type DataPoint = {
 	x: number;
@@ -94,8 +94,11 @@ function groupByTimePeriod(transcripts: TranscriptWithFeatures[], grouping: "Day
 
 function formatGroupLabel(date: Date, grouping: "Day" | "Week" | "Month"): string {
 	switch (grouping) {
-		case "Day":
-			return DAY_NAMES[date.getDay()];
+		case "Day": {
+			const day = String(date.getDate()).padStart(2, "0");
+			const month = String(date.getMonth() + 1).padStart(2, "0");
+			return `${day}/${month}`;
+		}
 		case "Week":
 			return `W${getWeekNumber(date) + 1}`;
 		case "Month":

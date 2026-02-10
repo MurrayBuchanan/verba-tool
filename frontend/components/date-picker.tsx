@@ -20,7 +20,7 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 	const [showPicker, setShowPicker] = useState(false);
 	const accentColour = useThemeColor({}, 'accent');
 	const iconColour = useThemeColor({}, 'icon');
-	const backgroundColour = useThemeColor({}, 'backgroundSecondary');
+	const backgroundColour = useThemeColor({}, 'active');
 
 	const handleDateChange = (event: any, selectedDate?: Date) => {
 		if (Platform.OS === "android") {
@@ -45,7 +45,7 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 		return (
 			<View style={styles.container}>
 				<Text type="strong">{label}</Text>
-				<Text>{value.toLocaleDateString()}</Text>
+				<Text type="caption">{value.toLocaleDateString()}</Text>
 			</View>
 		);
 	}
@@ -55,7 +55,7 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 			<Text type="strong">{label}</Text>
 			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: showPicker ? accentColour : 'transparent', backgroundColor: backgroundColour }]}>
 				<View style={styles.row}>
-					<Text>{formatDisplayDate(value)}</Text>
+					<Text type="caption">{formatDisplayDate(value)}</Text>
 					<Calendar size={20} color={iconColour} />
 				</View>
 			</TouchableOpacity>
@@ -93,7 +93,7 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 
 const styles = StyleSheet.create({
 	container: {
-		marginVertical: 20,
+		marginVertical: 16,
 	},
 	input: {
 		borderWidth: 1,

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { StyleSheet, TextInput } from "react-native";
-import { ThemedText as Text } from "@/components/themed-text";
-import { ThemedView as View } from "@/components/themed-view";
+import { View, StyleSheet, TextInput } from "react-native";
+import { ThemedText as Text } from "@/components/themed-text";;
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 type Props = {
@@ -17,20 +16,20 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 	const [focused, setFocused] = useState(false);
 	const accentColour = useThemeColor({}, 'accent');
 	const textColour = useThemeColor({}, 'text');
-	const backgroundColour = useThemeColor({}, 'backgroundSecondary');
-	const placeholderColour = useThemeColor({}, 'backgroundTertiary');
+	const backgroundColour = useThemeColor({}, 'active');
+	const placeholderColour = useThemeColor({}, 'textSecondary');
 
 	if (!editable) {
 		return (
-			<View style={styles.container}>
+			<View>
 				<Text type="strong">{label}</Text>
-				<Text>{value || placeholder || ""}</Text>
+				<Text type="caption" style={styles.text}>{ value || placeholder }</Text>
 			</View>
 		);
 	}
 
 	return (
-		<View style={styles.container}>
+		<View>
 			<Text type="strong">{label}</Text>
 			<TextInput
 				style={[ styles.input, multiline && styles.textArea,
@@ -54,19 +53,15 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 }
 
 const styles = StyleSheet.create({
-	container: {
-		marginBottom: 16,
-	},
-	label: {
-		marginBottom: 8,
-	},
 	input: {
 		borderWidth: 1,
 		borderRadius: 10,
 		padding: 12,
-		marginVertical: 8,
-		fontSize: 16,
+		marginTop: 16,
 		minHeight: 40,
+	},
+	text: {
+		marginTop: 12,
 	},
 	textArea: {
 		minHeight: 100,
