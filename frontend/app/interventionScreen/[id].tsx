@@ -11,10 +11,10 @@ import { AnnotationSelector } from "@/components/annotation-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { TextField } from "@/components/textfield";
 import { DatePicker as Picker } from "@/components/date-picker";
-import { Intervention } from "@/constants/transcript";
+import { Intervention } from "@/constants/interfaces";
 import { getIntervention, updateIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
-import { TranscriptWithFeatures } from "@/constants/transcript";
+import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatAPIDate } from "@/utils/datetime-formatting";
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 		paddingHorizontal: 20,
 		paddingTop: 20,
-		paddingBottom: 10,
+		paddingBottom: 30,
 		gap: 12,
 		borderRadius: 16
 	},
@@ -316,7 +316,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
-		minHeight: 44,
 	},
 	detailsRowRight: {
 		minWidth: 88,

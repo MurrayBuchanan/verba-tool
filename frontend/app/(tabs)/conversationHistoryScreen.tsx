@@ -7,7 +7,7 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { List } from "@/components/list";
 import { ConversationItem as Item } from "@/components/conversation-item";
 import { getTranscripts } from "@/services/transcript-service";
-import { TranscriptWithFeatures } from "@/constants/transcript";
+import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { formatDisplayDateTime } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { AlertCircle } from "lucide-react-native";

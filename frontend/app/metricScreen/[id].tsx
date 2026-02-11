@@ -6,7 +6,7 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { MetricChart as Chart} from "@/components/metric-chart";
 import { MetricSelector } from "@/components/metric-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
-import { TranscriptWithFeatures, Intervention } from "@/constants/transcript";
+import { TranscriptWithFeatures, Intervention } from "@/constants/interfaces";
 import { getTranscripts } from "@/services/transcript-service";
 import { getInterventions } from "@/services/intervention-service";
 import { getMetricProgression } from "@/utils/metric-progression";

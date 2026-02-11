@@ -6,7 +6,7 @@ import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { Trash, AlertCircle } from 'lucide-react-native';
 import { SpeakerSegment } from "@/components/speaker-segment";
-import { TranscriptWithSegments } from "@/constants/transcript";
+import { TranscriptWithSegments } from "@/constants/interfaces";
 import { getTranscript, deleteTranscript } from "@/services/transcript-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { IconButton } from "@/components/icon-button";

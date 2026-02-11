@@ -1,4 +1,4 @@
-import { TranscriptWithFeatures } from "@/constants/transcript";
+import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { MAX_DAYS_FOR_DAILY_VIEW, MAX_DAYS_FOR_WEEKLY_VIEW, MILLISECONDS_PER_DAY, MONTH_NAMES } from "@/constants/time";
 
 type DataPoint = {

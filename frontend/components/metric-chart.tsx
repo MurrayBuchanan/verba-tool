@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import Animated, { useAnimatedReaction, runOnJS, useDerivedValue, useAnimatedStyle } from "react-native-reanimated";
 import type { SharedValue } from "react-native-reanimated";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Intervention } from "@/constants/transcript";
+import { Intervention } from "@/constants/interfaces";
 import { CartesianChart, Line, AreaRange, useChartPressState } from "victory-native";
 import { useFont, Circle, Line as LinePath, Rect, vec } from "@shopify/react-native-skia";
 import { useThemeColor } from "@/hooks/use-theme-color";

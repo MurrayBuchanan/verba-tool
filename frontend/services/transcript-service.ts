@@ -1,4 +1,4 @@
-import { TranscriptWithFeatures, TranscriptWithSegments } from '@/constants/transcript';
+import { TranscriptWithFeatures, TranscriptWithSegments } from '@/constants/interfaces';
 import { apiService } from '@/services/api-service';
 
 export async function getTranscripts(): Promise<TranscriptWithFeatures[]> {

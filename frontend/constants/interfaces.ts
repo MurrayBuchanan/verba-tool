@@ -41,3 +41,8 @@ export interface Intervention {
 	start_date: string;
 	end_date: string;
 }
+
+export interface Profile {
+	name: string;
+	description: string | null;
+}

@@ -7,7 +7,7 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { Plus, AlertCircle } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { InterventionItem as Item } from "@/components/intervention-item";
-import { Intervention } from "@/constants/transcript";
+import { Intervention } from "@/constants/interfaces";
 import { getInterventions } from "@/services/intervention-service";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";

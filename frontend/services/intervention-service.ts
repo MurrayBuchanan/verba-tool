@@ -1,4 +1,4 @@
-import { Intervention } from '@/constants/transcript';
+import { Intervention } from '@/constants/interfaces';
 import { apiService } from '@/services/api-service';
 
 export async function getInterventions(): Promise<Intervention[]> {
