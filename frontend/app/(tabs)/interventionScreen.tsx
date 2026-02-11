@@ -81,7 +81,7 @@ export default function InterventionScreen() {
 				</ScrollView>
 			)}
 			{!loading && !error && (
-				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/interventionModal")}>
+				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createInterventionModal")}>
 					<Plus size={28} color="#FFF"/>
 				</TouchableOpacity>
 			)}

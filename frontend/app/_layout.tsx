@@ -49,7 +49,7 @@ function RootNavigator() {
 					<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Metric", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Chat", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Annotation", headerBackVisible: false, headerLeft: headerBack }} />
-					<Stack.Screen name="interventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Annotation' }} />
+					<Stack.Screen name="createInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Annotation' }} />
 				</Stack.Protected>
 
 				<Stack.Protected guard={!session}>

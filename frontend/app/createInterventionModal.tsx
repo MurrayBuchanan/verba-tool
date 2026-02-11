@@ -19,14 +19,12 @@ export default function InterventionModal() {
 	const [description, setDescription] = useState("");
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
-	const [isCreating, setIsCreating] = useState(false);
 
 	const handleCreateIntervention = useCallback(async () => {
 		if (!name.trim()) {
 			return;
 		}
 
-		setIsCreating(true);
 		try {
 			await createIntervention({
 				name: name.trim(),
@@ -38,8 +36,6 @@ export default function InterventionModal() {
 			router.back();
 		} catch {
 			console.error("Cannot create intervention");
-		} finally {
-			setIsCreating(false);
 		}
 	}, [name, description, startDate, endDate]);
 
@@ -99,5 +95,6 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		padding: 20,
+		gap: 24,
 	},
 });

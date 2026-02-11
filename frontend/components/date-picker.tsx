@@ -41,17 +41,13 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 		setShowPicker(!showPicker);
 	};
 
-	if (!editable) {
-		return (
-			<View style={styles.container}>
-				<Text type="strong">{label}</Text>
-				<Text type="caption">{value.toLocaleDateString()}</Text>
-			</View>
-		);
-	}
-
-	return (
-		<View style={styles.container}>
+	return !editable ? (
+		<View>
+			<Text type="strong" style={styles.notEditableLabel}>{label}</Text>
+			<Text type="caption">{formatDisplayDate(value)}</Text>
+		</View>
+	) : (
+		<View>
 			<Text type="strong">{label}</Text>
 			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: showPicker ? accentColour : 'transparent', backgroundColor: backgroundColour }]}>
 				<View style={styles.row}>
@@ -92,13 +88,15 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 }
 
 const styles = StyleSheet.create({
-	container: {
-		marginVertical: 16,
-	},
 	input: {
 		borderWidth: 1,
 		borderRadius: 10,
 		padding: 12,
+		marginTop: 16,
+		marginBottom: 10,
+	},
+	notEditableLabel: {
+		marginBottom: 12,
 	},
 	row: {
 		flexDirection: 'row',
@@ -109,15 +107,9 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 		overflow: 'hidden',
 		marginTop: 4,
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.15,
-		shadowRadius: 4,
 	},
 	select: {
 		alignItems: 'center',
 		paddingVertical: 12,
-		paddingHorizontal: 20,
-		borderRadius: 8,
 	},
 });

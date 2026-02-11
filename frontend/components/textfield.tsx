@@ -16,14 +16,14 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 	const [focused, setFocused] = useState(false);
 	const accentColour = useThemeColor({}, 'accent');
 	const textColour = useThemeColor({}, 'text');
-	const backgroundColour = useThemeColor({}, 'active');
 	const placeholderColour = useThemeColor({}, 'textSecondary');
+	const backgroundColour = useThemeColor({}, 'active');
 
 	if (!editable) {
 		return (
 			<View>
-				<Text type="strong">{label}</Text>
-				<Text type="caption" style={styles.text}>{ value || placeholder }</Text>
+				<Text type="strong" style={styles.notEditableLabel}>{label}</Text>
+				<Text type="caption">{ value || placeholder }</Text>
 			</View>
 		);
 	}
@@ -58,10 +58,10 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		padding: 12,
 		marginTop: 16,
-		minHeight: 40,
+		marginBottom: 10,
 	},
-	text: {
-		marginTop: 12,
+	notEditableLabel: {
+		marginBottom: 12,
 	},
 	textArea: {
 		minHeight: 100,

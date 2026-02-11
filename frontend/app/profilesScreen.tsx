@@ -19,7 +19,7 @@ export default function ProfilesScreen() {
 					<Item key={2} onPress={() => router.push(`/(tabs)/recordAudioScreen`)} name="John Doe" />
 				</List>
 			</ScrollView>
-			<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/interventionModal")}>
+			<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createInterventionModal")}>
 				<Plus size={28} color="#FFF"/>
 			</TouchableOpacity>
 		</View>
