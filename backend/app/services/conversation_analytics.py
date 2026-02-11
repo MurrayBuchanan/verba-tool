@@ -40,7 +40,6 @@ class ConversationAnalytics:
 
         # Extract NLP features
         wpm = self.nlp_extractor.wpm_per_speaker(segments, self.group_by_speaker)
-        mul = self.nlp_extractor.mul_per_speaker(segments, self.group_by_speaker)
         avg_word_length = self.nlp_extractor.avg_word_length_per_speaker(segments, self.group_by_speaker)
         adverb_ratio = self.nlp_extractor.adverb_ratio_per_speaker(segments, self.group_by_speaker)
         flesch_kincaid = self.nlp_extractor.flesch_kincaid_per_speaker(segments, self.group_by_speaker)
@@ -48,7 +47,6 @@ class ConversationAnalytics:
         num_unique_words = self.nlp_extractor.num_unique_words_per_speaker(segments, self.group_by_speaker)
         established_features = {
             "wpm_per_speaker": wpm,
-            "mean_utterance_length_per_speaker": mul,
             "avg_word_length": avg_word_length,
             "adverb_ratio": adverb_ratio,
             "flesch_kincaid": flesch_kincaid,

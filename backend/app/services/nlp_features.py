@@ -49,28 +49,6 @@ class NLPFeatureExtraction:
 
         return result
 
-    # Calculate mean utterance length
-    # Formula: (total words) / (number of utterances)
-    def calculate_mul(self, segments: List[TranscriptSegment]) -> float:
-        if not segments:
-            return 0.0
-
-        total_words = 0
-        for segment in segments:
-            total_words += self.count_words(segment.text or "")
-
-        return total_words / len(segments)
-
-    def mul_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
-        groupedSegments = group_by_speaker(segments)
-        result = {}
-
-        for speaker, speaker_segments in groupedSegments.items():
-            mul = self.calculate_mul(speaker_segments)
-            result[speaker] = round(mul, 2)
-
-        return result
-
 
 
     # Calculate average word length

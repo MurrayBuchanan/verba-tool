@@ -19,7 +19,6 @@ class AIFeatures(BaseModel):
 
 class NLPFeatures(BaseModel):
     wpm_per_speaker: Feature
-    mean_utterance_length_per_speaker: Feature
     avg_word_length: Feature
     adverb_ratio: Feature
     flesch_kincaid: Feature

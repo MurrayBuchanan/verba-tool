@@ -7,7 +7,6 @@ export interface TranscriptMetadata {
 
 export interface TranscriptFeatures {
 	wpm_per_speaker: Record<string, number>;
-	mean_utterance_length: Record<string, number>;
 	avg_word_length: Record<string, number>;
 	adverb_ratio: Record<string, number>;
 	flesch_kincaid: Record<string, number>;

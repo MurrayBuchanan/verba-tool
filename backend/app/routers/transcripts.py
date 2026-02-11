@@ -34,7 +34,6 @@ async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession 
                 "total_duration": transcript.total_duration,
                 "created_at": transcript.created_at.isoformat(),
                 "wpm_per_speaker": get_feature(features, "wpm_per_speaker"),
-                "mean_utterance_length": get_feature(features, "mean_utterance_length"),
                 "avg_word_length": get_feature(features, "avg_word_length"),
                 "adverb_ratio": get_feature(features, "adverb_ratio"),
                 "flesch_kincaid": get_feature(features, "flesch_kincaid"),

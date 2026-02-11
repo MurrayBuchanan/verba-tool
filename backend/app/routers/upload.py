@@ -68,7 +68,6 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         transcript_features = TranscriptFeatures(
             transcript_metadata_id=transcript_metadata.id,
             wpm_per_speaker=json.dumps(analytics.wpm_per_speaker or {}),
-            mean_utterance_length=json.dumps(analytics.mean_utterance_length_per_speaker or {}),
             avg_word_length=json.dumps(analytics.avg_word_length or {}),
             adverb_ratio=json.dumps(analytics.adverb_ratio or {}),
             flesch_kincaid=json.dumps(analytics.flesch_kincaid or {}),

@@ -17,7 +17,6 @@ class TranscriptFeatures(Base):
     id = Column(Integer, primary_key=True, index=True)
     transcript_metadata_id = Column(Integer, ForeignKey("transcript_metadata.id"), nullable=False)
     wpm_per_speaker = Column(String, nullable=True)
-    mean_utterance_length = Column(String, nullable=True)
     avg_word_length = Column(String, nullable=True)
     adverb_ratio = Column(String, nullable=True)
     flesch_kincaid = Column(String, nullable=True)
