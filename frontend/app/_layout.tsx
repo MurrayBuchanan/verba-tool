@@ -7,6 +7,7 @@ import { router } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import { IconButton } from '@/components/icon-button';
+import { LogoutButton } from '@/components/account-buttons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { SessionProvider, useAuthentication } from '@/hooks/use-authentication';
@@ -43,7 +44,8 @@ function RootNavigator() {
 		<ThemeProvider value={theme === 'dark' ? DarkTheme : DefaultTheme}>
 			<Stack screenOptions={{ headerShadowVisible: false, headerStyle: { backgroundColor: background }, headerTintColor: text }}>
 				<Stack.Protected guard={!!session}>
-					<Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
+					<Stack.Screen name="profilesScreen" options={{ headerShown: true, headerTitle: "Profiles", headerBackVisible: false, headerRight: () => <LogoutButton /> }} />
+					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 					<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Metric", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Chat", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Annotation", headerBackVisible: false, headerLeft: headerBack }} />
