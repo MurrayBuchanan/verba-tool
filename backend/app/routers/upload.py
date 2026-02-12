@@ -1,13 +1,14 @@
 from fastapi import APIRouter, File, UploadFile, Header, HTTPException, Depends
 from fastapi.responses import JSONResponse
-import os
 import json
+import os
+import tempfile
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.database import get_db
 from app.core.authentication import get_user_id
-from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, User, Profile as ProfileModel
+from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, Profile as ProfileModel
 from app.schemas.schemas import Transcript
 from app.services.audio_converter import AudioConverter
 from app.services.speech_service import SpeechService
@@ -23,48 +24,48 @@ conversation_analytics = ConversationAnalytics()
 @router.post("")
 async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..., alias="Created-At"), profile_id: int = Header(..., alias="Profile-Id"), user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
+        # Convert creation date to UTC to avoid timezone issues
         created_at_datetime = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
         if created_at_datetime.tzinfo is not None:
             created_at_datetime = created_at_datetime.astimezone(timezone.utc).replace(tzinfo=None)
         created_at = created_at_datetime
+
     except (ValueError, AttributeError):
         raise HTTPException(status_code=400, detail="Invalid creation date")
-
+    
+    # Check if profile exists
     profile = (await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))).scalar_one_or_none()
     if profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
 
-    # Verify file is an audio file
+    # Verify uploaded file is an audio file
     if not file.content_type.startswith("audio/"):
-        raise HTTPException(status_code=400, detail="Must upload an audio file")
-
-    # Create temporary files
-    temp_input = "/tmp/input.m4a"
-    temp_wav = "/tmp/output.wav"
+        raise HTTPException(status_code=400, detail="Invalid audio format")
 
     try:
-        # Save uploaded file to temporary location
-        contents = await file.read()
-        with open(temp_input, "wb") as temp_file:
-            temp_file.write(contents)
+        # Store audio in a temporary directory to allow Azure Speech Service to process it
+        with tempfile.TemporaryDirectory() as temp_directory:
+            temp_input = os.path.join(temp_directory, "input.m4a")
+            temp_wav = os.path.join(temp_directory, "output.wav")
 
-        # Convert audio to WAV format
-        audio_converter.convert_to_wav(temp_input, temp_wav)
+            contents = await file.read()
+            with open(temp_input, "wb") as temp_file:
+                temp_file.write(contents)
 
-        # Perform speaker diarisation
-        segments = speech_service.diarise_audio(temp_wav)
+            # Convert audio to WAV format
+            audio_converter.convert_to_wav(temp_input, temp_wav)
 
-        # Perform conversation feature extraction
-        analytics: Transcript = conversation_analytics.analyse(segments)
+            # Perform speaker diarisation
+            segments = speech_service.diarise_audio(temp_wav)
 
-        # Calculate total duration with safe type conversion
-        total_duration = sum(float(segment.duration or 0.0) for segment in segments)
+            # Perform feature extraction
+            analytics: Transcript = conversation_analytics.analyse(segments)
 
         # Add the transcript metadata to the database
         transcript_metadata = TranscriptMetadata(
             profile_id=profile_id,
             created_at=created_at,
-            total_duration=total_duration,
+            total_duration=analytics.total_duration or 0.0,
         )
         db.add(transcript_metadata)
         await db.flush()
@@ -91,29 +92,18 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         for segment in segments:
             transcript_segment = TranscriptSegment(
                 transcript_metadata_id=transcript_metadata.id,
-                duration=float(segment.duration or 0.0),
-                offset=float(segment.offset or 0.0),
-                speaker=segment.speaker or "",
-                text=segment.text or ""
+                duration=segment.duration,
+                offset=segment.offset,
+                speaker=segment.speaker,
+                text=segment.text,
             )
             db.add(transcript_segment)
         await db.commit()
         
-        analytics = analytics.model_dump()
-        analytics["id"] = transcript_metadata.id
-        
-        return JSONResponse(content=analytics)
+        return JSONResponse(content=analytics.model_dump())
 
     except HTTPException:
         raise
     except Exception:
         await db.rollback()
-        raise HTTPException(status_code=500, detail="Error while processing audio")
-    finally:
-        # Clean up temporary files
-        for path in (temp_input, temp_wav):
-            try:
-                if os.path.exists(path):
-                    os.remove(path)
-            except Exception:
-                pass
+        raise HTTPException(status_code=500, detail="Cannot process audio")

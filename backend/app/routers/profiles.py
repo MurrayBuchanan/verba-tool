@@ -17,36 +17,36 @@ async def create_profile(profile: ProfileSchema, user_id: str = Depends(get_user
             name=profile.name,
             description=profile.description,
         )
+
+        # Add profile to database
         db.add(db_profile)
         await db.flush()
         await db.refresh(db_profile)
         await db.commit()
-        return JSONResponse(content={
-            "id": db_profile.id,
-            "name": db_profile.name,
-            "description": db_profile.description,
-        })
+
+        return JSONResponse(content={"id": db_profile.id, "name": db_profile.name, "description": db_profile.description})
     except HTTPException:
-        await db.rollback()
         raise
     except Exception:
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot create profile")
 
-
 @router.get("")
 async def get_profiles(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
+        # Get all profiles for user
         result = await db.execute(select(ProfileModel).filter(ProfileModel.user_id == user_id).order_by(ProfileModel.id.desc()))
         profiles = result.scalars().all()
-        profile_list = []
+
+        db_profiles = []
         for profile in profiles:
-            profile_list.append({
+            db_profiles.append({
                 "id": profile.id,
                 "name": profile.name,
                 "description": profile.description,
             })
-        return JSONResponse(content={"profiles": profile_list})
+
+        return JSONResponse(content={"profiles": db_profiles})
     except Exception:
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot fetch profiles")
@@ -54,59 +54,61 @@ async def get_profiles(user_id: str = Depends(get_user_id), db: AsyncSession = D
 @router.get("/{profile_id}")
 async def get_profile(profile_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        result = await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))
-        profile = result.scalar_one_or_none()
-        
-        if profile is None:
-            raise HTTPException(status_code=404, detail="Profile not found")
-        
-        return JSONResponse(content={
-            "id": profile.id,
-            "name": profile.name,
-            "description": profile.description,
-        })
-    except Exception:
-        await db.rollback()
-        raise HTTPException(status_code=500, detail="Cannot get profile")
-
-
-@router.put("/{profile_id}")
-async def update_profile(profile_id: int, profile: ProfileSchema, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
-    try:
+        # Check if profile exists
         result = await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))
         db_profile = result.scalar_one_or_none()
         
         if db_profile is None:
             raise HTTPException(status_code=404, detail="Profile not found")
+        
+        return JSONResponse(content={"id": db_profile.id, "name": db_profile.name, "description": db_profile.description})
+    except HTTPException:
+        raise
+    except Exception:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail="Cannot get profile")
+
+@router.put("/{profile_id}")
+async def update_profile(profile_id: int, profile: ProfileSchema, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+    try:
+        # Check if profile exists
+        result = await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))
+        db_profile = result.scalar_one_or_none()
+        
+        if db_profile is None:
+            raise HTTPException(status_code=404, detail="Profile not found")
+
+        # Update profile
         db_profile.name = profile.name
         db_profile.description = profile.description
-
+        
         await db.commit()
         await db.refresh(db_profile)
-        
-        return JSONResponse(content={
-            "id": db_profile.id,
-            "name": db_profile.name,
-            "description": db_profile.description,
-        })
+
+        return JSONResponse(content={"id": db_profile.id, "name": db_profile.name, "description": db_profile.description})
+    except HTTPException:
+        raise
     except Exception:
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot update profile")
 
-
 @router.delete("/{profile_id}")
 async def delete_profile(profile_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
+        # Check if profile exists
         result = await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))
         profile = result.scalar_one_or_none()
         
         if profile is None:
             raise HTTPException(status_code=404, detail="Profile not found")
         
+        # Delete profile from database
         await db.execute(delete(ProfileModel).where(ProfileModel.id == profile_id))
         await db.commit()
         
         return JSONResponse(content={"message": "Profile deleted"})
+    except HTTPException:
+        raise
     except Exception:
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot delete profile")

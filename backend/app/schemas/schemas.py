@@ -15,13 +15,6 @@ class TranscriptSegment(BaseModel):
     duration: float
     offset: float
 
-class AIFeatures(BaseModel):
-    impoverished_vocabulary: Feature
-    word_finding_difficulties: Feature
-    semantic_paraphasias: Feature
-    syntactic_simplification: Feature
-    discourse_impairment: Feature
-
 class NLPFeatures(BaseModel):
     wpm_per_speaker: Feature
     avg_word_length: Feature
@@ -30,9 +23,16 @@ class NLPFeatures(BaseModel):
     prp_ratio: Feature
     num_unique_words: Feature
 
-class Transcript(AIFeatures, NLPFeatures):
+class AIFeatures(BaseModel):
+    impoverished_vocabulary: Feature
+    word_finding_difficulties: Feature
+    semantic_paraphasias: Feature
+    syntactic_simplification: Feature
+    discourse_impairment: Feature
+
+class Transcript(NLPFeatures, AIFeatures):
+    total_duration: Optional[float] = None
     raw_segments: Optional[List[TranscriptSegment]] = None
-    turns: Optional[Feature] = None
 
 class Intervention(BaseModel):
     id: Optional[int] = None
