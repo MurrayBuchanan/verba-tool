@@ -1,53 +1,26 @@
+# Python caches
+__pycache__/
+.pytest_cache/
+
 # Virtual environments
 .venv/
 venv/
 env/
 ENV/
 
-# Python caches and compiled files
-__pycache__/
-*.py[cod]
-*$py.class
-
 # Environment variables
 .env
 .env.local
 .env.*.local
 
-# Distribution / packaging
+# Distribution 
 build/
 dist/
-*.egg-info/
-*.egg
-.eggs/
-
-# Testing and coverage
-.pytest_cache/
-.coverage
-htmlcov/
-coverage.xml
-
-# Type-checking caches
-.mypy_cache/
-.pyright/
-
-# Logs
-*.log
-logs/
 
 # IDE/editor settings
 .vscode/
 .idea/
-*.sublime-workspace
-*.sublime-project
-
-# macOS filesystem files
 .DS_Store
-
-# Editor swap files
-*.swp
-*.swo
-*~
 
 # Docker overrides
 docker-compose.override.yml
