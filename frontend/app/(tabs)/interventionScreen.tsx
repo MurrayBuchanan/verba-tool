@@ -11,10 +11,12 @@ import { Intervention } from "@/constants/interfaces";
 import { getInterventions } from "@/services/intervention-service";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { useProfile } from "@/context/ProfileContext";
 import { Explaination } from "@/components/explaination";
 
 export default function InterventionScreen() {
 	const router = useRouter();
+	const { profileId } = useProfile();
 	const [interventions, setInterventions] = useState<Intervention[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -30,7 +32,7 @@ export default function InterventionScreen() {
 						setLoading(true);
 					}
 					
-					const data = await getInterventions();
+					const data = await getInterventions(profileId);
 					setInterventions(data);
 					setError(null);
 					hasInitiallyLoaded.current = true;
@@ -42,7 +44,7 @@ export default function InterventionScreen() {
 			}
 			fetchInterventions();
 			return () => {};
-		}, [])
+		}, [profileId])
 	);
 
 	return (

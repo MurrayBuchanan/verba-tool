@@ -1,5 +1,5 @@
 import { useState, useLayoutEffect, useCallback } from "react";
-import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Alert } from "react-native";
 import { router, useNavigation } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
@@ -7,11 +7,13 @@ import { DatePicker as Picker } from "@/components/date-picker";
 import { createIntervention } from "@/services/intervention-service";
 import { formatAPIDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { useProfile } from "@/context/ProfileContext";
 import { X, Check } from "lucide-react-native";
 import { IconButton } from "@/components/icon-button";
 
 export default function InterventionModal() {
 	const navigation = useNavigation();
+	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, "warning");
 	const accentColour = useThemeColor({}, "accent");
 	const secondaryBackground = useThemeColor({}, "backgroundSecondary");
@@ -27,6 +29,7 @@ export default function InterventionModal() {
 
 		try {
 			await createIntervention({
+				profile_id: profileId,
 				name: name.trim(),
 				description: description.trim() || null,
 				start_date: formatAPIDate(startDate),
@@ -37,7 +40,7 @@ export default function InterventionModal() {
 		} catch {
 			console.error("Cannot create intervention");
 		}
-	}, [name, description, startDate, endDate]);
+	}, [name, description, startDate, endDate, profileId]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({

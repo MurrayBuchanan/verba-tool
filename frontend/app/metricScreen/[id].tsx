@@ -12,10 +12,12 @@ import { getInterventions } from "@/services/intervention-service";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { useProfile } from "@/context/ProfileContext";
 import { AlertCircle } from "lucide-react-native";
 
 export default function MetricDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
+	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
 	const sectionBackground = useThemeColor({}, 'background');
@@ -45,8 +47,8 @@ export default function MetricDisplayScreen() {
 					setLoading(true);
 					
 					const [transcriptsData, interventionsData] = await Promise.all([
-						getTranscripts(),
-						getInterventions()
+						getTranscripts(profileId),
+						getInterventions(profileId),
 					]);
 					
 					setTranscripts(transcriptsData);
@@ -59,7 +61,7 @@ export default function MetricDisplayScreen() {
 				}
 			}
 			fetchData();
-		}, [])
+		}, [profileId])
 	);
 
 	const metricData = useMemo(() => getMetricProgression(transcripts, selectedMetric), [transcripts, selectedMetric]);

@@ -7,12 +7,14 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { MetricItem as Item } from "@/components/metric-item";
 import { getTranscripts } from "@/services/transcript-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { useProfile } from "@/context/ProfileContext";
 import { List } from "@/components/list";
 import { Theme } from "@/constants/theme";
 import { AlertCircle } from "lucide-react-native";
 
 export default function MetricsScreen() {
 	const router = useRouter();
+	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
 	const [loading, setLoading] = useState(true);
@@ -28,7 +30,7 @@ export default function MetricsScreen() {
 						setLoading(true);
 					}
 					
-					const transcripts = await getTranscripts();
+					const transcripts = await getTranscripts(profileId);
 					setHasConversations(transcripts.length > 0);
 					setError(null);
 					hasInitiallyLoaded.current = true;
@@ -40,7 +42,7 @@ export default function MetricsScreen() {
 				}
 			}
 			checkConversations();
-		}, [])
+		}, [profileId])
 	);
 
 	return (

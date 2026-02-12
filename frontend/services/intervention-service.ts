@@ -1,9 +1,9 @@
 import { Intervention } from '@/constants/interfaces';
 import { apiService } from '@/services/api-service';
 
-export async function getInterventions(): Promise<Intervention[]> {
+export async function getInterventions(profileId: number): Promise<Intervention[]> {
 	try {
-		const response = await apiService.get(`/interventions`);
+		const response = await apiService.get(`/interventions?profile_id=${profileId}`);
 		
 		if (response.data && response.data.interventions) {
 			return response.data.interventions;

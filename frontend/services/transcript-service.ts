@@ -1,9 +1,9 @@
 import { TranscriptWithFeatures, TranscriptWithSegments } from '@/constants/interfaces';
 import { apiService } from '@/services/api-service';
 
-export async function getTranscripts(): Promise<TranscriptWithFeatures[]> {
+export async function getTranscripts(profileId: number): Promise<TranscriptWithFeatures[]> {
 	try {
-		const response = await apiService.get(`/transcripts`);
+		const response = await apiService.get(`/transcripts?profile_id=${profileId}`);
 		
 		if (response.data && response.data.transcripts) {
 			return response.data.transcripts;

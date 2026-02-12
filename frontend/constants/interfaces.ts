@@ -1,6 +1,13 @@
+export interface Profile {
+	id?: number;
+	name: string;
+	description: string | null;
+}
+
 export interface TranscriptMetadata {
 	id: number;
-	user_id: string;
+	user_id?: string;
+	profile_id: number;
 	created_at: string;
 	total_duration: number;
 }
@@ -26,23 +33,19 @@ export interface TranscriptSegment {
 	text: string;
 }
 
-export interface TranscriptWithFeatures extends TranscriptMetadata, TranscriptFeatures {
-	// Combines interfaces
-}
+// Combines transcript metadata and features for visualisation of all transcripts
+export interface TranscriptWithFeatures extends TranscriptMetadata, TranscriptFeatures{}
 
+// Combines transcript metadata and segments for viewing single transcript
 export interface TranscriptWithSegments extends TranscriptMetadata {
 	segments: TranscriptSegment[];
 }
 
 export interface Intervention {
 	id?: number;
+	profile_id: number;
 	name: string;
 	description: string | null;
 	start_date: string;
 	end_date: string;
-}
-
-export interface Profile {
-	name: string;
-	description: string | null;
 }

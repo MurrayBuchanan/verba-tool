@@ -19,6 +19,7 @@ import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatAPIDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { useProfile } from "@/context/ProfileContext";
 import { IconButton } from "@/components/icon-button";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
@@ -39,6 +40,7 @@ function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, 
 export default function InterventionDetailScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const navigation = useNavigation();
+	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
 	const sectionBackground = useThemeColor({}, 'background');
@@ -88,13 +90,13 @@ export default function InterventionDetailScreen() {
 		
 		try {
 			const interventionId = parseInt(id, 10);
-			await updateIntervention(interventionId, editingIntervention);
+			await updateIntervention(interventionId, { ...editingIntervention, profile_id: profileId });
 			setIntervention(editingIntervention);
 			setEditingIntervention(null);
 		} catch (error) {
 			Alert.alert("Cannot update annotation");
 		}
-	}, [id, editingIntervention]);
+	}, [id, editingIntervention, profileId]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -115,8 +117,8 @@ export default function InterventionDetailScreen() {
 					const interventionId = parseInt(id, 10);
 
 					const interventionData = await getIntervention(interventionId);
-					const transcriptsData = await getTranscripts();
-					
+					const transcriptsData = await getTranscripts(profileId);
+
 					setIntervention(interventionData);
 					setTranscripts(transcriptsData);
 					setError(null);
@@ -128,7 +130,7 @@ export default function InterventionDetailScreen() {
 				}
 			}
 			fetchData();
-		}, [id])
+		}, [id, profileId])
 	);
 
 	const filteredTranscripts = useMemo(() => {

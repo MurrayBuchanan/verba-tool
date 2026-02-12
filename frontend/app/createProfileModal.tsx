@@ -1,5 +1,5 @@
 import { useState, useLayoutEffect, useCallback } from "react";
-import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Alert } from "react-native";
 import { router, useNavigation } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
@@ -29,7 +29,7 @@ export default function ProfileModal() {
 			
 			router.back();
 		} catch {
-			console.error("Cannot create profile");
+			Alert.alert("Cannot create profile", "Please try again");
 		}
 	}, [name, description]);
 

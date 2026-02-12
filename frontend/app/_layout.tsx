@@ -10,7 +10,8 @@ import { IconButton } from '@/components/icon-button';
 import { LogoutButton } from '@/components/account-buttons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { SessionProvider, useAuthentication } from '@/hooks/use-authentication';
+import { SessionProvider, useAuthentication } from '@/context/SessionContext';
+import { ProfileProvider } from '@/context/ProfileContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -76,7 +77,9 @@ export default function RootLayout() {
 
 	return (
 		<SessionProvider>
-			<RootNavigator />
+			<ProfileProvider>
+				<RootNavigator />
+			</ProfileProvider>
 		</SessionProvider>
 	);
 }

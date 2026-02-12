@@ -10,11 +10,13 @@ import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { formatDisplayDateTime } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { useProfile } from "@/context/ProfileContext";
 import { AlertCircle } from "lucide-react-native";
 import { formatDuration } from "@/utils/datetime-formatting";
 
 export default function ConversationHistoryScreen() {
 	const router = useRouter();
+	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
@@ -30,7 +32,7 @@ export default function ConversationHistoryScreen() {
 						setLoading(true);
 					}
 					
-					const data = await getTranscripts();
+					const data = await getTranscripts(profileId);
 					setTranscripts(data);
 					setError(null);
 					hasInitiallyLoaded.current = true;
@@ -41,7 +43,7 @@ export default function ConversationHistoryScreen() {
 				}
 			}
 			fetchTranscripts();
-		}, [])
+		}, [profileId])
 	);
 
 	return (

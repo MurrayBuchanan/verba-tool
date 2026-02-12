@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { BlockButton as Button } from "@/components/block-button";
-import { useAuthentication } from "@/hooks/use-authentication";
+import { useAuthentication } from "@/context/SessionContext";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function Index() {

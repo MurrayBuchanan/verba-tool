@@ -4,6 +4,11 @@ from pydantic import BaseModel
 
 Feature = Dict[str, Any]
 
+class Profile(BaseModel):
+    id: Optional[int] = None
+    name: str
+    description: Optional[str] = None
+
 class TranscriptSegment(BaseModel):
     speaker: str
     text: str
@@ -31,6 +36,7 @@ class Transcript(AIFeatures, NLPFeatures):
 
 class Intervention(BaseModel):
     id: Optional[int] = None
+    profile_id: int
     name: str
     description: Optional[str] = None
     start_date: date

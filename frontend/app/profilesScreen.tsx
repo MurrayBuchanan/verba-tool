@@ -1,23 +1,58 @@
+import { useState, useCallback } from "react";
 import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { Plus } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { ProfileItem as Item } from "@/components/profile-item";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { useProfile } from "@/context/ProfileContext";
+import { getProfiles } from "@/services/profile-service";
+import { Profile } from "@/constants/interfaces";
 
 export default function ProfilesScreen() {
 	const router = useRouter();
+	const { setProfileId } = useProfile();
 	const accentColour = useThemeColor({}, 'accent');
+	const [profiles, setProfiles] = useState<Profile[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	// TODO: Use this pattern for all fetching
+	const loadProfiles = useCallback(async () => {
+		try {
+			setLoading(true);
+			const data = await getProfiles();
+			setProfiles(data);
+		} catch {
+			setProfiles([]);
+		} finally {
+			setLoading(false);
+		}
+	}, []);
+
+	useFocusEffect(
+		useCallback(() => {
+			loadProfiles();
+		}, [loadProfiles])
+	);
 
 	return (
 		<View style={styles.container}>
 			<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-				
-				<List divider={true}>
-					<Item key={1} onPress={() => router.push(`/(tabs)/recordAudioScreen`)} name="Murray Buchanan" />
-					<Item key={2} onPress={() => router.push(`/(tabs)/recordAudioScreen`)} name="John Doe" />
-				</List>
+				{loading ? (
+					<ActivityIndicator size="large" style={styles.center} />
+				) : (
+					<List divider={true}>
+						{profiles.map((profile) => (
+							<Item
+								key={profile.id}
+								name={profile.name}
+								onPress={() => {setProfileId(profile.id!); router.push("/(tabs)/recordAudioScreen")}}
+							/>
+						))}
+					</List>
+				)}
 			</ScrollView>
 			<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createProfileModal")}>
 				<Plus size={28} color="#FFF"/>

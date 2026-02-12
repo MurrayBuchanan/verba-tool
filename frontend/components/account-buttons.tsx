@@ -1,7 +1,7 @@
 import { Alert, View, StyleSheet } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
-import { useAuthentication } from '@/hooks/use-authentication';
+import { useAuthentication } from '@/context/SessionContext';
 import { IconButton } from '@/components/icon-button';
 import { LogOut, ArrowLeft } from 'lucide-react-native';
 import { router } from 'expo-router';
@@ -17,7 +17,7 @@ export function ProfileButton() {
 }
 
 export function LogoutButton() {
-	const iconColour = useThemeColor({}, 'icon');
+	const iconColour = useThemeColor({}, 'warning');
 	const { signOut } = useAuthentication();
 
 	const handleLogout = () => {

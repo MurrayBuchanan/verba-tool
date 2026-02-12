@@ -2,8 +2,10 @@ import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder, use
 import React, { useEffect, useState } from 'react';
 import { BlockButton } from '@/components/block-button';
 import { uploadRecording } from '@/services/upload-service';
+import { useProfile } from '@/context/ProfileContext';
 
 export const RecordButton = () => {
+	const { profileId } = useProfile();
 	const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
 	const recorderState = useAudioRecorderState(recorder);
 	const [isProcessing, setIsProcessing] = useState(false);
@@ -52,7 +54,7 @@ export const RecordButton = () => {
 			}
 
 			setIsProcessing(true);
-			await uploadRecording(recorder.uri, createdAt);
+			await uploadRecording(profileId, recorder.uri, createdAt);
 			console.log("Uploaded recording successfully!");
 			setCreatedAt(null);
 		} catch (error: any) {

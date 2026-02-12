@@ -4,9 +4,10 @@ import os
 import json
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.core.database import get_db
 from app.core.authentication import get_user_id
-from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, User
+from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, User, Profile as ProfileModel
 from app.schemas.schemas import Transcript
 from app.services.audio_converter import AudioConverter
 from app.services.speech_service import SpeechService
@@ -20,7 +21,7 @@ speech_service = SpeechService(SPEECH_KEY, SPEECH_REGION)
 conversation_analytics = ConversationAnalytics()
 
 @router.post("")
-async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..., alias="Created-At"), user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
+async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..., alias="Created-At"), profile_id: int = Header(..., alias="Profile-Id"), user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         created_at_datetime = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
         if created_at_datetime.tzinfo is not None:
@@ -28,6 +29,10 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         created_at = created_at_datetime
     except (ValueError, AttributeError):
         raise HTTPException(status_code=400, detail="Invalid creation date")
+
+    profile = (await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))).scalar_one_or_none()
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
 
     # Verify file is an audio file
     if not file.content_type.startswith("audio/"):
@@ -57,7 +62,7 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
 
         # Add the transcript metadata to the database
         transcript_metadata = TranscriptMetadata(
-            user_id=user_id,
+            profile_id=profile_id,
             created_at=created_at,
             total_duration=total_duration,
         )
