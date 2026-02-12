@@ -13,6 +13,9 @@ OPENAI_ENDPOINT = os.getenv("OPENAI_ENDPOINT")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL")
 OPENAI_VERSION = os.getenv("OPENAI_VERSION")
 
+# API authentication
+API_TOKEN = os.getenv("API_TOKEN")
+
 # PostgreSQL Database configuration
 DATABASE_USER = os.getenv("DATABASE_USER")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
