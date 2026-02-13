@@ -5,46 +5,37 @@ from app.schemas.schemas import Feature, NLPFeatures, TranscriptSegment, Transcr
 
 class ConversationAnalytics:
     def __init__(self):
-        self.nlp_extractor = NLPFeatureExtraction()
+        self.nlp_feature_extraction = NLPFeatureExtraction()
     
-    # Group segments by speaker before applying each calculation
-    def group_by_speaker(self, segments: List[TranscriptSegment]) -> Dict[str, List[TranscriptSegment]]:
-        groupedSegments = {}
+    # Group speaker segments by to calculate metrics for each person speaker
+    def _group_by_speaker(self, segments: List[TranscriptSegment]) -> Dict[str, List[TranscriptSegment]]:
+        grouped_segments = {}
         for segment in segments:
             speaker = segment.speaker
-            if speaker not in groupedSegments:
-                groupedSegments[speaker] = []
-            groupedSegments[speaker].append(segment)
-        return groupedSegments
 
-    # Count turns per speaker
-    def count_turns_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
-        if not segments:
-            return {}
-            
-        counts = {}
-        last_speaker = None
+            if speaker not in grouped_segments:
+                grouped_segments[speaker] = []
+                
+            grouped_segments[speaker].append(segment)
+        return grouped_segments
 
+    def _calculate_total_duration(self, segments: List[TranscriptSegment]) -> float:
+        total_duration = 0.0
         for segment in segments:
-            speaker = segment.speaker
-            if speaker != last_speaker:
-                if speaker not in counts:
-                    counts[speaker] = 0
-                counts[speaker] = counts[speaker] + 1
-                last_speaker = speaker
-        return counts
+            total_duration += segment.duration
+        return total_duration
 
     def analyse(self, segments: List[TranscriptSegment]) -> Transcript:
         # Extract AI features
         ai_features = extract_features(segments)
 
         # Extract NLP features
-        wpm = self.nlp_extractor.wpm_per_speaker(segments, self.group_by_speaker)
-        avg_word_length = self.nlp_extractor.avg_word_length_per_speaker(segments, self.group_by_speaker)
-        adverb_ratio = self.nlp_extractor.adverb_ratio_per_speaker(segments, self.group_by_speaker)
-        flesch_kincaid = self.nlp_extractor.flesch_kincaid_per_speaker(segments, self.group_by_speaker)
-        prp_ratio = self.nlp_extractor.prp_ratio_per_speaker(segments, self.group_by_speaker)
-        num_unique_words = self.nlp_extractor.num_unique_words_per_speaker(segments, self.group_by_speaker)
+        wpm = self.nlp_feature_extraction.wpm_per_speaker(segments, self._group_by_speaker)
+        avg_word_length = self.nlp_feature_extraction.avg_word_length_per_speaker(segments, self._group_by_speaker)
+        adverb_ratio = self.nlp_feature_extraction.adverb_ratio_per_speaker(segments, self._group_by_speaker)
+        flesch_kincaid = self.nlp_feature_extraction.flesch_kincaid_per_speaker(segments, self._group_by_speaker)
+        prp_ratio = self.nlp_feature_extraction.prp_ratio_per_speaker(segments, self._group_by_speaker)
+        num_unique_words = self.nlp_feature_extraction.n_unique_words_per_speaker(segments, self._group_by_speaker)
         established_features = {
             "wpm_per_speaker": wpm,
             "avg_word_length": avg_word_length,
@@ -56,12 +47,11 @@ class ConversationAnalytics:
 
         # Combine all features
         nlp_features = NLPFeatures(**established_features)
-        
+
         result = Transcript(
-            **ai_features.model_dump(),
             **nlp_features.model_dump(),
+            **ai_features.model_dump(),
+            total_duration=self._calculate_total_duration(segments),
             raw_segments=segments,
-            turns=self.count_turns_per_speaker(segments),
         )
-        
         return result

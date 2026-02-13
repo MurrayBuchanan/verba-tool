@@ -4,42 +4,36 @@ import azure.cognitiveservices.speech as speechsdk
 from app.schemas.schemas import TranscriptSegment
 
 class SpeechService:
-    def __init__(self, speechKey: str, speechRegion: str) -> None:
-        if not speechKey or not speechRegion:
-            raise ValueError("Error: Speech key and region environment variables are not set.")
+    def __init__(self, speech_key: str, speech_region: str) -> None:
+        if not speech_key or not speech_region:
+            raise ValueError("Error: Azure Speech key and region are not set.")
 
-        self.speechKey = speechKey
-        self.speechRegion = speechRegion
+        self.speech_key = speech_key
+        self.speech_region = speech_region
 
     # Transcribe and perform speaker diarisation on audio file using the Azure Speech Service API
-    def diarise_audio(self, filePath: str) -> List[TranscriptSegment]:
-        speechConfig = speechsdk.SpeechConfig(subscription=self.speechKey, region=self.speechRegion)
-        speechConfig.speech_recognition_language = "en-GB"
+    def diarise_audio(self, file_path: str) -> List[TranscriptSegment]:
+        speech_config = speechsdk.SpeechConfig(subscription=self.speech_key, region=self.speech_region)
+        speech_config.speech_recognition_language = "en-GB"
 
         # Enable speaker diarisation for per speaker transcriptions        
-        speechConfig.set_property(
+        speech_config.set_property(
             speechsdk.PropertyId.SpeechServiceResponse_DiarizeIntermediateResults,
             "true",
         )
 
         # Enable timestamps for each word in the transcript
-        speechConfig.set_property(
+        speech_config.set_property(
             speechsdk.PropertyId.SpeechServiceResponse_RequestWordLevelTimestamps,
             "true",
         )
 
-        # Enable text post-processing for transcript corrections
-        speechConfig.set_property(
-            speechsdk.PropertyId.SpeechServiceResponse_PostProcessingOption,
-            "TrueText",
-        )
-
-        audioConfig = speechsdk.audio.AudioConfig(filename=filePath)
+        audio_config = speechsdk.audio.AudioConfig(filename=file_path)
 
         # Conversation transcriber for multi-speaker transcription
         conversation_transcriber = speechsdk.transcription.ConversationTranscriber(
-            speech_config=speechConfig,
-            audio_config=audioConfig,
+            speech_config=speech_config,
+            audio_config=audio_config,
         )
 
         segments: List[TranscriptSegment] = []
