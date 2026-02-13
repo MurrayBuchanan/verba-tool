@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Divider } from "@/components/divider";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 type Props = {
 	children: React.ReactNode;
@@ -8,27 +8,31 @@ type Props = {
 };
 
 export function List({ children, divider = false }: Props) {
-  	const items = React.Children.toArray(children);
+	const dividerColor = useThemeColor({}, "backgroundTertiary");
+	const items = React.Children.toArray(children);
 
-  	return (
-    	<View style={styles.container}>
-     		{items.map((child, index) => (
-        		<View key={index}>
-          			<View style={styles.item}>{child}</View>
-          			{divider && index < items.length - 1 && (
-            			<Divider />
-          			)}
-        		</View>
-      		))}
-    	</View>
-  	);
+	return (
+		<View style={styles.container}>
+			{items.map((child, index) => (
+				<View key={index}>
+					<View style={styles.item}>{child}</View>
+					{divider && index < items.length - 1 && (
+						<View style={[styles.divider, { backgroundColor: dividerColor }]} />
+					)}
+				</View>
+			))}
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  	container: {
-    	flexDirection: "column",
-  	},
-  	item: {
-    	paddingVertical: 4,
-  	},
+	container: {
+		flexDirection: "column",
+	},
+	item: {
+		paddingVertical: 4,
+	},
+	divider: {
+		height: StyleSheet.hairlineWidth,
+	},
 });

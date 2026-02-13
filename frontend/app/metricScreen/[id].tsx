@@ -13,6 +13,7 @@ import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
+import { List } from "@/components/list";
 import { AlertCircle } from "lucide-react-native";
 
 export default function MetricDisplayScreen() {
@@ -126,9 +127,11 @@ export default function MetricDisplayScreen() {
 						{metricData.length > 0 && (
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
-								<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
-								<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
-								<Switch label="Show Annotations" value={showInterventions} onValueChange={setShowInterventions} />
+								<List divider>
+									<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
+									<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
+									<Switch label="Show Annotations" value={showInterventions} onValueChange={setShowInterventions} />
+								</List>
 							</View>
 						)}
 					</ScrollView>
