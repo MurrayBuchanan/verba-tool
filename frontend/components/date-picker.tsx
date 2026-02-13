@@ -14,13 +14,16 @@ type Props = {
 	minimumDate?: Date;
 	maximumDate?: Date;
 	editable?: boolean;
+	error?: string;
 };
 
-export function DatePicker({ label, value, onDateChange, minimumDate, maximumDate, editable = true }: Props) {
+export function DatePicker({ label, value, onDateChange, minimumDate, maximumDate, editable = true, error }: Props) {
 	const [showPicker, setShowPicker] = useState(false);
 	const accentColour = useThemeColor({}, 'accent');
 	const iconColour = useThemeColor({}, 'icon');
 	const backgroundColour = useThemeColor({}, 'active');
+	const warningColour = useThemeColor({}, 'warning');
+	const borderColour = error ? warningColour : showPicker ? accentColour : 'transparent';
 
 	const handleDateChange = (event: any, selectedDate?: Date) => {
 		if (Platform.OS === "android") {
@@ -49,12 +52,13 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 	) : (
 		<View>
 			<Text type="strong">{label}</Text>
-			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: showPicker ? accentColour : 'transparent', backgroundColor: backgroundColour }]}>
+			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: borderColour, backgroundColor: backgroundColour }]}>
 				<View style={styles.row}>
 					<Text type="caption">{formatDisplayDate(value)}</Text>
 					<Calendar size={20} color={iconColour} />
 				</View>
 			</TouchableOpacity>
+			{ error ? <Text type="caption" style={{ color: warningColour }}>{error}</Text> : null}
 			{Platform.OS === "android" ? (
 				showPicker && (
 					<DateTimePicker
@@ -107,9 +111,11 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 		overflow: 'hidden',
 		marginTop: 4,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	select: {
 		alignItems: 'center',
 		paddingVertical: 12,
-	},
+	}
 });

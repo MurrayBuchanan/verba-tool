@@ -8,6 +8,7 @@ import { createIntervention } from "@/services/intervention-service";
 import { formatAPIDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
+import { validateIntervention, hasErrors, type InterventionErrors } from "@/utils/form-validation";
 import { X, Check } from "lucide-react-native";
 import { IconButton } from "@/components/icon-button";
 
@@ -21,9 +22,12 @@ export default function InterventionModal() {
 	const [description, setDescription] = useState("");
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
+	const [errors, setErrors] = useState<InterventionErrors>({});
 
 	const handleCreateIntervention = useCallback(async () => {
-		if (!name.trim()) {
+		const validationErrors = validateIntervention({ name, description, startDate, endDate });
+		setErrors(validationErrors);
+		if (hasErrors(validationErrors)) {
 			return;
 		}
 
@@ -38,7 +42,7 @@ export default function InterventionModal() {
 			
 			router.back();
 		} catch {
-			console.error("Cannot create intervention");
+			Alert.alert("Cannot create annotation", "Please try again");
 		}
 	}, [name, description, startDate, endDate, profileId]);
 
@@ -63,6 +67,7 @@ export default function InterventionModal() {
 						value={name}
 						onChangeText={setName}
 						placeholder="Enter annotation name"
+						error={errors.name}
 					/>
 
 					<TextField
@@ -71,6 +76,7 @@ export default function InterventionModal() {
 						onChangeText={setDescription}
 						placeholder="Enter description (optional)"
 						multiline
+						error={errors.description}
 					/>
 
 					<Picker
@@ -78,6 +84,7 @@ export default function InterventionModal() {
 						value={startDate}
 						onDateChange={setStartDate}
 						maximumDate={endDate}
+						error={errors.startDate}
 					/>
 
 					<Picker
@@ -85,6 +92,7 @@ export default function InterventionModal() {
 						value={endDate}
 						onDateChange={setEndDate}
 						minimumDate={startDate}
+						error={errors.endDate}
 					/>
 				</ScrollView>
 			</KeyboardAvoidingView>

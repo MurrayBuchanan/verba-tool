@@ -5,6 +5,7 @@ import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
 import { createProfile } from "@/services/profile-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { validateProfile, hasErrors, type ProfileErrors } from "@/utils/form-validation";
 import { X, Check } from "lucide-react-native";
 import { IconButton } from "@/components/icon-button";
 
@@ -15,9 +16,12 @@ export default function ProfileModal() {
 	const secondaryBackground = useThemeColor({}, "backgroundSecondary");
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
+	const [errors, setErrors] = useState<ProfileErrors>({});
 
 	const handleCreateProfile = useCallback(async () => {
-		if (!name.trim()) {
+		const validationErrors = validateProfile({ name, description });
+		setErrors(validationErrors);
+		if (hasErrors(validationErrors)) {
 			return;
 		}
 
@@ -54,6 +58,7 @@ export default function ProfileModal() {
 						value={name}
 						onChangeText={setName}
 						placeholder="Enter profile name"
+						error={errors.name}
 					/>
 
 					<TextField
@@ -62,6 +67,7 @@ export default function ProfileModal() {
 						onChangeText={setDescription}
 						placeholder="Enter description (optional)"
 						multiline
+						error={errors.description}
 					/>
 				</ScrollView>
 			</KeyboardAvoidingView>

@@ -20,7 +20,9 @@ import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatAPIDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
+import { validateIntervention, hasErrors, type InterventionErrors } from "@/utils/form-validation";
 import { IconButton } from "@/components/icon-button";
+import { List } from "@/components/list";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
@@ -56,6 +58,7 @@ export default function InterventionDetailScreen() {
 	const [annotationView, setAnnotationView] = useState<string>("annotation");
 	const [showMean, setShowMean] = useState<boolean>(true);
 	const [showRange, setShowRange] = useState<boolean>(false);
+	const [errors, setErrors] = useState<InterventionErrors>({});
 	const loadedId = useRef<string | undefined>(undefined);
 
 	const performDeleteIntervention = useCallback(async () => {
@@ -82,12 +85,22 @@ export default function InterventionDetailScreen() {
 
 	const handleUpdateIntervention = useCallback(async () => {
 		if (!id || !editingIntervention) return;
-		
+
+		const validationErrors = validateIntervention({
+			name: editingIntervention.name ?? "",
+			description: editingIntervention.description ?? "",
+			startDate: new Date(editingIntervention.start_date),
+			endDate: new Date(editingIntervention.end_date),
+		});
+		setErrors(validationErrors);
+		if (hasErrors(validationErrors)) return;
+
 		try {
 			const interventionId = parseInt(id, 10);
 			await updateIntervention(interventionId, { ...editingIntervention, profile_id: profileId });
 			setIntervention(editingIntervention);
 			setEditingIntervention(null);
+			setErrors({});
 		} catch (error) {
 			Alert.alert("Cannot update annotation");
 		}
@@ -207,7 +220,7 @@ export default function InterventionDetailScreen() {
 										<View style={styles.detailsRowRight}>
 											{editingIntervention ? (
 												<View style={styles.buttons}>
-													<IconButton icon={<X size={22} color={warningColour} />} onPress={() => setEditingIntervention(null)} accessibilityLabel="Cancel" />
+													<IconButton icon={<X size={22} color={warningColour} />} onPress={() => { setEditingIntervention(null); setErrors({}); }} accessibilityLabel="Cancel" />
 													<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Update" />
 												</View>
 											) : (
@@ -220,6 +233,7 @@ export default function InterventionDetailScreen() {
 										value={editingIntervention ? (editingIntervention.name ?? "") : intervention.name}
 										onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, name: text })}
 										editable={editingIntervention !== null}
+										error={editingIntervention ? errors.name : undefined}
 									/>
 									<TextField
 										label="Description"
@@ -228,6 +242,7 @@ export default function InterventionDetailScreen() {
 										placeholder="No description"
 										multiline
 										editable={editingIntervention !== null}
+										error={editingIntervention ? errors.description : undefined}
 									/>
 									<Picker
 										label="Start Date"
@@ -235,6 +250,7 @@ export default function InterventionDetailScreen() {
 										onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, start_date: formatAPIDate(date) })}
 										maximumDate={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
 										editable={editingIntervention !== null}
+										error={editingIntervention ? errors.startDate : undefined}
 									/>
 									<Picker
 										label="End Date"
@@ -242,6 +258,7 @@ export default function InterventionDetailScreen() {
 										onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, end_date: formatAPIDate(date) })}
 										minimumDate={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
 										editable={editingIntervention !== null}
+										error={editingIntervention ? errors.endDate : undefined}
 									/>
 								</View>
 							) : (
@@ -261,8 +278,10 @@ export default function InterventionDetailScreen() {
 						{metricData.length > 0 && (
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
-								<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
-								<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
+								<List divider>
+									<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
+									<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
+								</List>
 							</View>
 						)}
 					</ScrollView>

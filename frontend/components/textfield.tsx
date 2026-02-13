@@ -10,14 +10,17 @@ type Props = {
 	placeholder?: string;
 	multiline?: boolean;
 	editable?: boolean;
+	error?: string;
 };
 
-export function TextField({ label, value, onChangeText, placeholder, multiline = false, editable = true }: Props) {
+export function TextField({ label, value, onChangeText, placeholder, multiline = false, editable = true, error }: Props) {
 	const [focused, setFocused] = useState(false);
 	const accentColour = useThemeColor({}, 'accent');
 	const textColour = useThemeColor({}, 'text');
 	const placeholderColour = useThemeColor({}, 'textSecondary');
 	const backgroundColour = useThemeColor({}, 'active');
+	const warningColour = useThemeColor({}, 'warning');
+	const borderColour = error ? warningColour : focused ? accentColour : 'transparent';
 
 	if (!editable) {
 		return (
@@ -34,7 +37,7 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 			<TextInput
 				style={[ styles.input, multiline && styles.textArea,
 					{
-						borderColor: focused ? accentColour : 'transparent',
+						borderColor: borderColour,
 						color: textColour,
 						backgroundColor: backgroundColour,
 					}
@@ -48,6 +51,7 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
 			/>
+			{ error ? <Text type="caption" style={{ color: warningColour }}>{error}</Text> : null }
 		</View>
 	);
 }
