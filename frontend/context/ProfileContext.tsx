@@ -1,11 +1,11 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-interface ProfileContextType {
+interface ProfileContext {
 	profileId: number;
 	setProfileId: (id: number) => void;
 }
 
-const ProfileContext = createContext<ProfileContextType | null>(null);
+const ProfileContext = createContext<ProfileContext | null>(null);
 
 export function ProfileProvider({ children }: { children: ReactNode }) {
 	const [profileId, setProfileId] = useState<number>(0);

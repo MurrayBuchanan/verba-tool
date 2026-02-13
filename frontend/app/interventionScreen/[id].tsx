@@ -43,6 +43,7 @@ export default function InterventionDetailScreen() {
 	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
 	const accentColour = useThemeColor({}, 'accent');
+	const iconColour = useThemeColor({}, 'icon');
 	const sectionBackground = useThemeColor({}, 'background');
 	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
 	const borderColour = useThemeColor({}, 'backgroundTertiary');
@@ -54,36 +55,30 @@ export default function InterventionDetailScreen() {
 	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
 	const [annotationView, setAnnotationView] = useState<string>("annotation");
 	const [showMean, setShowMean] = useState<boolean>(true);
-	const [showRange, setShowRange] = useState<boolean>(true);
+	const [showRange, setShowRange] = useState<boolean>(false);
 	const loadedId = useRef<string | undefined>(undefined);
 
-	const handleDeleteIntervention = useCallback(async () => {
-		if (!id) return;
-		
-		Alert.alert(
-			"Delete Annotation",
-			"Are you sure you want to delete this annotation?",
-			[
-				{
-					text: "Cancel",
-					style: "cancel"
-				},
-				{
-					text: "Delete",
-					style: "destructive",
-					onPress: async () => {
-						try {
-							const interventionId = parseInt(id, 10);
-							await deleteIntervention(interventionId);
-							router.back();
-						} catch (error) {
-							Alert.alert("Failed to delete annotation");
-						}
-					}
-				}
-			]
-		);
+	const performDeleteIntervention = useCallback(async () => {
+		try {
+			const interventionId = parseInt(id, 10);
+			await deleteIntervention(interventionId);
+			router.back();
+		} catch {
+			Alert.alert("Failed to delete annotation");
+		}
 	}, [id]);
+
+	const handleDeleteIntervention = useCallback(() => {
+		Alert.alert("Delete Annotation", "Are you sure you want to delete this annotation?", [
+			{ 
+				text: "Cancel", 
+				style: "cancel"
+			}, {
+				text: "Delete", 
+				style: "destructive", 
+				onPress: performDeleteIntervention
+		}]);
+	}, [id, performDeleteIntervention]);
 
 	const handleUpdateIntervention = useCallback(async () => {
 		if (!id || !editingIntervention) return;
@@ -166,8 +161,7 @@ export default function InterventionDetailScreen() {
 		<ThemedView style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={accentColour} />
-					<Text align="center">Loading...</Text>
+					<ActivityIndicator size="large" color={iconColour} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>

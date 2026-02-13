@@ -1,14 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { getToken } from '@/services/authentication-service';
+import { getUserId } from '@/services/authentication-service';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN;
+const API_URL = process.env.EXPO_PUBLIC_API_URL || "";
+const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN || "";
 
-if (!API_URL) {
-	throw new Error('API URL environment variable must be set');
-}
-
+// Create an instance of axios with the API URL and default headers
 export const apiService: AxiosInstance = axios.create({
 	baseURL: API_URL,
 	headers: {
@@ -16,15 +12,13 @@ export const apiService: AxiosInstance = axios.create({
 	},
 });
 
-// Add API token and user id to headers
+// Add API token and user id to all headers
 apiService.interceptors.request.use(async (config) => {
 	config.headers.Authorisation = API_TOKEN;
-	const token = await getToken();
-	if (token) {
-		const decoded = jwtDecode<{ sub?: string }>(token);
-		if (decoded.sub) {
-				config.headers['User-Id'] = decoded.sub;
-		}
+
+	const userId = await getUserId();
+	if (userId) {
+		config.headers['User-Id'] = userId;
 	}
 	return config;
 });

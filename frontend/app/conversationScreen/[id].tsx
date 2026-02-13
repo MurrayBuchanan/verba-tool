@@ -15,39 +15,30 @@ export default function ConversationDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const navigation = useNavigation();
 	const warningColour = useThemeColor({}, 'warning');
-	const accentColour = useThemeColor({}, 'accent');
+	const iconColour = useThemeColor({}, 'icon');
 	const [transcript, setTranscript] = useState<TranscriptWithSegments | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const loadedId = useRef<string | undefined>(undefined);
 
-	const handleDelete = useCallback(async () => {
-		if (!id) return;
-		
-		Alert.alert(
-			"Delete Conversation",
-			"Are you sure you want to delete this conversation? This will permanently delete the conversation and the metrics associated with it.",
-			[
-				{
-					text: "Cancel",
-					style: "cancel"
-				},
-				{
-					text: "Delete",
-					style: "destructive",
-					onPress: async () => {
-						try {
-							const transcriptId = parseInt(id, 10);
-							await deleteTranscript(transcriptId);
-							router.back();
-						} catch (error) {
-							Alert.alert("Failed to delete conversation");
-						}
-					}
-				}
-			]
-		);
+	const performDeleteTranscript = useCallback(async () => {
+		try {
+			const transcriptId = parseInt(id, 10);
+			await deleteTranscript(transcriptId);
+			router.back();
+		} catch {
+			Alert.alert("Failed to delete conversation");
+		}
 	}, [id]);
+
+	const handleDelete = useCallback(() => {
+		Alert.alert("Delete Conversation", "Are you sure you want to delete this conversation? This will permanently delete the conversation and the metrics associated with it.", [
+			{
+				text: "Cancel", style: "cancel"
+			}, {
+				text: "Delete", style: "destructive", onPress: performDeleteTranscript
+		}]);
+	}, [id, performDeleteTranscript]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -91,8 +82,7 @@ export default function ConversationDisplayScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={accentColour} />
-					<Text align="center">Loading...</Text>
+					<ActivityIndicator size="large" color={iconColour} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>

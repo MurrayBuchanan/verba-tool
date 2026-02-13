@@ -1,9 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
-import { Plus } from 'lucide-react-native';
+import { ThemedText as Text } from "@/components/themed-text";
+import { Plus, AlertCircle } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { ProfileItem as Item } from "@/components/profile-item";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -15,34 +16,47 @@ export default function ProfilesScreen() {
 	const router = useRouter();
 	const { setProfileId } = useProfile();
 	const accentColour = useThemeColor({}, 'accent');
+	const iconColour = useThemeColor({}, 'icon');
+	const warningColour = useThemeColor({}, 'warning');
 	const [profiles, setProfiles] = useState<Profile[]>([]);
 	const [loading, setLoading] = useState(true);
-
-	// TODO: Use this pattern for all fetching
-	const loadProfiles = useCallback(async () => {
-		try {
-			setLoading(true);
-			const data = await getProfiles();
-			setProfiles(data);
-		} catch {
-			setProfiles([]);
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+	const [error, setError] = useState<string | null>(null);
+	const hasInitiallyLoaded = useRef(false);
 
 	useFocusEffect(
 		useCallback(() => {
-			loadProfiles();
-		}, [loadProfiles])
+			async function fetchProfiles() {
+				try {
+					if (!hasInitiallyLoaded.current) {
+						setLoading(true);
+					}
+					const data = await getProfiles();
+					setProfiles(data);
+					setError(null);
+					hasInitiallyLoaded.current = true;
+				} catch {
+					setError("Unable to load all profiles");
+				} finally {
+					setLoading(false);
+				}
+			}
+			fetchProfiles();
+		}, [])
 	);
 
 	return (
 		<View style={styles.container}>
-			<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-				{loading ? (
-					<ActivityIndicator size="large" style={styles.center} />
-				) : (
+			{loading ? (
+				<View style={styles.center}>
+					<ActivityIndicator size="large" color={iconColour} />
+				</View>
+			) : error ? (
+				<View style={styles.center}>
+					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
+					<Text align="center" style={{ color: warningColour }}>{error}</Text>
+				</View>
+			) : (
+				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 					<List divider={true}>
 						{profiles.map((profile) => (
 							<Item
@@ -52,11 +66,13 @@ export default function ProfilesScreen() {
 							/>
 						))}
 					</List>
-				)}
-			</ScrollView>
-			<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createProfileModal")}>
-				<Plus size={28} color="#FFF"/>
-			</TouchableOpacity>
+				</ScrollView>
+			)}
+			{!loading && !error && (
+				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createProfileModal")}>
+					<Plus size={28} color="#FFF"/>
+				</TouchableOpacity>
+			)}
 		</View>
 	);
 }

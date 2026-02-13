@@ -19,7 +19,7 @@ export default function MetricDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
-	const accentColour = useThemeColor({}, 'accent');
+	const iconColour = useThemeColor({}, 'icon');
 	const sectionBackground = useThemeColor({}, 'background');
 	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
 	const borderColour = useThemeColor({}, 'backgroundTertiary');
@@ -30,7 +30,7 @@ export default function MetricDisplayScreen() {
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>(id || "wpm_per_speaker");
 	const [showMean, setShowMean] = useState<boolean>(true);
-	const [showRange, setShowRange] = useState<boolean>(true);
+	const [showRange, setShowRange] = useState<boolean>(false);
 	const [showInterventions, setShowInterventions] = useState<boolean>(true);
 	const metricDetails = METRIC_DEFINITIONS[selectedMetric];
 
@@ -77,8 +77,7 @@ export default function MetricDisplayScreen() {
 		<ThemedView style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={accentColour} />
-					<Text align="center">Loading data...</Text>
+					<ActivityIndicator size="large" color={iconColour} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>

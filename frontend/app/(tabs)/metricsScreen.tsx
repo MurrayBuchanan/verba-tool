@@ -10,13 +10,13 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
 import { List } from "@/components/list";
 import { Theme } from "@/constants/theme";
-import { AlertCircle } from "lucide-react-native";
+import { AlertCircle, ChartLine } from "lucide-react-native";
 
 export default function MetricsScreen() {
 	const router = useRouter();
 	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
-	const accentColour = useThemeColor({}, 'accent');
+	const iconColour = useThemeColor({}, 'icon');
 	const [loading, setLoading] = useState(true);
 	const [hasConversations, setHasConversations] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -34,7 +34,7 @@ export default function MetricsScreen() {
 					setHasConversations(transcripts.length > 0);
 					setError(null);
 					hasInitiallyLoaded.current = true;
-				} catch (error: any) {
+				} catch {
 					setError("Unable to load metrics");
 					setHasConversations(false);
 				} finally {
@@ -49,8 +49,7 @@ export default function MetricsScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={accentColour} />
-					<Text align="center">Loading...</Text>
+					<ActivityIndicator size="large" color={iconColour} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
@@ -59,11 +58,12 @@ export default function MetricsScreen() {
 				</View>
 			) : (!hasConversations) ? (
 				<View style={styles.center}>
+					<ChartLine size={36} color={iconColour} style={styles.placeholder} />
 					<Text align="center">No metrics exist, record a conversation to see metrics!</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<Text type="heading" style={styles.categoryHeader}>Speech Rate & Fluency</Text>
+					<Text type="heading" style={styles.categoryHeader}>Speech Rate</Text>
 					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
 							<Item metricId="wpm_per_speaker" onPress={() => router.push(`/metricScreen/wpm_per_speaker`)} />

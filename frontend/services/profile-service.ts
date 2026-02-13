@@ -14,18 +14,18 @@ export async function getProfiles(): Promise<Profile[]> {
 	}
 }
 
-export async function createProfile(payload: Profile): Promise<Profile> {
+export async function createProfile(profile: Profile): Promise<Profile> {
 	try {
-		const response = await apiService.post(`/profiles`, payload);
+		const response = await apiService.post(`/profiles`, profile);
 		return response.data;
 	} catch (error) {
 		throw error;
 	}
 }
 
-export async function updateProfile(profileId: number, payload: Profile): Promise<Profile> {
+export async function updateProfile(profileId: number, profile: Profile): Promise<Profile> {
 	try {
-		const response = await apiService.put(`/profiles/${profileId}`, payload);
+		const response = await apiService.put(`/profiles/${profileId}`, profile);
 		return response.data;
 	} catch (error) {
 		throw error;

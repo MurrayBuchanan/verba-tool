@@ -1,14 +1,15 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { router } from 'expo-router';
 import { getToken, signIn, signOut } from '@/services/authentication-service';
 
-interface SessionContextType {
+interface SessionContext {
 	signIn: () => Promise<void>;
 	signOut: () => Promise<void>;
 	session: string | null;
 	isLoading: boolean;
 }
 
-const SessionContext = createContext<SessionContextType | null>(null);
+const SessionContext = createContext<SessionContext | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
 	const [session, setSession] = useState<string | null>(null);
@@ -17,8 +18,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 	useEffect(() => {
 		getToken()
 			.then(setSession)
-			.catch((error: any) => {
-				console.error("Cannot load session:", error);
+			.catch(() => {
 				setSession(null);
 			})
 			.finally(() => setIsLoading(false));
@@ -33,12 +33,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 	const handleSignOut = async () => {
 		await signOut();
 		setSession(null);
+		router.replace('/');
 	};
 
 	return (
-		<SessionContext.Provider
-			value={{ signIn: handleSignIn, signOut: handleSignOut, session, isLoading }}
-		>
+		<SessionContext.Provider value={{ signIn: handleSignIn, signOut: handleSignOut, session, isLoading }}>
 			{children}
 		</SessionContext.Provider>
 	);
@@ -47,7 +46,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 export function useAuthentication() {
 	const context = useContext(SessionContext);
 	if (!context) {
-		throw new Error("Requires wrapping component in a SessionProvider");
+		throw new Error('useAuthentication must be used within a SessionProvider');
 	}
 	return context;
 }

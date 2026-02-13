@@ -11,18 +11,18 @@ const TENANT_ID = process.env.EXPO_PUBLIC_TENANT_ID || "";
 const TENANT_DOMAIN = process.env.EXPO_PUBLIC_TENANT_DOMAIN || "";
 const SCHEME = process.env.EXPO_PUBLIC_SCHEME || "";
 
-const ISSUER = `https://${TENANT_DOMAIN}/${TENANT_ID}/v2.0`;
+const domain = `https://${TENANT_DOMAIN}/${TENANT_ID}/v2.0`;
 
 export async function signIn() {
-	const discovery = await AuthSession.fetchDiscoveryAsync(ISSUER);
-	const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "auth" });
+	const discovery = await AuthSession.fetchDiscoveryAsync(domain);
+	const redirectUrl = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "auth" });
 
 	const request = new AuthSession.AuthRequest({
 		clientId: CLIENT_ID,
-		redirectUri,
+		redirectUri: redirectUrl,
 		responseType: AuthSession.ResponseType.Code,
 		usePKCE: true,
-		scopes: ["openid", "profile", "offline_access"],
+		scopes: ["openid", "profile"],
 	});
 
 	// Launch system browser
@@ -36,15 +36,12 @@ export async function signIn() {
 	const tokenResponse = await new AuthSession.AccessTokenRequest({
 		clientId: CLIENT_ID,
 		code: result.params.code,
-		redirectUri,
+		redirectUri: redirectUrl,
 		extraParams: request.codeVerifier ? { code_verifier: request.codeVerifier } : undefined,
 	}).performAsync({ tokenEndpoint: discovery.tokenEndpoint });
 
 	if (tokenResponse.idToken) {
 		await SecureStore.setItemAsync("token", tokenResponse.idToken);
-	}
-	if (tokenResponse.refreshToken) {
-		await SecureStore.setItemAsync("refresh_token", tokenResponse.refreshToken);
 	}
 	return tokenResponse;
 }
@@ -66,70 +63,17 @@ export async function getToken(): Promise<string | null> {
 		return token;
 	}
 
-	// Refresh token since it expired
-	const refreshToken = await SecureStore.getItemAsync("refresh_token");
-	if (!refreshToken) {
-		await SecureStore.deleteItemAsync("token");
-		return null;
-	}
-
-	try {
-		// Get token endpoint
-		const discovery = await AuthSession.fetchDiscoveryAsync(ISSUER);
-		if (!discovery.tokenEndpoint) {
-			await SecureStore.deleteItemAsync("token");
-			await SecureStore.deleteItemAsync("refresh_token");
-			return null;
-		}
-		const redirectUri = AuthSession.makeRedirectUri({ scheme: SCHEME, path: "auth" });
-
-		const formData = new URLSearchParams();
-		formData.append("client_id", CLIENT_ID);
-		formData.append("refresh_token", refreshToken);
-		formData.append("grant_type", "refresh_token");
-		formData.append("redirect_uri", redirectUri);
-
-		// Get new token
-		const response = await fetch(discovery.tokenEndpoint, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-			body: formData.toString(),
-		});
-
-		if (!response.ok) {
-			await SecureStore.deleteItemAsync("token");
-			await SecureStore.deleteItemAsync("refresh_token");
-			return null;
-		}
-
-		const tokenResponse = await response.json();
-
-		if (tokenResponse.id_token) {
-			await SecureStore.setItemAsync("token", tokenResponse.id_token);
-			if (tokenResponse.refresh_token) {
-				await SecureStore.setItemAsync("refresh_token", tokenResponse.refresh_token);
-			}
-			return tokenResponse.id_token;
-		}
-		return null;
-	} catch (error) {
-		await SecureStore.deleteItemAsync("token");
-		await SecureStore.deleteItemAsync("refresh_token");
-		return null;
-	}
+	await SecureStore.deleteItemAsync("token");
+	return null;
 }
 
-export async function isAuthenticated(): Promise<boolean> {
+export async function getUserId(): Promise<string | null> {
 	const token = await getToken();
-	if (token) {
-		return true;
-	}
-	return false;
+	if (!token) return null;
+	const decoded = jwtDecode<{ sub?: string }>(token);
+	return decoded.sub ?? null;
 }
 
 export async function signOut() {
 	await SecureStore.deleteItemAsync("token");
-	await SecureStore.deleteItemAsync("refresh_token");
 }

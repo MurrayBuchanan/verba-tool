@@ -11,14 +11,14 @@ import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { formatDisplayDateTime } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
-import { AlertCircle } from "lucide-react-native";
+import { AlertCircle, MessageSquare } from "lucide-react-native";
 import { formatDuration } from "@/utils/datetime-formatting";
 
 export default function ConversationHistoryScreen() {
 	const router = useRouter();
 	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
-	const accentColour = useThemeColor({}, 'accent');
+	const iconColour = useThemeColor({}, 'icon');
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -36,8 +36,8 @@ export default function ConversationHistoryScreen() {
 					setTranscripts(data);
 					setError(null);
 					hasInitiallyLoaded.current = true;
-				} catch (error) {
-					setError("Unable to load transcripts");
+				} catch {
+					setError("Unable to load conversation history");
 				} finally {
 					setLoading(false);
 				}
@@ -50,8 +50,7 @@ export default function ConversationHistoryScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={accentColour} />
-					<Text align="center">Loading...</Text>
+					<ActivityIndicator size="large" color={iconColour} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
@@ -60,6 +59,7 @@ export default function ConversationHistoryScreen() {
 				</View>
 			) : transcripts.length === 0 ? (
 				<View style={styles.center}>
+					<MessageSquare size={36} color={iconColour} style={styles.placeholder} />
 					<Text align="center">No conversations, try starting a new chat!</Text>
 				</View>
 			) : (

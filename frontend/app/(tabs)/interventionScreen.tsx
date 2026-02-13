@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Plus, AlertCircle } from 'lucide-react-native';
+import { Plus, AlertCircle, ClipboardList, Lightbulb } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { InterventionItem as Item } from "@/components/intervention-item";
 import { Intervention } from "@/constants/interfaces";
@@ -12,7 +12,6 @@ import { getInterventions } from "@/services/intervention-service";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
-import { Explaination } from "@/components/explaination";
 
 export default function InterventionScreen() {
 	const router = useRouter();
@@ -22,7 +21,10 @@ export default function InterventionScreen() {
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
 	const warningColour = useThemeColor({}, 'warning');
+	const iconColour = useThemeColor({}, 'icon');
 	const accentColour = useThemeColor({}, 'accent');
+	const textSecondary = useThemeColor({}, 'textSecondary');
+	const backgroundSecondary = useThemeColor({}, 'backgroundSecondary');
 
 	useFocusEffect(
 		useCallback(() => {
@@ -36,7 +38,7 @@ export default function InterventionScreen() {
 					setInterventions(data);
 					setError(null);
 					hasInitiallyLoaded.current = true;
-				} catch (error) {
+				} catch {
 					setError("Unable to load annotations");
 				} finally {
 					setLoading(false);
@@ -51,8 +53,7 @@ export default function InterventionScreen() {
 		<View style={styles.container}>
 			{loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={accentColour} />
-					<Text align="center">Loading...</Text>
+					<ActivityIndicator size="large" color={iconColour} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
@@ -61,13 +62,18 @@ export default function InterventionScreen() {
 				</View>
 			) : interventions.length === 0 ? (
 				<View style={styles.center}>
+					<ClipboardList size={36} color={iconColour} style={styles.placeholder} />
 					<Text align="center">No annotations, try creating a new annotation!</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					
-					<Explaination text="Annotations are used to document and view changes to language over set periods of time." />
-					
+					<View style={[styles.explainationContainer, { backgroundColor: backgroundSecondary }]} lightColour={backgroundSecondary} darkColour={backgroundSecondary}>
+						<View style={styles.explaination} lightColour={backgroundSecondary} darkColour={backgroundSecondary}>
+							<Lightbulb size={18} color={textSecondary} />
+							<Text type="caption">About this</Text>
+						</View>
+						<Text>Annotations are used to document and view changes to language over set periods of time.</Text>
+					</View>
 					<List divider={true}>
 						{ interventions.map((intervention) => {
 							return (
@@ -99,6 +105,18 @@ const styles = StyleSheet.create({
 	content: {
 		paddingVertical: 20,
 		flexGrow: 1,
+	},
+	explainationContainer: {
+		borderRadius: 8,
+		paddingVertical: 12,
+		paddingHorizontal: 16,
+		marginBottom: 20,
+	},
+	explaination: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 8,
+		marginBottom: 8,
 	},
 	button: {
 		position: 'absolute',
