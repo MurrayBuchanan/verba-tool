@@ -10,19 +10,14 @@ export async function uploadRecording(profileId: number, audioUri: string, creat
 		name: 'conversation-recording.m4a'
 	} as any);
 
-	try {
-		// Upload recording to API
-		const response = await apiService.post('/upload', formData, {
-			timeout: 1000 * 60 * 10,
-			headers: {
-				'Profile-Id': String(profileId),
-				'Created-At': createdAt.toISOString(),
-				'Content-Type': undefined
-			}
-		});
-		console.log('Success:', response.data);
-		return response.data;
-	} catch {
-		console.error('Error: Cannot upload audio file');
-	}
+	// Upload recording to API
+	const response = await apiService.post('/upload', formData, {
+		timeout: 1000 * 60 * 10,
+		headers: {
+			'Profile-Id': String(profileId),
+			'Created-At': createdAt.toISOString(),
+			'Content-Type': undefined
+		}
+	});
+	return response.data;
 }

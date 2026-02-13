@@ -13,6 +13,7 @@ from app.schemas.schemas import Transcript
 from app.services.audio_converter import AudioConverter
 from app.services.speech_service import SpeechService
 from app.services.conversation_analytics import ConversationAnalytics
+from app.services.quality_gate import check_quality_gates
 from app.core.config import SPEECH_KEY, SPEECH_REGION
 
 router = APIRouter(prefix="/upload", tags=["upload"])
@@ -60,6 +61,10 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
 
             # Perform feature extraction
             analytics: Transcript = conversation_analytics.analyse(segments)
+
+        quality_error = check_quality_gates(analytics)
+        if quality_error:
+            raise HTTPException(status_code=400, detail=quality_error)
 
         # Add the transcript metadata to the database
         transcript_metadata = TranscriptMetadata(

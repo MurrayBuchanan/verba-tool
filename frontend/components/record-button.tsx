@@ -1,5 +1,6 @@
 import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder, useAudioRecorderState } from 'expo-audio';
 import React, { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { BlockButton } from '@/components/block-button';
 import { uploadRecording } from '@/services/upload-service';
 import { useProfile } from '@/context/ProfileContext';
@@ -55,10 +56,9 @@ export const RecordButton = () => {
 
 			setIsProcessing(true);
 			await uploadRecording(profileId, recorder.uri, createdAt);
-			console.log("Uploaded recording successfully!");
 			setCreatedAt(null);
 		} catch (error: any) {
-			console.error("Error: Failed to upload recording", error.message);
+			Alert.alert("Failed to upload", error.response.data.detail);
 		} finally {
 			setIsProcessing(false);
 		}
