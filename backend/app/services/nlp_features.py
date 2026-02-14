@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 import spacy
 import textstat
 from app.schemas.schemas import Feature, TranscriptSegment
@@ -25,7 +25,15 @@ class NLPFeatureExtraction:
             return 0
         return len(text.split())
 
-    
+
+    def _group_by_speaker(self, segments: List[TranscriptSegment]) -> Dict[str, List[TranscriptSegment]]:
+        result: Dict[str, List[TranscriptSegment]] = {}
+        for segment in segments:
+            speaker = segment.speaker
+            if speaker not in result:
+                result[speaker] = []
+            result[speaker].append(segment)
+        return result
 
     # Calculate words per minute using the formula: total words / (total seconds / 60)
     def calculate_wpm(self, segments: List[TranscriptSegment]) -> float:
@@ -41,8 +49,8 @@ class NLPFeatureExtraction:
 
         return total_words / (total_seconds / 60.0)
 
-    def wpm_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
-        grouped_segments = group_by_speaker(segments)
+    def wpm_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
+        grouped_segments = self._group_by_speaker(segments)
         result = {}
 
         for speaker, speaker_segments in grouped_segments.items():
@@ -58,8 +66,8 @@ class NLPFeatureExtraction:
         text = self._combine_segments(segments)
         return textstat.avg_character_per_word(text)
 
-    def avg_word_length_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
-        grouped_segments = group_by_speaker(segments)
+    def avg_word_length_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
+        grouped_segments = self._group_by_speaker(segments)
         result = {}
 
         for speaker, speaker_segments in grouped_segments.items():
@@ -87,8 +95,8 @@ class NLPFeatureExtraction:
         
         return total_adverbs / total_words
     
-    def adverb_ratio_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
-        grouped_segments = group_by_speaker(segments)
+    def adverb_ratio_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
+        grouped_segments = self._group_by_speaker(segments)
         result = {}
         
         for speaker, speaker_segments in grouped_segments.items():
@@ -104,8 +112,8 @@ class NLPFeatureExtraction:
         text = self._combine_segments(segments)
         return textstat.flesch_kincaid_grade(text)
     
-    def flesch_kincaid_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
-        grouped_segments = group_by_speaker(segments)
+    def flesch_kincaid_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
+        grouped_segments = self._group_by_speaker(segments)
         result = {}
         
         for speaker, speaker_segments in grouped_segments.items():
@@ -135,8 +143,8 @@ class NLPFeatureExtraction:
         
         return pronouns / (pronouns + nouns)
 
-    def prp_ratio_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
-        grouped_segments = group_by_speaker(segments)
+    def prp_ratio_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
+        grouped_segments = self._group_by_speaker(segments)
         result = {}
         
         for speaker, speaker_segments in grouped_segments.items():
@@ -153,8 +161,8 @@ class NLPFeatureExtraction:
         words = text.lower().split()
         return len(set(words))
     
-    def n_unique_words_per_speaker(self, segments: List[TranscriptSegment], group_by_speaker) -> Feature:
-        grouped_segments = group_by_speaker(segments)
+    def n_unique_words_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
+        grouped_segments = self._group_by_speaker(segments)
         result = {}
         
         for speaker, speaker_segments in grouped_segments.items():

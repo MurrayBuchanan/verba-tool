@@ -4,13 +4,11 @@ from openai import AzureOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
 from app.schemas.schemas import TranscriptSegment, AIFeatures
 
-# GitHub: https://github.com/openai/openai-python
-
 # Create client with the OpenAI SDK for Azure
 client = AzureOpenAI(
-    api_version = OPENAI_VERSION,
-    azure_endpoint = OPENAI_ENDPOINT,
-    api_key = OPENAI_API_KEY,
+    api_version=OPENAI_VERSION,
+    azure_endpoint=OPENAI_ENDPOINT,
+    api_key=OPENAI_API_KEY,
 )
 
 def _format_transcript(segments: List[TranscriptSegment]) -> str:
@@ -43,10 +41,9 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     speakers = sorted(all_speakers)
 
     system_prompt = """
-    You are a experienced doctor studying patients with dementia. You understand how the disease affects language abilities.
-    Task: 
-    - Extract language impairment features from a transcript per speaker.
-    - Rate each feature on an integer scale from 1 (no impairment) to 7 (severe impairment).
+    You are an experienced doctor studying patients with dementia. You understand how the disease affects language abilities.
+
+    Task: Extract language impairment features from the transcript per speaker. Rate each feature on an integer scale from 1 (no impairment) to 7 (severe impairment).
 
     Output: Return only a JSON object with these keys:
     {
@@ -68,7 +65,7 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     - Include every speaker from the provided speaker list.
     - Scores must be integers between 1 and 7.
     - Do not include extra keys or explanations.
-    - Respond in JSON.
+    - Respond as a JSON object.
     """
     
     # Create the user prompt
@@ -82,7 +79,7 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
         model = OPENAI_MODEL,
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
+            {"role": "user", "content": user_prompt}
         ],
         response_format = {"type": "json_object"}, # Formats the response as a JSON
         temperature=0, # Most deterministic output for stability
