@@ -12,12 +12,11 @@ type Props = {
 
 export function BlockButton({ onPress, title, lightBackgroundColour, darkBackgroundColour }: Props) {
     const backgroundColour = useThemeColor({ light: lightBackgroundColour, dark: darkBackgroundColour, }, 'accent');
-    const textColour = (lightBackgroundColour || darkBackgroundColour) ? useThemeColor({}, 'text') : '#FFF';
 
     return (
         <TouchableOpacity onPress={onPress}>
             <View style={[ styles.container, { backgroundColor: backgroundColour }]}>
-                <Text type="button" style={{ color: textColour }}>{title}</Text>
+                <Text type="button" align="center" lightColour="#FFF" darkColour="#FFF">{title}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -25,9 +24,8 @@ export function BlockButton({ onPress, title, lightBackgroundColour, darkBackgro
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
-        borderRadius: 14,
-        paddingVertical: 14,
+        borderRadius: 18,
+        paddingVertical: 16,
         paddingHorizontal: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

@@ -10,7 +10,7 @@ type Props = {
     subtitle?: string;
 };
 
-export function ListItem({ name, onPress, icon, subtitle }: Props) {
+export function Item({ name, onPress, icon, subtitle }: Props) {
 	const iconColour = useThemeColor({}, 'icon');
 	return (
 		<TouchableOpacity onPress={onPress} style={styles.container}>

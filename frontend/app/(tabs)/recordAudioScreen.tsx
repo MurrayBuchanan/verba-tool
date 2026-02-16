@@ -14,7 +14,7 @@ export default function RecordAudioScreen() {
 		/>	
 		<View style={styles.tutorialTextContainer}>
 			<Text type='title' align='center'>How to use</Text>
-			<Text align='center'>The first speaker should use a consistent set of questions to form a baseline between conversations and the second speaker will be analysed.</Text>
+			<Text align='center'>The person asking questions should speak first and the person who's language is being analysed should speak second.</Text>
 		</View>
 	
 		<View style={styles.button}>
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 	},
 	image: {
-		width: 220,
-		height: 220,
+		width: 300,
+		height: 200,
 		alignSelf: 'center'
 	},
 	tutorialTextContainer: {

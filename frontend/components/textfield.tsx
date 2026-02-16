@@ -9,11 +9,10 @@ type Props = {
 	onChangeText: (text: string) => void;
 	placeholder?: string;
 	multiline?: boolean;
-	editable?: boolean;
 	error?: string;
 };
 
-export function TextField({ label, value, onChangeText, placeholder, multiline = false, editable = true, error }: Props) {
+export function TextField({ label, value, onChangeText, placeholder, multiline = false, error }: Props) {
 	const [focused, setFocused] = useState(false);
 	const accentColour = useThemeColor({}, 'accent');
 	const textColour = useThemeColor({}, 'text');
@@ -21,15 +20,6 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 	const backgroundColour = useThemeColor({}, 'active');
 	const warningColour = useThemeColor({}, 'warning');
 	const borderColour = error ? warningColour : focused ? accentColour : 'transparent';
-
-	if (!editable) {
-		return (
-			<View>
-				<Text type="strong" style={styles.notEditableLabel}>{label}</Text>
-				<Text type="caption">{ value || placeholder }</Text>
-			</View>
-		);
-	}
 
 	return (
 		<View>
@@ -47,7 +37,6 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 				placeholder={placeholder}
 				placeholderTextColor={placeholderColour}
 				multiline={multiline}
-				editable={editable}
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
 			/>
@@ -63,9 +52,6 @@ const styles = StyleSheet.create({
 		padding: 12,
 		marginTop: 16,
 		marginBottom: 10,
-	},
-	notEditableLabel: {
-		marginBottom: 12,
 	},
 	textArea: {
 		minHeight: 100,

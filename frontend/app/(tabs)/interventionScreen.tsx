@@ -4,9 +4,9 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Plus, AlertCircle, ClipboardList, Lightbulb } from 'lucide-react-native';
+import { AlertCircle, Calendar, ClipboardList, Lightbulb, Plus } from 'lucide-react-native';
 import { List } from "@/components/list";
-import { InterventionItem as Item } from "@/components/intervention-item";
+import { Item } from "@/components/list-item";
 import { Intervention } from "@/constants/interfaces";
 import { getInterventions } from "@/services/intervention-service";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
@@ -72,25 +72,24 @@ export default function InterventionScreen() {
 							<Lightbulb size={18} color={textSecondary} />
 							<Text type="caption">About this</Text>
 						</View>
-						<Text>Annotations are used to document and view changes to language over set periods of time.</Text>
+						<Text>Annotations/interventions are used to document and visualise strategies that support language impairment recovery.</Text>
 					</View>
 					<List divider={true}>
-						{ interventions.map((intervention) => {
-							return (
-								<Item
-									key={intervention.id}
-									onPress={() => router.push(`/interventionScreen/${intervention.id}`)}
-									name={intervention.name}
-									dateRange={`${formatDisplayDate(intervention.start_date)} - ${formatDisplayDate(intervention.end_date)}`}
-								/>
-							);
-						})}
+						{ interventions.map((intervention) => (
+							<Item
+								key={intervention.id}
+								name={intervention.name}
+								icon={<Calendar size={14} color={iconColour} />}
+								subtitle={`${formatDisplayDate(intervention.start_date)} - ${formatDisplayDate(intervention.end_date)}`}
+								onPress={() => router.push(`/interventionScreen/${intervention.id}`)}
+							/>
+						))}
 					</List>
 				</ScrollView>
 			)}
 			{!loading && !error && (
 				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createInterventionModal")}>
-					<Plus size={28} color="#FFF"/>
+					<Plus size={32} color="#FFF"/>
 				</TouchableOpacity>
 			)}
 		</View>

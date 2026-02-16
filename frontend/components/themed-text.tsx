@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontFamily: Fonts.sansSemiBold,
-		fontSize: 30,
+		fontSize: 28,
 		lineHeight: 30,
 	},
 	button: {

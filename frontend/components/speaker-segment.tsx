@@ -5,8 +5,8 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 function calculateTimestamp(recordingStartedAt: string, offsetSeconds: number): string {
-    const start = new Date(recordingStartedAt.replace("Z", "+00:00")).getTime();
-    const timestamp = new Date(start + offsetSeconds * 1000);
+    const startedAt = new Date(recordingStartedAt.replace("Z", "+00:00")).getTime();
+    const timestamp = new Date(startedAt + offsetSeconds * 1000);
     return timestamp.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", hour12: true });
 }
 
@@ -18,36 +18,25 @@ type Props = {
 };
 
 export function SpeakerSegment({ speaker, text, createdAt, offsetSeconds }: Props) {
-    const backgroundColour = useThemeColor({}, "backgroundSecondary");
-    const activeColour = useThemeColor({}, "active");
+    const bubbleColour = useThemeColor({}, "backgroundSecondary");
     const textColour = useThemeColor({}, "text");
     const textSecondaryColour = useThemeColor({}, "textSecondary");
 
-    const isPrimarySpeaker = speaker === "Guest-1";
+    const isLeft = speaker === "Guest-1";
     const timestamp = createdAt != null && offsetSeconds != null ? calculateTimestamp(createdAt, offsetSeconds) : null;
 
-    const message = (
-        <View>
-            <Text lightColour={textColour} darkColour={textColour}>{text}</Text>
-            { timestamp && (
-                <View style={styles.timestamp}>
-                    <Text type="caption" lightColour={textSecondaryColour} darkColour={textSecondaryColour}>{timestamp}</Text>
-                </View>
-            )}
-        </View>
-    );
-
     return (
-        <ThemedView style={[styles.container, isPrimarySpeaker ? styles.left : styles.right]}>
-            {isPrimarySpeaker ? (
-                <ThemedView lightColour={activeColour} darkColour={activeColour} style={styles.bubble}>
-                    {message}
-                </ThemedView>
-            ) : (
-                <ThemedView lightColour={backgroundColour} darkColour={backgroundColour} style={styles.bubble}>
-                    {message}
-                </ThemedView>
-            )}
+        <ThemedView style={[styles.container, isLeft ? styles.left : styles.right]}>
+            <ThemedView lightColour={bubbleColour} darkColour={bubbleColour} style={styles.bubble}>
+                <View>
+                    <Text lightColour={textColour} darkColour={textColour}>{text}</Text>
+                    { timestamp && (
+                        <View style={styles.timestamp}>
+                            <Text type="caption" lightColour={textSecondaryColour} darkColour={textSecondaryColour}>{timestamp}</Text>
+                        </View>
+                    )}
+                </View>
+            </ThemedView>
         </ThemedView>
     );
 }

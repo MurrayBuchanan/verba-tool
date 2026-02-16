@@ -13,11 +13,10 @@ type Props = {
 	onDateChange: (date: Date) => void;
 	minimumDate?: Date;
 	maximumDate?: Date;
-	editable?: boolean;
 	error?: string;
 };
 
-export function DatePicker({ label, value, onDateChange, minimumDate, maximumDate, editable = true, error }: Props) {
+export function DatePicker({ label, value, onDateChange, minimumDate, maximumDate, error }: Props) {
 	const [showPicker, setShowPicker] = useState(false);
 	const accentColour = useThemeColor({}, 'accent');
 	const iconColour = useThemeColor({}, 'icon');
@@ -39,17 +38,11 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 	};
 
 	const handlePress = () => {
-		if (!editable) return;
 		Keyboard.dismiss();
 		setShowPicker(!showPicker);
 	};
 
-	return !editable ? (
-		<View>
-			<Text type="strong" style={styles.notEditableLabel}>{label}</Text>
-			<Text type="caption">{formatDisplayDate(value)}</Text>
-		</View>
-	) : (
+	return (
 		<View>
 			<Text type="strong">{label}</Text>
 			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: borderColour, backgroundColor: backgroundColour }]}>
@@ -98,9 +91,6 @@ const styles = StyleSheet.create({
 		padding: 12,
 		marginTop: 16,
 		marginBottom: 10,
-	},
-	notEditableLabel: {
-		marginBottom: 12,
 	},
 	row: {
 		flexDirection: 'row',

@@ -1,5 +1,5 @@
-const tintColourLight = '#4A90E2';
-const tintColourDark = '#80CFFF';
+const tintColourLight = '#6FB6E9';
+const tintColourDark = '#6FB6E9';
 
 export const Theme = {
 	light: {
@@ -8,15 +8,12 @@ export const Theme = {
 		background: '#FAFAFA',
 		backgroundSecondary: '#F5F5F5',
 		backgroundTertiary: '#E0E0E0',
-
 		active: '#EEEEEE',
 		accent: tintColourLight,
 		warning: '#BA1A1A',
 		icon: '#49454F',
 		tabIconDefault: '#79747E',
 		tabIconSelected: tintColourLight,
-
-		standardDeviationColour: 'rgba(74, 144, 226, 0.2)',
 		meanColour: '#43A047',
 		interventionColour: 'rgba(74, 144, 226, 0.15)',
 	},
@@ -27,16 +24,13 @@ export const Theme = {
 		background: '#121212',
 		backgroundSecondary: '#1E1E1E',
 		backgroundTertiary: '#2D2D2D',
-
 		accent: tintColourDark,
 		active: '#363636',
 		warning: '#F2B8B5',
 		icon: '#CAC4D0',
 		tabIconDefault: '#938F99',
 		tabIconSelected: tintColourDark,
-
 		meanColour: '#66BB6A',
-		standardDeviationColour: 'rgba(107, 163, 216, 0.25)',
 		interventionColour: 'rgba(107, 163, 216, 0.2)',
 	},
 };

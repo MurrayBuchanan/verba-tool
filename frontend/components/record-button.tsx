@@ -2,7 +2,7 @@ import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder, use
 import React, { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { BlockButton } from '@/components/block-button';
-import { uploadRecording } from '@/services/upload-service';
+import { upload } from '@/services/upload-service';
 import { useProfile } from '@/context/ProfileContext';
 
 export const RecordButton = () => {
@@ -36,8 +36,8 @@ export const RecordButton = () => {
 			recorder.record();
 			setCreatedAt(new Date());
 			console.log("Started recording!");
-		} catch (error) {
-			console.log("Failed to start recording", error);
+		} catch {
+			Alert.alert("Failed to start recording");
 		}
 	};
 
@@ -45,20 +45,16 @@ export const RecordButton = () => {
 	const stopRecording = async () => {
 		try {
 			await recorder.stop();
-			console.log("Ended recording!");
 
-			if (!recorder.uri) {
-				throw new Error("Failed to get recording URI");
-			}
-			if (!createdAt) {
-				throw new Error("Failed to get timestamp");
+			if (!recorder.uri || !createdAt) {
+				throw new Error("Failed to get recording URI or timestamp");
 			}
 
 			setIsProcessing(true);
-			await uploadRecording(profileId, recorder.uri, createdAt);
+			await upload(profileId, recorder.uri, createdAt);
 			setCreatedAt(null);
-		} catch (error: any) {
-			Alert.alert("Failed to upload", error.response.data.detail);
+		} catch {
+			console.log("Failed to upload recording");
 		} finally {
 			setIsProcessing(false);
 		}
@@ -73,7 +69,6 @@ export const RecordButton = () => {
 		if (isProcessing) return 'Processing';
 		return recorderState.isRecording ? 'Stop Recording' : 'Start Recording';
 	};
-
 	return (
 		<BlockButton onPress={onPress}  title={getLabel()} />
 	);
