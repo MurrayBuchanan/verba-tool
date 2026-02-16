@@ -4,8 +4,8 @@ from app.schemas.schemas import Transcript
 # Ensures the audio is long enough, and has enough text segments to analyse
 def check_quality_gates(transcript: Transcript) -> Optional[str]:
     duration = transcript.total_duration
-    if duration < 60:
-        return "Audio must be at least 1 minute."
+    if duration > 600:
+        return "Audio must be less than 10 minutes."
 
     segments = transcript.raw_segments
     has_text = False
