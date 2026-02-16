@@ -71,7 +71,7 @@ Content coming soon...
       ```
    3. Create development build
       ```bash
-      eas build
+      eas build --platform all
       ```
 
 ## How to run
