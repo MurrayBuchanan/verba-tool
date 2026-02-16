@@ -1,6 +1,6 @@
 import { StyleSheet, ScrollView, ActivityIndicator, Alert } from "react-native";
 import { useState, useCallback, useRef, useLayoutEffect } from "react";
-import { useLocalSearchParams, router, useNavigation } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
@@ -13,6 +13,7 @@ import { IconButton } from "@/components/icon-button";
 
 export default function ConversationDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
+	const router = useRouter();
 	const navigation = useNavigation();
 	const warningColour = useThemeColor({}, 'warning');
 	const iconColour = useThemeColor({}, 'icon');
@@ -21,24 +22,20 @@ export default function ConversationDisplayScreen() {
 	const [error, setError] = useState<string | null>(null);
 	const loadedId = useRef<string | undefined>(undefined);
 
-	const performDeleteTranscript = useCallback(async () => {
-		try {
-			const transcriptId = parseInt(id, 10);
-			await deleteTranscript(transcriptId);
-			router.back();
-		} catch {
-			Alert.alert("Failed to delete conversation");
-		}
-	}, [id]);
-
 	const handleDelete = useCallback(() => {
 		Alert.alert("Delete Conversation", "Are you sure you want to delete this conversation? This will permanently delete the conversation and the metrics associated with it.", [
-			{
-				text: "Cancel", style: "cancel"
-			}, {
-				text: "Delete", style: "destructive", onPress: performDeleteTranscript
-		}]);
-	}, [id, performDeleteTranscript]);
+			{ text: "Cancel", style: "cancel" },
+			{ text: "Delete", style: "destructive", onPress: async () => {
+				try {
+					const transcriptId = parseInt(id, 10);
+					await deleteTranscript(transcriptId);
+					router.back();
+				} catch {
+					Alert.alert("Failed to delete conversation");
+				}
+			}},
+		]);
+	}, [id]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -51,12 +48,6 @@ export default function ConversationDisplayScreen() {
 	useFocusEffect(
 		useCallback(() => {
 			async function fetchTranscript() {
-				if (!id) {
-					setError("No transcript ID provided");
-					setLoading(false);
-					return;
-				}
-				
 				try {
 					if (loadedId.current === id) {
 						return;

@@ -36,7 +36,7 @@ function RootNavigator() {
 		}
 	}, [isLoading]);
 
-	// Show splash until authentication is loaded
+	// Show splash screen until authentication is loaded
 	if (isLoading) {
 		return null;
 	}
@@ -51,7 +51,9 @@ function RootNavigator() {
 					<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Chat", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Annotation", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="createInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Annotation' }} />
+					<Stack.Screen name="editInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'Edit Annotation' }} />
 					<Stack.Screen name="createProfileModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Profile' }} />
+					<Stack.Screen name="editProfileModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'Edit Profile' }} />
 				</Stack.Protected>
 
 				<Stack.Protected guard={!session}>

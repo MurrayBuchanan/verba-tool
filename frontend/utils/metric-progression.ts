@@ -1,7 +1,8 @@
 import { TranscriptWithFeatures } from "@/constants/interfaces";
-import { MAX_DAYS_FOR_DAILY_VIEW, MAX_DAYS_FOR_WEEKLY_VIEW, MILLISECONDS_PER_DAY, MONTH_NAMES } from "@/constants/time";
 
-type DataPoint = {
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+export type Data = {
 	x: number;
 	value: number;
 	label: string;
@@ -15,26 +16,23 @@ type DateGroup = {
 	transcripts: TranscriptWithFeatures[];
 };
 
-function getDaysDifference(startDate: Date, endDate: Date): number {
-	return Math.ceil(Math.abs(endDate.getTime() - startDate.getTime()) / MILLISECONDS_PER_DAY);
-}
-
 function getTimeGrouping(startDate: Date, endDate: Date): "Day" | "Week" | "Month" {
-	const days = getDaysDifference(startDate, endDate);
+	const difference = Math.abs(endDate.getTime() - startDate.getTime());
+	const days = Math.ceil(difference / 86400000);
 	
-	if (days <= MAX_DAYS_FOR_DAILY_VIEW) {
+	if (days <= 14) {
 		return "Day";
-	}
-	if (days <= MAX_DAYS_FOR_WEEKLY_VIEW) {
+	} else if (days <= 90) {
 		return "Week";
+	} else {
+		return "Month";
 	}
-	return "Month";
 }
 
 function getWeekNumber(date: Date): number {
 	const year = date.getFullYear();
 	const startOfYear = new Date(year, 0, 1);
-	const days = Math.floor((date.getTime() - startOfYear.getTime()) / MILLISECONDS_PER_DAY);
+	const days = Math.floor((date.getTime() - startOfYear.getTime()) / 86400000);
 	const dayOfWeek = startOfYear.getDay();
 	const adjusted = days + dayOfWeek;
 	return Math.floor(adjusted / 7);
@@ -112,14 +110,6 @@ function getMetricValue(transcript: TranscriptWithFeatures, metricKey: string): 
 	return value[speakers[0]];
 }
 
-function calculateAverage(values: number[]): number {
-	let sum = 0;
-	for (let i = 0; i < values.length; i++) {
-		sum += values[i];
-	}
-	return sum / values.length;
-}
-
 function getDates(transcripts: TranscriptWithFeatures[]): Date[] {
 	const dates = [];
 	for (let i = 0; i < transcripts.length; i++) {
@@ -131,7 +121,7 @@ function getDates(transcripts: TranscriptWithFeatures[]): Date[] {
 	return dates;
 }
 
-export function getMetricProgression(transcripts: TranscriptWithFeatures[], metricKey: string): DataPoint[] {
+export function getMetricProgression(transcripts: TranscriptWithFeatures[], metricKey: string): Data[] {
 	if (transcripts.length === 0) {
 		return [];
 	}
@@ -146,18 +136,14 @@ export function getMetricProgression(transcripts: TranscriptWithFeatures[], metr
 	const result = [];
 	for (let i = 0; i < groups.length; i++) {
 		const group = groups[i];
-		const values = [];
-		for (let j = 0; j < group.transcripts.length; j++) {
-			values.push(getMetricValue(group.transcripts[j], metricKey));
-		}
-		
+		const transcript = group.transcripts[0];
 		result.push({
 			x: i + 1,
-			value: calculateAverage(values),
+			value: getMetricValue(transcript, metricKey),
 			label: formatGroupLabel(group.date, grouping),
-			transcriptId: group.transcripts[0].id,
+			transcriptId: transcript.id,
 			date: group.date,
-			grouping,
+			grouping
 		});
 	}
 	return result;

@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { Mic, ChartLine, ClipboardList, History } from 'lucide-react-native';
 import { HapticFeedback } from '@/components/haptic-feedback';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { ProfileButton } from '@/components/account-buttons';
+import { ToProfileButton, EditProfileButton } from '@/components/account-buttons';
 import { Fonts } from '@/constants/theme';
 
 export default function TabLayout() {
@@ -22,7 +22,8 @@ export default function TabLayout() {
 				headerStyle: { backgroundColor: backgroundColour },
 				headerTintColor: textColour,
 				tabBarButton: HapticFeedback,
-				headerLeft: () => (<ProfileButton />),
+				headerLeft: () => (<ToProfileButton />),
+				headerRight: () => (<EditProfileButton />),
 				headerShadowVisible: false,
 				tabBarStyle: { backgroundColor: backgroundSecondaryColour, borderTopWidth: 0 },
 				tabBarLabelStyle: { fontFamily: Fonts.sansSemiBold, fontSize: 12 }

@@ -1,46 +1,43 @@
 import { StyleSheet, View, ScrollView, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from "react-native";
-import { useState, useCallback, useRef, useMemo, useLayoutEffect } from "react";
-import { useLocalSearchParams, router, useNavigation } from "expo-router";
+import { useState, useCallback, useMemo, useLayoutEffect } from "react";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Trash, Pencil, X, Check, AlertCircle } from "lucide-react-native";
+import { Trash, Pencil, AlertCircle } from "lucide-react-native";
 import { MetricChart as Chart } from "@/components/metric-chart";
 import { MetricSelector } from "@/components/metric-selector";
 import { AnnotationSelector } from "@/components/annotation-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
-import { TextField } from "@/components/textfield";
-import { DatePicker as Picker } from "@/components/date-picker";
-import { Intervention } from "@/constants/interfaces";
-import { getIntervention, updateIntervention, deleteIntervention } from "@/services/intervention-service";
+import { getIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { getMetricProgression } from "@/utils/metric-progression";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
-import { formatAPIDate } from "@/utils/datetime-formatting";
+import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
-import { validateIntervention, hasErrors, type InterventionErrors } from "@/utils/form-validation";
 import { IconButton } from "@/components/icon-button";
 import { List } from "@/components/list";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
 	const end = new Date(endDate);
-	const result = [];
+	const dates = [];
 	
 	for (let i = 0; i < transcripts.length; i++) {
 		const transcript = transcripts[i];
 		const date = new Date(transcript.created_at);
 		if (date >= start && date <= end) {
-			result.push(transcript);
+			dates.push(transcript);
 		}
 	}
-	return result;
+	return dates;
 }
 
 export default function InterventionDetailScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
+	const router = useRouter();
 	const navigation = useNavigation();
 	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, 'warning');
@@ -50,67 +47,38 @@ export default function InterventionDetailScreen() {
 	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
 	const borderColour = useThemeColor({}, 'backgroundTertiary');
 	const [intervention, setIntervention] = useState<any>(null);
-	const [editingIntervention, setEditingIntervention] = useState<Intervention | null>(null);
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
 	const [annotationView, setAnnotationView] = useState<string>("annotation");
 	const [showMean, setShowMean] = useState<boolean>(true);
-	const [showRange, setShowRange] = useState<boolean>(false);
-	const [errors, setErrors] = useState<InterventionErrors>({});
-	const loadedId = useRef<string | undefined>(undefined);
-
-	const performDeleteIntervention = useCallback(async () => {
-		try {
-			const interventionId = parseInt(id, 10);
-			await deleteIntervention(interventionId);
-			router.back();
-		} catch {
-			Alert.alert("Failed to delete annotation");
-		}
-	}, [id]);
 
 	const handleDeleteIntervention = useCallback(() => {
 		Alert.alert("Delete Annotation", "Are you sure you want to delete this annotation?", [
-			{ 
-				text: "Cancel", 
-				style: "cancel"
-			}, {
-				text: "Delete", 
-				style: "destructive", 
-				onPress: performDeleteIntervention
-		}]);
-	}, [id, performDeleteIntervention]);
+			{ text: "Cancel", style: "cancel" },
+			{
+				text: "Delete",
+				style: "destructive",
+				onPress: async () => {
+					try {
+						await deleteIntervention(parseInt(id, 10));
+						router.back();
+					} catch {
+						Alert.alert("Failed to delete annotation");
+					}
+				},
+			},
+		]);
+	}, [id]);
 
-	const handleUpdateIntervention = useCallback(async () => {
-		if (!id || !editingIntervention) return;
-
-		const validationErrors = validateIntervention({
-			name: editingIntervention.name ?? "",
-			description: editingIntervention.description ?? "",
-			startDate: new Date(editingIntervention.start_date),
-			endDate: new Date(editingIntervention.end_date),
-		});
-		setErrors(validationErrors);
-		if (hasErrors(validationErrors)) return;
-
-		try {
-			const interventionId = parseInt(id, 10);
-			await updateIntervention(interventionId, { ...editingIntervention, profile_id: profileId });
-			setIntervention(editingIntervention);
-			setEditingIntervention(null);
-			setErrors({});
-		} catch (error) {
-			Alert.alert("Cannot update annotation");
-		}
-	}, [id, editingIntervention, profileId]);
+	const handleUpdateIntervention = useCallback(() => {
+		router.push({ pathname: "/editInterventionModal", params: { id } });
+	}, [id]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
-			headerRight: () => (
-				<IconButton icon={<Trash size={22} color={warningColour} />} onPress={handleDeleteIntervention} />
-			),
+			headerRight: () => (<IconButton icon={<Trash size={22} color={warningColour} />} onPress={handleDeleteIntervention} accessibilityLabel="Delete Annotation" />),
 		});
 	}, [navigation, handleDeleteIntervention, warningColour]);
 
@@ -118,9 +86,6 @@ export default function InterventionDetailScreen() {
 		useCallback(() => {
 			async function fetchData() {
 				try {
-					if (loadedId.current === id) {
-						return;
-					}
 					setLoading(true);
 					const interventionId = parseInt(id, 10);
 
@@ -130,7 +95,6 @@ export default function InterventionDetailScreen() {
 					setIntervention(interventionData);
 					setTranscripts(transcriptsData);
 					setError(null);
-					loadedId.current = id;
 				} catch {
 					setError("Unable to load annotation");
 				} finally {
@@ -196,12 +160,11 @@ export default function InterventionDetailScreen() {
 								<Chart
 									data={metricData}
 									xAxisLabel={(value) => {
-										const point = metricData.find(d => d.x === value);
-										return point?.label || "";
+										const point = metricData.find(data => data.x === value); 
+										return point?.label ?? ""; 
 									}}
 									title={`Changes to ${metricDetails.name} during annotation`}
 									showMean={showMean}
-									showRange={showRange}
 									showInterventions={false}
 								/>
 							</View>
@@ -217,55 +180,25 @@ export default function InterventionDetailScreen() {
 								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 									<View style={styles.detailsRow}>
 										<Text type="heading">Annotation Details</Text>
-										<View style={styles.detailsRowRight}>
-											{editingIntervention ? (
-												<View style={styles.buttons}>
-													<IconButton icon={<X size={22} color={warningColour} />} onPress={() => { setEditingIntervention(null); setErrors({}); }} accessibilityLabel="Cancel" />
-													<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Update" />
-												</View>
-											) : (
-												<IconButton icon={<Pencil size={22} color={accentColour} />} onPress={() => intervention && setEditingIntervention({ ...intervention })} accessibilityLabel="Edit" />
-											)}
-										</View>
+										<IconButton icon={<Pencil size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Edit" />
 									</View>
-									<TextField
-										label="Annotation Name"
-										value={editingIntervention ? (editingIntervention.name ?? "") : intervention.name}
-										onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, name: text })}
-										editable={editingIntervention !== null}
-										error={editingIntervention ? errors.name : undefined}
-									/>
-									<TextField
-										label="Description"
-										value={editingIntervention ? (editingIntervention.description ?? "") : (intervention.description || "")}
-										onChangeText={(text) => editingIntervention && setEditingIntervention({ ...editingIntervention, description: text || null })}
-										placeholder="No description"
-										multiline
-										editable={editingIntervention !== null}
-										error={editingIntervention ? errors.description : undefined}
-									/>
-									<Picker
-										label="Start Date"
-										value={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
-										onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, start_date: formatAPIDate(date) })}
-										maximumDate={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
-										editable={editingIntervention !== null}
-										error={editingIntervention ? errors.startDate : undefined}
-									/>
-									<Picker
-										label="End Date"
-										value={editingIntervention ? new Date(editingIntervention.end_date) : new Date(intervention.end_date)}
-										onDateChange={(date) => editingIntervention && setEditingIntervention({ ...editingIntervention, end_date: formatAPIDate(date) })}
-										minimumDate={editingIntervention ? new Date(editingIntervention.start_date) : new Date(intervention.start_date)}
-										editable={editingIntervention !== null}
-										error={editingIntervention ? errors.endDate : undefined}
-									/>
+									<Text type="strong">Annotation Name</Text>
+									<Text type="caption">{intervention.name}</Text>
+									{ intervention.description && 
+										<>
+											<Text type="strong">Description</Text>
+											<Text>{intervention.description}</Text> 
+										</> 
+									}
+									<Text type="strong">Start Date</Text>
+									<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
+									<Text type="strong">End Date</Text>
+									<Text type="caption">{formatDisplayDate(intervention.end_date)}</Text>
 								</View>
 							) : (
 								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 									<View style={styles.detailsRow}>
 										<Text type="heading">Metric Information</Text>
-										<View style={styles.detailsRowRight} />
 									</View>
 									<Text type="strong">What Does this Mean?</Text>
 									<Text type="caption">{metricDetails.alias}</Text>
@@ -280,7 +213,6 @@ export default function InterventionDetailScreen() {
 								<Text type="heading">Chart Controls</Text>
 								<List divider>
 									<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
-									<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
 								</List>
 							</View>
 						)}
@@ -310,7 +242,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		paddingTop: 20,
 		paddingBottom: 30,
-		gap: 12,
+		gap: 14,
 		borderRadius: 16
 	},
 	center: {
@@ -331,15 +263,10 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
+		minHeight: 48,
 	},
-	detailsRowRight: {
-		minWidth: 88,
-		height: 44,
+	headerRight: {
 		flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "flex-end",
-	},
-	buttons: {
-		flexDirection: "row",
 	},
 });

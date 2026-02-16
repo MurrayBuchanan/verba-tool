@@ -24,21 +24,17 @@ export default function MetricDisplayScreen() {
 	const sectionBackground = useThemeColor({}, 'background');
 	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
 	const borderColour = useThemeColor({}, 'backgroundTertiary');
-
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [interventions, setInterventions] = useState<Intervention[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>(id || "wpm_per_speaker");
 	const [showMean, setShowMean] = useState<boolean>(true);
-	const [showRange, setShowRange] = useState<boolean>(false);
 	const [showInterventions, setShowInterventions] = useState<boolean>(true);
 	const metricDetails = METRIC_DEFINITIONS[selectedMetric];
 
 	useEffect(() => {
-		if (id && METRIC_DEFINITIONS[id]) {
-			setSelectedMetric(id);
-		}
+		setSelectedMetric(id);
 	}, [id]);
 
 	useFocusEffect(
@@ -99,14 +95,9 @@ export default function MetricDisplayScreen() {
 							<View style={styles.section}>
 								<Chart 
 									data={metricData} 
-									xAxisLabel={(value) => {
-										const point = metricData.find(d => d.x === value);
-										return point?.label || "";
-									}}
-									title={`Changes to ${metricDetails.name}`}
+									title={`All time changes to ${metricDetails.name}`}
 									interventions={interventions}
 									showMean={showMean}
-									showRange={showRange}
 									showInterventions={showInterventions}
 								/>
 							</View>
@@ -129,7 +120,6 @@ export default function MetricDisplayScreen() {
 								<Text type="heading">Chart Controls</Text>
 								<List divider>
 									<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
-									<Switch label="Show Range" value={showRange} onValueChange={setShowRange} />
 									<Switch label="Show Annotations" value={showInterventions} onValueChange={setShowInterventions} />
 								</List>
 							</View>

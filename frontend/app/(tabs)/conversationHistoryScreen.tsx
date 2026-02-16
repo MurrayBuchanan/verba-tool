@@ -5,14 +5,13 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { List } from "@/components/list";
-import { ConversationItem as Item } from "@/components/conversation-item";
+import { Item } from "@/components/list-item";
 import { getTranscripts } from "@/services/transcript-service";
+import { AlertCircle, Clock, MessageSquare } from "lucide-react-native";
 import { TranscriptWithFeatures } from "@/constants/interfaces";
-import { formatDisplayDateTime } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
-import { AlertCircle, MessageSquare } from "lucide-react-native";
-import { formatDuration } from "@/utils/datetime-formatting";
+import { formatDuration, formatDisplayDateTime } from "@/utils/datetime-formatting";
 
 export default function ConversationHistoryScreen() {
 	const router = useRouter();
@@ -66,16 +65,15 @@ export default function ConversationHistoryScreen() {
 				<>
 					<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 						<List divider={true}>
-							{transcripts.map((transcript) => {
-								return (
-									<Item
-										key={transcript.id}
-										onPress={() => router.push(`/conversationScreen/${transcript.id}`)}
-										datetime={formatDisplayDateTime(transcript.created_at)}
-										duration={formatDuration(transcript.total_duration)}
-									/>
-								);
-							})}
+							{transcripts.map((transcript) => (
+								<Item
+									key={transcript.id}
+									name={formatDisplayDateTime(transcript.created_at)}
+									icon={<Clock size={14} color={iconColour} />}
+									subtitle={formatDuration(transcript.total_duration)}
+									onPress={() => router.push(`/conversationScreen/${transcript.id}`)}
+								/>
+							))}
 						</List>
 					</ScrollView>
 				</>
