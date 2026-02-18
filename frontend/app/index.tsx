@@ -1,6 +1,5 @@
 import { StyleSheet, Alert } from "react-native";
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { BlockButton as Button } from "@/components/block-button";
@@ -14,7 +13,7 @@ export default function Index() {
 	const handleSignIn = async () => {
 		try {
 			await signIn();
-		} catch (error) {
+		} catch {
 			Alert.alert("Login Failed", "Please try again.");
 		}
 	};

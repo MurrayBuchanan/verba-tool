@@ -1,3 +1,5 @@
+import { dateToMidnight } from "@/utils/datetime-formatting";
+
 type ProfileProps = {
 	name?: string;
 	description?: string;
@@ -47,7 +49,7 @@ export function validateIntervention(values: InterventionProps): InterventionErr
 	if (values.description && values.description.length > 500) {
 		return { description: "Description must be less than 500 characters." };
 	}
-	if (values.startDate && values.endDate && values.startDate.getTime() >= values.endDate.getTime()) {
+	if (values.startDate && values.endDate && dateToMidnight(values.startDate).getTime() >= dateToMidnight(values.endDate).getTime()) {
 		return { endDate: "End date must be after start date" };
 	}
 	return {};

@@ -14,6 +14,11 @@ export async function getProfiles(): Promise<Profile[]> {
 	}
 }
 
+export async function getProfile(profileId: number): Promise<Profile> {
+	const response = await apiService.get(`/profiles/${profileId}`);
+	return response.data;
+}
+
 export async function createProfile(profile: Profile): Promise<Profile> {
 	try {
 		const response = await apiService.post(`/profiles`, profile);

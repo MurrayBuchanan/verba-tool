@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from app.core.database import get_db
 from app.core.authentication import get_user_id
-from app.schemas.models import Profile as ProfileModel
+from app.schemas.models import Profile as ProfileModel, TranscriptMetadata, TranscriptFeatures, TranscriptSegment, Intervention as InterventionModel
 from app.schemas.schemas import Profile as ProfileSchema
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
@@ -101,11 +101,15 @@ async def delete_profile(profile_id: int, user_id: str = Depends(get_user_id), d
         
         if profile is None:
             raise HTTPException(status_code=404, detail="Profile not found")
-        
-        # Delete profile from database
+        # Delete profile & dependencies
+        profile_transcripts = await db.execute(select(TranscriptMetadata.id).where(TranscriptMetadata.profile_id == profile_id))
+        for transcript in profile_transcripts:
+            await db.execute(delete(TranscriptSegment).where(TranscriptSegment.transcript_metadata_id == transcript.id))
+            await db.execute(delete(TranscriptFeatures).where(TranscriptFeatures.transcript_metadata_id == transcript.id))
+            await db.execute(delete(TranscriptMetadata).where(TranscriptMetadata.id == transcript.id))
+        await db.execute(delete(InterventionModel).where(InterventionModel.profile_id == profile_id))
         await db.execute(delete(ProfileModel).where(ProfileModel.id == profile_id))
         await db.commit()
-        
         return JSONResponse(content={"message": "Profile deleted"})
     except HTTPException:
         raise

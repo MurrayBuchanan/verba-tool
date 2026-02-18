@@ -1,6 +1,6 @@
 import { apiService } from '@/services/api-service';
 
-export async function uploadRecording(profileId: number, audioUri: string, createdAt: Date) {
+export async function upload(profileId: number, audioUri: string, createdAt: Date) {
 	
 	// Send audio as a FormData object
 	const formData = new FormData();
@@ -19,5 +19,6 @@ export async function uploadRecording(profileId: number, audioUri: string, creat
 			'Content-Type': undefined
 		}
 	});
+	console.log(response.data);
 	return response.data;
 }

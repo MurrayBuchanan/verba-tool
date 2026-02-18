@@ -6,7 +6,7 @@ import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { Plus, AlertCircle } from 'lucide-react-native';
 import { List } from "@/components/list";
-import { ProfileItem as Item } from "@/components/profile-item";
+import { Item } from "@/components/list-item";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
 import { getProfiles } from "@/services/profile-service";
@@ -62,6 +62,7 @@ export default function ProfilesScreen() {
 							<Item
 								key={profile.id}
 								name={profile.name}
+								subtitle={profile.description || undefined}
 								onPress={() => {setProfileId(profile.id!); router.push("/(tabs)/recordAudioScreen")}}
 							/>
 						))}
@@ -70,7 +71,7 @@ export default function ProfilesScreen() {
 			)}
 			{!loading && !error && (
 				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createProfileModal")}>
-					<Plus size={28} color="#FFF"/>
+					<Plus size={32} color="#FFF"/>
 				</TouchableOpacity>
 			)}
 		</View>
