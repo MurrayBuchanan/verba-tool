@@ -36,7 +36,7 @@ export default function MetricsScreen() {
 					setError(null);
 					hasInitiallyLoaded.current = true;
 				} catch {
-					setError("Unable to load metrics");
+					setError("Unable to load indicators");
 					setHasConversations(false);
 				} finally {
 					setLoading(false);
@@ -60,7 +60,7 @@ export default function MetricsScreen() {
 			) : (!hasConversations) ? (
 				<View style={styles.center}>
 					<ChartLine size={36} color={iconColour} style={styles.placeholder} />
-					<Text align="center">No metrics exist, record a conversation to see metrics!</Text>
+					<Text align="center">No indicators exist, record a conversation to see indicators!</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

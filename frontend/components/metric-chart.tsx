@@ -8,17 +8,14 @@ import { CartesianChart, Line, AreaRange, useChartPressState } from "victory-nat
 import { useFont, Circle, Line as LinePath, Rect, vec } from "@shopify/react-native-skia";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Inter_500Medium } from "@expo-google-fonts/inter";
+import { Data } from "@/utils/metric-progression";
 
-type DataPoint = {
-    x: number;
-    value: number;
-    label?: string;
-    grouping?: "Day" | "Week" | "Month";
-    date?: Date;
-};
+
+// Victory Native Documentation: https://nearform.com/open-source/victory-native/docs/cartesian/cartesian-chart/
+// ToolTip: https://stackoverflow.com/questions/78615845/toolitips-with-victory-native-xl-cart
 
 type Props = {
-    data: DataPoint[];
+    data: Data[];
     xAxisLabel?: (value: number) => string;
     title?: string;
     interventions?: Intervention[];

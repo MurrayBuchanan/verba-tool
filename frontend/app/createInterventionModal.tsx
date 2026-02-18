@@ -4,6 +4,7 @@ import { router, useNavigation } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
 import { DatePicker as Picker } from "@/components/date-picker";
+import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { createIntervention } from "@/services/intervention-service";
 import { formatAPIDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -20,12 +21,14 @@ export default function InterventionModal() {
 	const secondaryBackground = useThemeColor({}, "backgroundSecondary");
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
+	const [goals, setGoals] = useState("");
+	const [success, setSuccess] = useState(false);
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
 	const [errors, setErrors] = useState<InterventionErrors>({});
 
 	const handleCreateIntervention = useCallback(async () => {
-		const validationErrors = validateIntervention({ name, description, startDate, endDate });
+		const validationErrors = validateIntervention({ name, description, goals, startDate, endDate });
 		setErrors(validationErrors);
 		if (hasErrors(validationErrors)) {
 			return;
@@ -36,6 +39,8 @@ export default function InterventionModal() {
 				profile_id: profileId,
 				name: name.trim(),
 				description: description.trim() || null,
+				goals: goals.trim() || null,
+				success,
 				start_date: formatAPIDate(startDate),
 				end_date: formatAPIDate(endDate),
 			});
@@ -44,7 +49,7 @@ export default function InterventionModal() {
 		} catch {
 			Alert.alert("Cannot create annotation", "Please try again");
 		}
-	}, [name, description, startDate, endDate, profileId]);
+	}, [name, description, goals, success, startDate, endDate, profileId]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -78,6 +83,17 @@ export default function InterventionModal() {
 						multiline
 						error={errors.description}
 					/>
+
+					<TextField
+						label="SMART Goals"
+						value={goals}
+						onChangeText={setGoals}
+						placeholder="Enter goals (optional)"
+						multiline
+						error={errors.goals}
+					/>
+
+					<Switch label="Success" value={success} onValueChange={setSuccess} />
 
 					<Picker
 						label="Start Date"

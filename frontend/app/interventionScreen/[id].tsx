@@ -53,6 +53,7 @@ export default function InterventionDetailScreen() {
 	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
 	const [annotationView, setAnnotationView] = useState<string>("annotation");
 	const [showMean, setShowMean] = useState<boolean>(true);
+	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
 
 	const handleDeleteIntervention = useCallback(() => {
 		Alert.alert("Delete Annotation", "Are you sure you want to delete this annotation?", [
@@ -130,7 +131,7 @@ export default function InterventionDetailScreen() {
 
 	const annotationViewOptions = useMemo(() => [
 			{ label: "Annotation Details", value: "annotation" },
-			{ label: "Metric Information", value: "metric" },
+			{ label: "Indicator Information", value: "metric" },
 		], []
 	);
 
@@ -165,12 +166,13 @@ export default function InterventionDetailScreen() {
 									}}
 									title={`Changes to ${metricDetails.name} during annotation`}
 									showMean={showMean}
+									showRange={showStandardDeviation}
 									showInterventions={false}
 								/>
 							</View>
 						) : (
 							<View style={styles.center}>
-								<Text align="center">No data available for this metric within this annotation period.</Text>
+								<Text align="center">No data available for this indicator within this annotation period.</Text>
 							</View>
 						)}
 
@@ -190,6 +192,14 @@ export default function InterventionDetailScreen() {
 											<Text>{intervention.description}</Text> 
 										</> 
 									}
+									{ intervention.goals && 
+										<>
+											<Text type="strong">Goals</Text>
+											<Text>{intervention.goals}</Text> 
+										</> 
+									}
+									<Text type="strong">Success</Text>
+									<Text type="caption">{intervention.success ? "Yes" : "No"}</Text>
 									<Text type="strong">Start Date</Text>
 									<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
 									<Text type="strong">End Date</Text>
@@ -198,7 +208,7 @@ export default function InterventionDetailScreen() {
 							) : (
 								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 									<View style={styles.detailsRow}>
-										<Text type="heading">Metric Information</Text>
+										<Text type="heading">Indicator Information</Text>
 									</View>
 									<Text type="strong">What Does this Mean?</Text>
 									<Text type="caption">{metricDetails.alias}</Text>
@@ -213,6 +223,7 @@ export default function InterventionDetailScreen() {
 								<Text type="heading">Chart Controls</Text>
 								<List divider>
 									<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
+									<Switch label="Show Standard Deviation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
 								</List>
 							</View>
 						)}

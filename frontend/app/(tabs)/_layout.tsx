@@ -39,7 +39,7 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name='metricsScreen'
 				options={{
-					title: 'Metrics',
+					title: 'Indicators',
 					tabBarIcon: ({ color }) => <ChartLine size={22} color={color} />,
 				}}
 			/>

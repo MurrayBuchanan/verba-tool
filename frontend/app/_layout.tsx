@@ -47,7 +47,7 @@ function RootNavigator() {
 				<Stack.Protected guard={!!session}>
 					<Stack.Screen name="profilesScreen" options={{ headerShown: true, headerTitle: "Profiles", headerBackVisible: false, headerRight: () => <LogoutButton /> }} />
 					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-					<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Metric", headerBackVisible: false, headerLeft: headerBack }} />
+					<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Indicator", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Chat", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Annotation", headerBackVisible: false, headerLeft: headerBack }} />
 					<Stack.Screen name="createInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Annotation' }} />

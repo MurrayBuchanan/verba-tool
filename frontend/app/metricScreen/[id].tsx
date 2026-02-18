@@ -30,6 +30,7 @@ export default function MetricDisplayScreen() {
 	const [error, setError] = useState<string | null>(null);
 	const [selectedMetric, setSelectedMetric] = useState<string>(id || "wpm_per_speaker");
 	const [showMean, setShowMean] = useState<boolean>(true);
+	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
 	const [showInterventions, setShowInterventions] = useState<boolean>(true);
 	const metricDetails = METRIC_DEFINITIONS[selectedMetric];
 
@@ -52,7 +53,7 @@ export default function MetricDisplayScreen() {
 					setInterventions(interventionsData);
 					setError(null);
 				} catch {
-					setError("Unable to load metrics");
+					setError("Unable to load indicators");
 				} finally {
 					setLoading(false);
 				}
@@ -98,17 +99,18 @@ export default function MetricDisplayScreen() {
 									title={`All time changes to ${metricDetails.name}`}
 									interventions={interventions}
 									showMean={showMean}
+									showRange={showStandardDeviation}
 									showInterventions={showInterventions}
 								/>
 							</View>
 						) : (
 							<View style={styles.center}>
-								<Text align="center">No data available for this metric yet. Record conversations to see progress over time.</Text>
+								<Text align="center">No data available for this indicator yet. Record conversations to see progress over time.</Text>
 							</View>
 						)}
 
 						<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
-								<Text type="heading">Metric Information</Text>
+								<Text type="heading">Indicator Information</Text>
 								<Text type="strong">What Does this Mean?</Text>
 								<Text type="caption">{metricDetails.alias}</Text>
 								<Text type="strong">Description</Text>
@@ -120,6 +122,7 @@ export default function MetricDisplayScreen() {
 								<Text type="heading">Chart Controls</Text>
 								<List divider>
 									<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
+									<Switch label="Show Standard Deviation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
 									<Switch label="Show Annotations" value={showInterventions} onValueChange={setShowInterventions} />
 								</List>
 							</View>

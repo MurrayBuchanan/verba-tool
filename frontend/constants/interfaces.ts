@@ -46,6 +46,8 @@ export interface Intervention {
 	profile_id: number;
 	name: string;
 	description: string | null;
+	goals: string | null;
+	success: boolean | null;
 	start_date: string;
 	end_date: string;
 }

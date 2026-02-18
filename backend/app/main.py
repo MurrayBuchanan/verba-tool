@@ -7,7 +7,7 @@ from app.routers import upload, transcripts, interventions, profiles
 
 app = FastAPI()
 
-# CORS to allow requests from Expo Go/Dev
+# CORS to allow requests from Expo Client
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], # TODO: Restrict if hosted

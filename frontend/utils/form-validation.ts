@@ -27,6 +27,7 @@ export function validateProfile(values: ProfileProps): ProfileErrors {
 type InterventionProps = {
 	name?: string;
 	description?: string;
+	goals?: string;
 	startDate?: Date;
 	endDate?: Date;
 };
@@ -34,6 +35,7 @@ type InterventionProps = {
 export type InterventionErrors = {
 	name?: string;
 	description?: string;
+	goals?: string;
 	startDate?: string;
 	endDate?: string;
 };
@@ -48,6 +50,9 @@ export function validateIntervention(values: InterventionProps): InterventionErr
 	}
 	if (values.description && values.description.length > 500) {
 		return { description: "Description must be less than 500 characters." };
+	}
+	if (values.goals && values.goals.length > 500) {
+		return { goals: "Goals must be less than 500 characters." };
 	}
 	if (values.startDate && values.endDate && dateToMidnight(values.startDate).getTime() >= dateToMidnight(values.endDate).getTime()) {
 		return { endDate: "End date must be after start date" };

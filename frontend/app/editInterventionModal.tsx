@@ -4,6 +4,7 @@ import { router, useNavigation, useLocalSearchParams } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
 import { DatePicker as Picker } from "@/components/date-picker";
+import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { getIntervention, updateIntervention } from "@/services/intervention-service";
 import { formatAPIDate, dateToMidnight } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -22,6 +23,8 @@ export default function EditInterventionModal() {
 
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
+	const [goals, setGoals] = useState("");
+	const [success, setSuccess] = useState(false);
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
 	const [errors, setErrors] = useState<InterventionErrors>({});
@@ -32,6 +35,8 @@ export default function EditInterventionModal() {
 				const data = await getIntervention(parseInt(id, 10));
 				setName(data.name ?? "");
 				setDescription(data.description ?? "");
+				setGoals(data.goals ?? "");
+				setSuccess(data.success ?? false);
 				setStartDate(new Date(data.start_date));
 				setEndDate(new Date(data.end_date));
 			} catch {
@@ -54,6 +59,8 @@ export default function EditInterventionModal() {
 				profile_id: profileId,
 				name: name.trim(),
 				description: description.trim() || null,
+				goals: goals.trim() || null,
+				success,
 				start_date: formatAPIDate(startDate),
 				end_date: formatAPIDate(endDate),
 			});
@@ -61,7 +68,7 @@ export default function EditInterventionModal() {
 		} catch {
 			Alert.alert("Failed to update annotation", "Please try again");
 		}
-	}, [id, name, description, startDate, endDate, profileId]);
+	}, [id, name, description, goals, success, startDate, endDate, profileId]);
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -99,6 +106,17 @@ export default function EditInterventionModal() {
 						multiline
 						error={errors.description}
 					/>
+
+					<TextField
+						label="Goals"
+						value={goals}
+						onChangeText={setGoals}
+						placeholder="Enter goals (optional)"
+						multiline
+						error={errors.goals}
+					/>
+
+					<Switch label="Success" value={success} onValueChange={setSuccess} />
 
 					<Picker
 						label="Start Date"

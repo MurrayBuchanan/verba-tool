@@ -23,7 +23,7 @@ export default function ConversationDisplayScreen() {
 	const loadedId = useRef<string | undefined>(undefined);
 
 	const handleDelete = useCallback(() => {
-		Alert.alert("Delete Conversation", "Are you sure you want to delete this conversation? This will permanently delete the conversation and the metrics associated with it.", [
+		Alert.alert("Delete Conversation", "Are you sure you want to delete this conversation? This will permanently delete the conversation and the indicators associated with it.", [
 			{ text: "Cancel", style: "cancel" },
 			{ text: "Delete", style: "destructive", onPress: async () => {
 				try {

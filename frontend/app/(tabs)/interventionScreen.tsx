@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { AlertCircle, Calendar, ClipboardList, Lightbulb, Plus } from 'lucide-react-native';
+import { AlertCircle, Calendar, Check, ClipboardList, Lightbulb, Plus } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { Item } from "@/components/list-item";
 import { Intervention } from "@/constants/interfaces";
@@ -79,8 +79,8 @@ export default function InterventionScreen() {
 							<Item
 								key={intervention.id}
 								name={intervention.name}
-								icon={<Calendar size={14} color={iconColour} />}
-								subtitle={`${formatDisplayDate(intervention.start_date)} - ${formatDisplayDate(intervention.end_date)}`}
+								icon={intervention.success ? <Check size={14} color={accentColour} /> : <Calendar size={14} color={iconColour} />}
+								subtitle={`${formatDisplayDate(intervention.start_date)} - ${formatDisplayDate(intervention.end_date)}${intervention.success ? " · Success" : ""}`}
 								onPress={() => router.push(`/interventionScreen/${intervention.id}`)}
 							/>
 						))}

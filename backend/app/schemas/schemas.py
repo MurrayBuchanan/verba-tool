@@ -39,5 +39,7 @@ class Intervention(BaseModel):
     profile_id: int
     name: str
     description: Optional[str] = None
+    goals: Optional[str] = None
+    success: bool = False
     start_date: date
     end_date: date

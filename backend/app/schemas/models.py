@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date, Boolean, Text
 from app.core.database import Base
 
 class User(Base):
@@ -50,5 +50,7 @@ class Intervention(Base):
     profile_id = Column(Integer, ForeignKey("profiles.id"))
     name = Column(String, nullable=False)
     description = Column(String)
+    goals = Column(Text)
+    success = Column(Boolean, default=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)

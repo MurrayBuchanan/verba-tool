@@ -23,6 +23,8 @@ async def create_intervention(intervention: InterventionSchema, user_id: str = D
             profile_id=intervention.profile_id,
             name=intervention.name,
             description=intervention.description,
+            goals=intervention.goals,
+            success=intervention.success,
             start_date=intervention.start_date,
             end_date=intervention.end_date
         )
@@ -38,6 +40,8 @@ async def create_intervention(intervention: InterventionSchema, user_id: str = D
             "profile_id": db_intervention.profile_id,
             "name": db_intervention.name,
             "description": db_intervention.description,
+            "goals": db_intervention.goals,
+            "success": db_intervention.success,
             "start_date": db_intervention.start_date.isoformat(),
             "end_date": db_intervention.end_date.isoformat()
         })
@@ -69,6 +73,8 @@ async def get_interventions(user_id: str = Depends(get_user_id), db: AsyncSessio
                 "profile_id": intervention.profile_id,
                 "name": intervention.name,
                 "description": intervention.description,
+                "goals": intervention.goals,
+                "success": intervention.success,
                 "start_date": intervention.start_date.isoformat(),
                 "end_date": intervention.end_date.isoformat(),
             })
@@ -96,6 +102,8 @@ async def get_intervention(intervention_id: int, user_id: str = Depends(get_user
             "profile_id": db_intervention.profile_id,
             "name": db_intervention.name,
             "description": db_intervention.description,
+            "goals": db_intervention.goals,
+            "success": db_intervention.success,
             "start_date": db_intervention.start_date.isoformat(),
             "end_date": db_intervention.end_date.isoformat(),
         })
@@ -126,6 +134,8 @@ async def update_intervention(intervention_id: int, intervention: InterventionSc
         db_intervention.profile_id = intervention.profile_id
         db_intervention.name = intervention.name
         db_intervention.description = intervention.description
+        db_intervention.goals = intervention.goals
+        db_intervention.success = intervention.success
         db_intervention.start_date = intervention.start_date
         db_intervention.end_date = intervention.end_date
         
@@ -137,6 +147,8 @@ async def update_intervention(intervention_id: int, intervention: InterventionSc
             "profile_id": db_intervention.profile_id,
             "name": db_intervention.name,
             "description": db_intervention.description,
+            "goals": db_intervention.goals,
+            "success": db_intervention.success,
             "start_date": db_intervention.start_date.isoformat(),
             "end_date": db_intervention.end_date.isoformat(),
         })
