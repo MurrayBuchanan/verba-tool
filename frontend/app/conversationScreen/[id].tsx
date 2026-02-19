@@ -8,6 +8,7 @@ import { Trash, AlertCircle } from 'lucide-react-native';
 import { SpeakerSegment } from "@/components/speaker-segment";
 import { TranscriptWithSegments } from "@/constants/interfaces";
 import { getTranscript, deleteTranscript } from "@/services/transcript-service";
+import { getProfile } from "@/services/profile-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { IconButton } from "@/components/icon-button";
 
@@ -18,6 +19,7 @@ export default function ConversationDisplayScreen() {
 	const warningColour = useThemeColor({}, 'warning');
 	const iconColour = useThemeColor({}, 'icon');
 	const [transcript, setTranscript] = useState<TranscriptWithSegments | null>(null);
+	const [profileName, setProfileName] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const loadedId = useRef<string | undefined>(undefined);
@@ -59,6 +61,13 @@ export default function ConversationDisplayScreen() {
 					setTranscript(data);
 					setError(null);
 					loadedId.current = id;
+
+					try {
+						const profile = await getProfile(data.profile_id);
+						setProfileName(profile.name);
+					} catch {
+						setProfileName(null);
+					}
 				} catch {
 					setError("Unable to load transcript");
 				} finally {
@@ -82,15 +91,20 @@ export default function ConversationDisplayScreen() {
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					{(transcript?.segments ?? []).map((segment, index) => (
-						<SpeakerSegment
-							key={index}
-							speaker={segment.speaker}
-							text={segment.text}
-							createdAt={transcript?.created_at}
-							offsetSeconds={segment.offset}
-						/>
-					))}
+					{(transcript?.segments ?? []).map((segment, index) => {
+						const speakerTitle = segment.speaker === "Guest-1" ? "You": (profileName ?? segment.speaker);
+						
+						return (
+							<SpeakerSegment
+								key={index}
+								speaker={segment.speaker}
+								speakerTitle={speakerTitle}
+								text={segment.text}
+								createdAt={transcript?.created_at}
+								offsetSeconds={segment.offset}
+							/>
+						);
+					})}
 				</ScrollView>
 			)}
 		</View>

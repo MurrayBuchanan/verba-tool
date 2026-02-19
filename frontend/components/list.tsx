@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { Divider } from "@/components/divider";
 
 type Props = {
 	children: React.ReactNode;
@@ -17,7 +18,7 @@ export function List({ children, divider = false }: Props) {
 				<View key={index}>
 					<View style={styles.item}>{child}</View>
 					{divider && index < items.length - 1 && (
-						<View style={[styles.divider, { backgroundColor: dividerColor }]} />
+						<Divider />
 					)}
 				</View>
 			))}
@@ -31,8 +32,5 @@ const styles = StyleSheet.create({
 	},
 	item: {
 		paddingVertical: 4,
-	},
-	divider: {
-		height: StyleSheet.hairlineWidth,
-	},
+	}
 });

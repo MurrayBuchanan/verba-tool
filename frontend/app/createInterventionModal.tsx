@@ -1,7 +1,6 @@
 import { useState, useLayoutEffect, useCallback } from "react";
-import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Alert } from "react-native";
+import { StyleSheet, View, Platform, ScrollView, KeyboardAvoidingView, Alert } from "react-native";
 import { router, useNavigation } from "expo-router";
-import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
 import { DatePicker as Picker } from "@/components/date-picker";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
@@ -47,7 +46,7 @@ export default function InterventionModal() {
 			
 			router.back();
 		} catch {
-			Alert.alert("Cannot create annotation", "Please try again");
+			Alert.alert("Cannot create intervention", "Please try again");
 		}
 	}, [name, description, goals, success, startDate, endDate, profileId]);
 
@@ -68,11 +67,20 @@ export default function InterventionModal() {
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 					<TextField
-						label="Annotation Name"
+						label="Name"
 						value={name}
 						onChangeText={setName}
-						placeholder="Enter annotation name"
+						placeholder="Enter intervention name"
 						error={errors.name}
+					/>
+
+					<TextField
+						label="Goals"
+						value={goals}
+						onChangeText={setGoals}
+						placeholder="Enter goals (optional)"
+						multiline
+						error={errors.goals}
 					/>
 
 					<TextField
@@ -82,15 +90,6 @@ export default function InterventionModal() {
 						placeholder="Enter description (optional)"
 						multiline
 						error={errors.description}
-					/>
-
-					<TextField
-						label="SMART Goals"
-						value={goals}
-						onChangeText={setGoals}
-						placeholder="Enter goals (optional)"
-						multiline
-						error={errors.goals}
 					/>
 
 					<Switch label="Success" value={success} onValueChange={setSuccess} />
@@ -123,5 +122,5 @@ const styles = StyleSheet.create({
 	content: {
 		padding: 20,
 		gap: 24,
-	},
+	}
 });

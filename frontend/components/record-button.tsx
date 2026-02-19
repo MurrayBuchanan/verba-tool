@@ -4,6 +4,7 @@ import { Alert } from 'react-native';
 import { BlockButton } from '@/components/block-button';
 import { upload } from '@/services/upload-service';
 import { useProfile } from '@/context/ProfileContext';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export const RecordButton = () => {
 	const { profileId } = useProfile();
@@ -11,6 +12,9 @@ export const RecordButton = () => {
 	const recorderState = useAudioRecorderState(recorder);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [createdAt, setCreatedAt] = useState<Date | null>(null);
+	const accentColour = useThemeColor({}, 'accent');
+	const warningColour = useThemeColor({}, 'warning');
+	const meanColour = useThemeColor({}, 'meanColour');
 
 	// Request microphone permission
 	useEffect(() => {
@@ -67,9 +71,20 @@ export const RecordButton = () => {
 
 	const getLabel = () => {
 		if (isProcessing) return 'Processing';
-		return recorderState.isRecording ? 'Stop Recording' : 'Start Recording';
+		return recorderState.isRecording ? 'End Recording' : 'Start Recording';
 	};
-	return (
-		<BlockButton onPress={onPress}  title={getLabel()} />
-	);
+
+	const getButtonColour = () => {
+		if (isProcessing) {
+			return meanColour;
+		}
+		if (recorderState.isRecording) {
+			return warningColour;
+		}
+		return accentColour;
+	};
+	
+	const buttonColour = getButtonColour();
+
+	return <BlockButton onPress={onPress} title={getLabel()} lightColour={buttonColour} darkColour={buttonColour} />
 };

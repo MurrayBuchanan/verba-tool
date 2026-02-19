@@ -46,30 +46,19 @@ export async function signIn() {
 	return tokenResponse;
 }
 
-function hasExpired(token: string): boolean {
-	const decoded: any = jwtDecode(token);
-	const expirationTime = decoded.exp;
-	const currentTime = Math.floor(Date.now() / 1000);
-	return expirationTime < currentTime;
-}
-
 export async function getToken(): Promise<string | null> {
 	const token = await SecureStore.getItemAsync("token");
 	if (!token) {
 		return null;
 	}
-
-	if (!hasExpired(token)) {
-		return token;
-	}
-
-	await SecureStore.deleteItemAsync("token");
-	return null;
+	return token;
 }
 
 export async function getUserId(): Promise<string | null> {
 	const token = await getToken();
-	if (!token) return null;
+	if (!token) {
+		return null;
+	}
 	const decoded = jwtDecode<{ sub?: string }>(token);
 	return decoded.sub ?? null;
 }

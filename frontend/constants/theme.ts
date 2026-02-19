@@ -15,7 +15,7 @@ export const Theme = {
 		tabIconDefault: '#79747E',
 		tabIconSelected: tintColourLight,
 		meanColour: '#43A047',
-		standardDeviationColour: 'rgba(74, 144, 226, 0.2)',
+		standardDeviationColour: 'rgba(100, 149, 237, 0.25)',
 		interventionColour: 'rgba(74, 144, 226, 0.15)'
 	},
 
@@ -32,7 +32,7 @@ export const Theme = {
 		tabIconDefault: '#938F99',
 		tabIconSelected: tintColourDark,
 		meanColour: '#66BB6A',
-		standardDeviationColour: 'rgba(107, 163, 216, 0.25)',
+		standardDeviationColour: 'rgba(135, 179, 245, 0.35)',
 		interventionColour: 'rgba(107, 163, 216, 0.2)'
 	},
 };

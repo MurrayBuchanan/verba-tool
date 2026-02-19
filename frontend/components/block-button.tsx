@@ -6,12 +6,12 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 type Props = {
     onPress: () => void;
     title?: string;
-    lightBackgroundColour?: string;
-    darkBackgroundColour?: string;
+    lightColour?: string;
+    darkColour?: string;
 };
 
-export function BlockButton({ onPress, title, lightBackgroundColour, darkBackgroundColour }: Props) {
-    const backgroundColour = useThemeColor({ light: lightBackgroundColour, dark: darkBackgroundColour, }, 'accent');
+export function BlockButton({ onPress, title, lightColour, darkColour }: Props) {
+    const backgroundColour = useThemeColor({ light: lightColour, dark: darkColour }, 'accent');
 
     return (
         <TouchableOpacity onPress={onPress}>

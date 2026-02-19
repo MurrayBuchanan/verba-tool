@@ -40,7 +40,7 @@ export default function EditInterventionModal() {
 				setStartDate(new Date(data.start_date));
 				setEndDate(new Date(data.end_date));
 			} catch {
-				Alert.alert("Failed to load annotation", "Please try again");
+				Alert.alert("Failed to load intervention", "Please try again");
 				router.back();
 			}
 		}
@@ -66,7 +66,7 @@ export default function EditInterventionModal() {
 			});
 			router.back();
 		} catch {
-			Alert.alert("Failed to update annotation", "Please try again");
+			Alert.alert("Failed to update intervention", "Please try again");
 		}
 	}, [id, name, description, goals, success, startDate, endDate, profileId]);
 
@@ -91,10 +91,10 @@ export default function EditInterventionModal() {
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 					<TextField
-						label="Annotation Name"
+						label="Intervention Name"
 						value={name}
 						onChangeText={setName}
-						placeholder="Enter annotation name"
+						placeholder="Enter intervention name"
 						error={errors.name}
 					/>
 

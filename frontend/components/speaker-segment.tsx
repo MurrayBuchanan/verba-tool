@@ -12,12 +12,13 @@ function calculateTimestamp(recordingStartedAt: string, offsetSeconds: number): 
 
 type Props = {
     speaker: string;
+    speakerTitle?: string;
     text: string;
     createdAt?: string;
     offsetSeconds?: number;
 };
 
-export function SpeakerSegment({ speaker, text, createdAt, offsetSeconds }: Props) {
+export function SpeakerSegment({ speaker, speakerTitle, text, createdAt, offsetSeconds }: Props) {
     const bubbleColour = useThemeColor({}, "backgroundSecondary");
     const textColour = useThemeColor({}, "text");
     const textSecondaryColour = useThemeColor({}, "textSecondary");
@@ -27,16 +28,19 @@ export function SpeakerSegment({ speaker, text, createdAt, offsetSeconds }: Prop
 
     return (
         <ThemedView style={[styles.container, isLeft ? styles.left : styles.right]}>
-            <ThemedView lightColour={bubbleColour} darkColour={bubbleColour} style={styles.bubble}>
-                <View>
-                    <Text lightColour={textColour} darkColour={textColour}>{text}</Text>
-                    { timestamp && (
-                        <View style={styles.timestamp}>
-                            <Text type="caption" lightColour={textSecondaryColour} darkColour={textSecondaryColour}>{timestamp}</Text>
-                        </View>
-                    )}
-                </View>
-            </ThemedView>
+            <View style={styles.segmentColumn}>
+                <Text type="caption" lightColour={textSecondaryColour} darkColour={textSecondaryColour} style={isLeft ? styles.titleLeft : styles.titleRight}>{speakerTitle}</Text>
+                <ThemedView lightColour={bubbleColour} darkColour={bubbleColour} style={styles.bubble}>
+                    <View>
+                        <Text lightColour={textColour} darkColour={textColour}>{text}</Text>
+                        { timestamp && (
+                            <View style={styles.timestamp}>
+                                <Text type="caption" lightColour={textSecondaryColour} darkColour={textSecondaryColour}>{timestamp}</Text>
+                            </View>
+                        )}
+                    </View>
+                </ThemedView>
+            </View>
         </ThemedView>
     );
 }
@@ -53,8 +57,19 @@ const styles = StyleSheet.create({
     right: {
         justifyContent: "flex-end",
     },
-    bubble: {
+    segmentColumn: {
         maxWidth: "70%",
+    },
+    titleLeft: {
+        marginBottom: 4,
+        marginLeft: 4,
+    },
+    titleRight: {
+        marginBottom: 4,
+        marginRight: 4,
+        textAlign: "right",
+    },
+    bubble: {
         borderRadius: 18,
         paddingVertical: 10,
         paddingHorizontal: 14,

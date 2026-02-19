@@ -109,28 +109,23 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
     );
 
     const chartData = useMemo(() => {
-        const result = [];
-        for (let i = 0; i < data.length; i++) {
-            const point = data[i];
-            const values = [];
-            for (let j = 0; j <= i; j++) {
-                values.push(data[j].value);
-            }
-            
-            const mean = calculateMean(values);
-            const standardDeviation = calculateStandardDeviation(values, mean);
-            
-            result.push({
-                x: point.x,
-                value: point.value,
-                mean,
-                upperBound: mean + standardDeviation,
-                lowerBound: mean - standardDeviation,
-                label: point.label,
-                date: point.date,
-            });
+        if (!data.length) {
+            return [];
         }
-        return result;
+
+        const allValues = data.map((d) => d.value);
+        const mean = calculateMean(allValues);
+        const standardDeviation = calculateStandardDeviation(allValues, mean);
+
+        return data.map((point) => ({
+            x: point.x,
+            value: point.value,
+            mean,
+            upperBound: mean + standardDeviation,
+            lowerBound: mean - standardDeviation,
+            label: point.label,
+            date: point.date,
+        }));
     }, [data]);
 
     const tooltipPoint = useMemo(() => (pressedX == null ? null : findPointAtX(chartData, pressedX)), [pressedX, chartData]);
@@ -196,7 +191,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
 
                 <Animated.View style={valueLabelStyle} pointerEvents="none">
                     { tooltipPoint != null && (
-                        <Text type="caption" align='center'>{tooltipPoint.value.toFixed(2)}</Text>
+                        <Text type="caption" align='center'>{tooltipPoint.value}</Text>
                     )}
                 </Animated.View>
 
@@ -261,11 +256,22 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                                     </>
                                 )}
                                 {showRange && (
-                                    <AreaRange
-                                        upperPoints={points.upperBound}
-                                        lowerPoints={points.lowerBound}
-                                        color={standardDeviationColour}
-                                    />
+                                    <>
+                                        <Line
+                                            points={points.upperBound}
+                                            color={standardDeviationColour}
+                                            strokeWidth={2}
+                                            strokeCap="round"
+                                            strokeJoin="round"
+                                        />
+                                        <Line
+                                            points={points.lowerBound}
+                                            color={standardDeviationColour}
+                                            strokeWidth={2}
+                                            strokeCap="round"
+                                            strokeJoin="round"
+                                        />
+                                    </>
                                 )}
                                 {showMean && (
                                     <Line
@@ -289,27 +295,28 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                 </CartesianChart>
             </View>
 
+            <Text type="caption" style={styles.timeLabel} align='center'>Time</Text>
             <View style={styles.labelsContainer}>
                 <View style={styles.labelItem}>
                     <View style={[styles.labelLine, { backgroundColor: dataColour }]} />
-                    <Text type="caption">Recorded Values</Text>
+                    <Text type="caption">Recorded Data</Text>
                 </View>
                 {showMean && (
                     <View style={styles.labelItem}>
                         <View style={[styles.labelLine, { backgroundColor: meanColour }]} />
-                        <Text type="caption">Mean</Text>
+                        <Text type="caption">Baseline</Text>
                     </View>
                 )}
                 {showRange && (
                     <View style={styles.labelItem}>
-                        <View style={[styles.labelDot, { backgroundColor: standardDeviationColour }]} />
-                        <Text type="caption">Range</Text>
+                        <View style={[styles.labelLine, { backgroundColor: standardDeviationColour }]} />
+                        <Text type="caption">Variation</Text>
                     </View>
                 )}
                 {showInterventions && interventionPeriods.length > 0 && (
                     <View style={styles.labelItem}>
                         <View style={[styles.labelDot, { backgroundColor: interventionColour }]} />
-                        <Text type="caption">Annotated Period</Text>
+                        <Text type="caption">Intervention Period</Text>
                     </View>
                 )}
             </View>
@@ -329,7 +336,11 @@ const styles = StyleSheet.create({
     chart: {
         position: "relative",
         width: "100%",
-        height: 300,
+        height: 360,
+    },
+    timeLabel: {
+        marginTop: 20,
+        marginBottom: 4,
     },
     labelsContainer: {
         marginVertical: 20,

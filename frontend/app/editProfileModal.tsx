@@ -1,7 +1,6 @@
 import { useState, useLayoutEffect, useCallback, useEffect } from "react";
-import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Alert } from "react-native";
+import { StyleSheet, View, Platform, ScrollView, KeyboardAvoidingView, Alert } from "react-native";
 import { router, useNavigation, useLocalSearchParams } from "expo-router";
-import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
 import { getProfile, updateProfile, deleteProfile } from "@/services/profile-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -63,6 +62,11 @@ export default function EditProfileModal() {
 		]);
 	}, [id]);
 
+	const handleSwitchProfile = useCallback(() => {
+		router.dismissTo("/profilesScreen");
+		router.push({ pathname: "/profilesScreen" });
+	}, [id]);
+
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerStyle: { backgroundColor: secondaryBackground },
@@ -97,11 +101,17 @@ export default function EditProfileModal() {
 					/>
 				</ScrollView>
 				<View style={styles.bottomButton}>
+				<BlockButton
+						title="Switch Profile"
+						onPress={handleSwitchProfile}
+						lightColour={accentColour}
+						darkColour={accentColour}
+					/>
 					<BlockButton
 						title="Delete profile"
 						onPress={handleDeleteProfile}
-						lightBackgroundColour={warningColour}
-						darkBackgroundColour={warningColour}
+						lightColour={warningColour}
+						darkColour={warningColour}
 					/>
 				</View>
 			</KeyboardAvoidingView>
@@ -123,6 +133,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	bottomButton: {
+		gap: 16,
 		position: "absolute",
 		bottom: 20,
 		left: 20,

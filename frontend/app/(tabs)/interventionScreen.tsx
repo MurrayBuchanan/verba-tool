@@ -39,7 +39,7 @@ export default function InterventionScreen() {
 					setError(null);
 					hasInitiallyLoaded.current = true;
 				} catch {
-					setError("Unable to load annotations");
+					setError("Unable to load interventions");
 				} finally {
 					setLoading(false);
 				}
@@ -63,7 +63,7 @@ export default function InterventionScreen() {
 			) : interventions.length === 0 ? (
 				<View style={styles.center}>
 					<ClipboardList size={36} color={iconColour} style={styles.placeholder} />
-					<Text align="center">No annotations, try creating a new annotation!</Text>
+					<Text align="center">No interventions, try creating a new intervention!</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -72,7 +72,7 @@ export default function InterventionScreen() {
 							<Lightbulb size={18} color={textSecondary} />
 							<Text type="caption">About this</Text>
 						</View>
-						<Text>Annotations/interventions are used to document and visualise strategies that support language impairment recovery.</Text>
+						<Text>Interventions are used to document and visualise strategies that support language recovery.</Text>
 					</View>
 					<List divider={true}>
 						{ interventions.map((intervention) => (

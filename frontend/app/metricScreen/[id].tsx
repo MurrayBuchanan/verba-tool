@@ -15,6 +15,7 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
 import { List } from "@/components/list";
 import { AlertCircle } from "lucide-react-native";
+import { Divider } from "@/components/divider";
 
 export default function MetricDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -111,8 +112,10 @@ export default function MetricDisplayScreen() {
 
 						<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Indicator Information</Text>
+								<Divider />
 								<Text type="strong">What Does this Mean?</Text>
 								<Text type="caption">{metricDetails.alias}</Text>
+								<Divider />
 								<Text type="strong">Description</Text>
 								<Text type="caption">{metricDetails.description}</Text>
 						</View>
@@ -121,9 +124,9 @@ export default function MetricDisplayScreen() {
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
 								<List divider>
-									<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
-									<Switch label="Show Standard Deviation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
-									<Switch label="Show Annotations" value={showInterventions} onValueChange={setShowInterventions} />
+									<Switch label="Show Baseline" value={showMean} onValueChange={setShowMean} />
+									<Switch label="Show Variation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
+									<Switch label="Show Interventions" value={showInterventions} onValueChange={setShowInterventions} />
 								</List>
 							</View>
 						)}

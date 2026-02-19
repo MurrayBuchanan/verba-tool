@@ -14,7 +14,7 @@ export function ChartToggle({ label, value, onValueChange }: Props) {
 
 	return (
 		<View style={styles.container}>
-			<Text>{label}</Text>
+			<Text type="strong">{label}</Text>
 			<Switch
 				value={value}
 				onValueChange={onValueChange}

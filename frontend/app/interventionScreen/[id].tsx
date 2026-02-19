@@ -19,6 +19,7 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
 import { IconButton } from "@/components/icon-button";
 import { List } from "@/components/list";
+import { Divider } from "@/components/divider";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
@@ -56,7 +57,7 @@ export default function InterventionDetailScreen() {
 	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
 
 	const handleDeleteIntervention = useCallback(() => {
-		Alert.alert("Delete Annotation", "Are you sure you want to delete this annotation?", [
+		Alert.alert("Delete Intervention", "Are you sure you want to delete this intervention?", [
 			{ text: "Cancel", style: "cancel" },
 			{
 				text: "Delete",
@@ -66,7 +67,7 @@ export default function InterventionDetailScreen() {
 						await deleteIntervention(parseInt(id, 10));
 						router.back();
 					} catch {
-						Alert.alert("Failed to delete annotation");
+						Alert.alert("Failed to delete intervention");
 					}
 				},
 			},
@@ -79,7 +80,7 @@ export default function InterventionDetailScreen() {
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
-			headerRight: () => (<IconButton icon={<Trash size={22} color={warningColour} />} onPress={handleDeleteIntervention} accessibilityLabel="Delete Annotation" />),
+			headerRight: () => (<IconButton icon={<Trash size={22} color={warningColour} />} onPress={handleDeleteIntervention} accessibilityLabel="Delete Intervention" />),
 		});
 	}, [navigation, handleDeleteIntervention, warningColour]);
 
@@ -97,7 +98,7 @@ export default function InterventionDetailScreen() {
 					setTranscripts(transcriptsData);
 					setError(null);
 				} catch {
-					setError("Unable to load annotation");
+					setError("Unable to load intervention");
 				} finally {
 					setLoading(false);
 				}
@@ -130,7 +131,7 @@ export default function InterventionDetailScreen() {
 	}, []);
 
 	const annotationViewOptions = useMemo(() => [
-			{ label: "Annotation Details", value: "annotation" },
+			{ label: "Intervention Details", value: "annotation" },
 			{ label: "Indicator Information", value: "metric" },
 		], []
 	);
@@ -164,7 +165,7 @@ export default function InterventionDetailScreen() {
 										const point = metricData.find(data => data.x === value); 
 										return point?.label ?? ""; 
 									}}
-									title={`Changes to ${metricDetails.name} during annotation`}
+									title={`Changes to ${metricDetails.name} during intervention`}
 									showMean={showMean}
 									showRange={showStandardDeviation}
 									showInterventions={false}
@@ -172,7 +173,7 @@ export default function InterventionDetailScreen() {
 							</View>
 						) : (
 							<View style={styles.center}>
-								<Text align="center">No data available for this indicator within this annotation period.</Text>
+								<Text align="center">No data available for this indicator within this intervention period.</Text>
 							</View>
 						)}
 
@@ -181,37 +182,52 @@ export default function InterventionDetailScreen() {
 								{annotationView === "annotation" ? (
 								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 									<View style={styles.detailsRow}>
-										<Text type="heading">Annotation Details</Text>
+										<Text type="heading">Intervention Details</Text>
 										<IconButton icon={<Pencil size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Edit" />
 									</View>
-									<Text type="strong">Annotation Name</Text>
+									<Divider />
+									<Text type="strong">Name</Text>
 									<Text type="caption">{intervention.name}</Text>
+									<Divider />
 									{ intervention.description && 
 										<>
 											<Text type="strong">Description</Text>
 											<Text>{intervention.description}</Text> 
+											<Divider />
 										</> 
 									}
+									
 									{ intervention.goals && 
 										<>
 											<Text type="strong">Goals</Text>
 											<Text>{intervention.goals}</Text> 
+											<Divider />
 										</> 
 									}
 									<Text type="strong">Success</Text>
 									<Text type="caption">{intervention.success ? "Yes" : "No"}</Text>
-									<Text type="strong">Start Date</Text>
-									<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
-									<Text type="strong">End Date</Text>
-									<Text type="caption">{formatDisplayDate(intervention.end_date)}</Text>
+									<Divider />
+									<View style={styles.row}>
+										<View>
+											<Text type="strong">Start Date</Text>
+											<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
+										</View>
+										<View>
+											<Text type="strong">End Date</Text>
+											<Text type="caption">{formatDisplayDate(intervention.end_date)}</Text>
+										</View>
+									</View>
+									
 								</View>
 							) : (
 								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 									<View style={styles.detailsRow}>
 										<Text type="heading">Indicator Information</Text>
 									</View>
+									<Divider />
 									<Text type="strong">What Does this Mean?</Text>
 									<Text type="caption">{metricDetails.alias}</Text>
+									<Divider />
 									<Text type="strong">Description</Text>
 									<Text type="caption">{metricDetails.description}</Text>
 								</View>
@@ -221,9 +237,10 @@ export default function InterventionDetailScreen() {
 						{metricData.length > 0 && (
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
+								<Divider />
 								<List divider>
-									<Switch label="Show Mean" value={showMean} onValueChange={setShowMean} />
-									<Switch label="Show Standard Deviation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
+									<Switch label="Show Baseline" value={showMean} onValueChange={setShowMean} />
+									<Switch label="Show Variation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
 								</List>
 							</View>
 						)}
@@ -279,5 +296,5 @@ const styles = StyleSheet.create({
 	headerRight: {
 		flexDirection: "row",
 		alignItems: "center",
-	},
+	}
 });
