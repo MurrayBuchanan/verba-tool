@@ -13,6 +13,8 @@ class ConversationAnalytics:
             total_duration += segment.duration
         return round(total_duration, 3)
 
+    # Could add more general conversation analytics here e.g. total turns, etc
+
     def analyse(self, segments: List[TranscriptSegment]) -> Transcript:
         # Extract AI features
 #         ai_features = extract_features(segments) # Single Modal

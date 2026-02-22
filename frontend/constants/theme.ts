@@ -6,7 +6,7 @@ export const Theme = {
 		text: '#1C1B1F',
 		textSecondary: '#49454F',
 		background: '#FAFAFA',
-		backgroundSecondary: '#F5F5F5',
+		backgroundSecondary: '#f5f5f5',
 		backgroundTertiary: '#E0E0E0',
 		active: '#EEEEEE',
 		accent: tintColourLight,

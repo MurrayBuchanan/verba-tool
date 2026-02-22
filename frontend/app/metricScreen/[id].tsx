@@ -16,6 +16,7 @@ import { useProfile } from "@/context/ProfileContext";
 import { List } from "@/components/list";
 import { AlertCircle } from "lucide-react-native";
 import { Divider } from "@/components/divider";
+import { CHART_DEFINITION } from "@/constants/metrics";
 
 export default function MetricDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -113,8 +114,9 @@ export default function MetricDisplayScreen() {
 						<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Indicator Information</Text>
 								<Divider />
-								<Text type="strong">What Does this Mean?</Text>
+								<Text type="strong">What Does This Show?</Text>
 								<Text type="caption">{metricDetails.alias}</Text>
+								<Text type="caption">{CHART_DEFINITION}</Text>
 								<Divider />
 								<Text type="strong">Description</Text>
 								<Text type="caption">{metricDetails.description}</Text>

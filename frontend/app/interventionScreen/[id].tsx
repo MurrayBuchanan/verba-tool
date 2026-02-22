@@ -13,7 +13,7 @@ import { getIntervention, deleteIntervention } from "@/services/intervention-ser
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { getMetricProgression } from "@/utils/metric-progression";
-import { METRIC_DEFINITIONS } from "@/constants/metrics";
+import { CHART_DEFINITION, METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
@@ -225,8 +225,9 @@ export default function InterventionDetailScreen() {
 										<Text type="heading">Indicator Information</Text>
 									</View>
 									<Divider />
-									<Text type="strong">What Does this Mean?</Text>
+									<Text type="strong">What Does This Show?</Text>
 									<Text type="caption">{metricDetails.alias}</Text>
+									<Text type="caption">{CHART_DEFINITION}</Text>
 									<Divider />
 									<Text type="strong">Description</Text>
 									<Text type="caption">{metricDetails.description}</Text>
