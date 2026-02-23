@@ -77,11 +77,7 @@ export default function EditInterventionModal() {
 				<IconButton icon={<X size={22} color={warningColour} />} onPress={() => router.back()} accessibilityLabel="Cancel" />
 			),
 			headerRight: () => (
-				<IconButton
-					icon={<Check size={22} color={accentColour} />}
-					onPress={handleUpdateIntervention}
-					accessibilityLabel="Save"
-				/>
+				<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Save" />
 			),
 		});
 	}, [navigation, handleUpdateIntervention, warningColour, accentColour, secondaryBackground]);

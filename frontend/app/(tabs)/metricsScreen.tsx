@@ -67,15 +67,15 @@ export default function MetricsScreen() {
 					<Text type="heading" style={styles.categoryHeader}>Speech Rate</Text>
 					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
-							<Item name={METRIC_DEFINITIONS.wpm_per_speaker.name} subtitle={METRIC_DEFINITIONS.wpm_per_speaker.alias} onPress={() => router.push(`/metricScreen/wpm_per_speaker`)} />
+							<Item name={METRIC_DEFINITIONS.words_per_minute.name} subtitle={METRIC_DEFINITIONS.words_per_minute.alias} onPress={() => router.push(`/metricScreen/words_per_minute`)} />
 						</List>
 					</View>
 					
 					<Text type="heading" style={styles.categoryHeader}>Lexical & Vocabulary</Text>
 					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
-							<Item name={METRIC_DEFINITIONS.num_unique_words.name} subtitle={METRIC_DEFINITIONS.num_unique_words.alias} onPress={() => router.push(`/metricScreen/num_unique_words`)} />
-							<Item name={METRIC_DEFINITIONS.avg_word_length.name} subtitle={METRIC_DEFINITIONS.avg_word_length.alias} onPress={() => router.push(`/metricScreen/avg_word_length`)} />
+							<Item name={METRIC_DEFINITIONS.number_of_unique_words.name} subtitle={METRIC_DEFINITIONS.number_of_unique_words.alias} onPress={() => router.push(`/metricScreen/number_of_unique_words`)} />
+							<Item name={METRIC_DEFINITIONS.average_word_length.name} subtitle={METRIC_DEFINITIONS.average_word_length.alias} onPress={() => router.push(`/metricScreen/average_word_length`)} />
 							<Item name={METRIC_DEFINITIONS.impoverished_vocabulary.name} subtitle={METRIC_DEFINITIONS.impoverished_vocabulary.alias} onPress={() => router.push(`/metricScreen/impoverished_vocabulary`)} />
 							<Item name={METRIC_DEFINITIONS.word_finding_difficulties.name} subtitle={METRIC_DEFINITIONS.word_finding_difficulties.alias} onPress={() => router.push(`/metricScreen/word_finding_difficulties`)} />
 						</List>
@@ -84,7 +84,7 @@ export default function MetricsScreen() {
 					<Text type="heading" style={styles.categoryHeader}>Grammatical & Syntactic</Text>
 					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
-							<Item name={METRIC_DEFINITIONS.prp_ratio.name} subtitle={METRIC_DEFINITIONS.prp_ratio.alias} onPress={() => router.push(`/metricScreen/prp_ratio`)} />
+							<Item name={METRIC_DEFINITIONS.personal_pronoun_ratio.name} subtitle={METRIC_DEFINITIONS.personal_pronoun_ratio.alias} onPress={() => router.push(`/metricScreen/personal_pronoun_ratio`)} />
 							<Item name={METRIC_DEFINITIONS.adverb_ratio.name} subtitle={METRIC_DEFINITIONS.adverb_ratio.alias} onPress={() => router.push(`/metricScreen/adverb_ratio`)} />
 							<Item name={METRIC_DEFINITIONS.syntactic_simplification.name} subtitle={METRIC_DEFINITIONS.syntactic_simplification.alias} onPress={() => router.push(`/metricScreen/syntactic_simplification`)} />
 						</List>
@@ -100,7 +100,7 @@ export default function MetricsScreen() {
 					<Text type="heading" style={styles.categoryHeader}>Discourse & Cognitive Load</Text>
 					<View style={styles.section} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
 						<List divider={true}>
-							<Item name={METRIC_DEFINITIONS.flesch_kincaid.name} subtitle={METRIC_DEFINITIONS.flesch_kincaid.alias} onPress={() => router.push(`/metricScreen/flesch_kincaid`)} />
+							<Item name={METRIC_DEFINITIONS.flesch_kincaid_grade.name} subtitle={METRIC_DEFINITIONS.flesch_kincaid_grade.alias} onPress={() => router.push(`/metricScreen/flesch_kincaid_grade`)} />
 							<Item name={METRIC_DEFINITIONS.discourse_impairment.name} subtitle={METRIC_DEFINITIONS.discourse_impairment.alias} onPress={() => router.push(`/metricScreen/discourse_impairment`)} />
 						</List>
 					</View>

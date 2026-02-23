@@ -9,7 +9,7 @@ export const apiService: AxiosInstance = axios.create({
 	baseURL: API_URL,
 	headers: {
 		'Content-Type': 'application/json',
-	},
+	}
 });
 
 // Add API token and user id to all headers
@@ -18,7 +18,7 @@ apiService.interceptors.request.use(async (config) => {
 
 	const userId = await getUserId();
 	if (userId) {
-		config.headers['User-Id'] = userId;
+		config.headers['UserID'] = userId;
 	}
 	return config;
 });

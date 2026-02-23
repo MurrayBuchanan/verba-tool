@@ -1,6 +1,10 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Date, Boolean, Text
 from app.core.database import Base
 
+"""
+Database models/tables
+"""
+
 class User(Base):
     __tablename__ = "users"
     id = Column(String, primary_key=True, index=True)
@@ -23,12 +27,12 @@ class TranscriptFeatures(Base):
     __tablename__ = "transcript_features"
     id = Column(Integer, primary_key=True, index=True)
     transcript_metadata_id = Column(Integer, ForeignKey("transcript_metadata.id"), nullable=False)
-    wpm_per_speaker = Column(String, nullable=False)
-    avg_word_length = Column(String, nullable=False)
+    words_per_minute = Column(String, nullable=False)
+    average_word_length = Column(String, nullable=False)
     adverb_ratio = Column(String, nullable=False)
-    flesch_kincaid = Column(String, nullable=False)
-    prp_ratio = Column(String, nullable=False)
-    num_unique_words = Column(String, nullable=False)
+    flesch_kincaid_grade = Column(String, nullable=False)
+    personal_pronoun_ratio = Column(String, nullable=False)
+    number_of_unique_words = Column(String, nullable=False)
     impoverished_vocabulary = Column(String, nullable=False)
     word_finding_difficulties = Column(String, nullable=False)
     semantic_paraphasias = Column(String, nullable=False)

@@ -1,6 +1,6 @@
 import pytest
 from app.services.nlp_features import NLPFeatureExtraction
-from app.schemas.schemas import TranscriptSegment
+from app.structures.schemas import TranscriptSegment
 from app.services.conversation_analytics import ConversationAnalytics
 
 def create_segment(text, duration=0.0, speaker=None, offset=0.0):

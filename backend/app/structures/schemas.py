@@ -2,6 +2,10 @@ from typing import List, Dict, Any, Optional
 from datetime import date
 from pydantic import BaseModel
 
+"""
+Type definitions
+"""
+
 Feature = Dict[str, Any]
 
 class Profile(BaseModel):
@@ -16,12 +20,12 @@ class TranscriptSegment(BaseModel):
     offset: float
 
 class NLPFeatures(BaseModel):
-    wpm_per_speaker: Feature
-    avg_word_length: Feature
+    words_per_minute: Feature
+    average_word_length: Feature
     adverb_ratio: Feature
-    flesch_kincaid: Feature
-    prp_ratio: Feature
-    num_unique_words: Feature
+    flesch_kincaid_grade: Feature
+    personal_pronoun_ratio: Feature
+    number_of_unique_words: Feature
 
 class AIFeatures(BaseModel):
     impoverished_vocabulary: Feature

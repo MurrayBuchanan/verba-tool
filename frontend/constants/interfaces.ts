@@ -13,12 +13,12 @@ export interface TranscriptMetadata {
 }
 
 export interface TranscriptFeatures {
-	wpm_per_speaker: Record<string, number>;
-	avg_word_length: Record<string, number>;
+	words_per_minute: Record<string, number>;
+	average_word_length: Record<string, number>;
 	adverb_ratio: Record<string, number>;
-	flesch_kincaid: Record<string, number>;
-	prp_ratio: Record<string, number>;
-	num_unique_words: Record<string, number>;
+	flesch_kincaid_grade: Record<string, number>;
+	personal_pronoun_ratio: Record<string, number>;
+	number_of_unique_words: Record<string, number>;
 	impoverished_vocabulary: Record<string, number>;
 	word_finding_difficulties: Record<string, number>;
 	semantic_paraphasias: Record<string, number>;

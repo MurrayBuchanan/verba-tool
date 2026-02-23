@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from app.core.database import get_db
 from app.core.authentication import get_user_id
-from app.schemas.models import Intervention as InterventionModel, Profile
-from app.schemas.schemas import Intervention as InterventionSchema
+from app.structures.models import Intervention as InterventionModel, Profile
+from app.structures.schemas import Intervention as InterventionSchema
 
 router = APIRouter(prefix="/interventions", tags=["interventions"])
 

@@ -98,5 +98,5 @@ const styles = StyleSheet.create({
 	},
 	placeholder: {
 		marginBottom: 16,
-	},
+	}
 });

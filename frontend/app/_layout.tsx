@@ -26,17 +26,13 @@ function RootNavigator() {
 	const text = useThemeColor({}, 'text');
 	const icon = useThemeColor({}, 'icon');
 
-	const headerBack = () => (
-		<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.back()} accessibilityLabel="Go back" />
-	);
-
+	// Show loading/splash screen until authentication is checked
 	useEffect(() => {
 		if (!isLoading) {
 			SplashScreen.hideAsync();
 		}
 	}, [isLoading]);
 
-	// Show splash screen until authentication is loaded
 	if (isLoading) {
 		return null;
 	}
@@ -44,18 +40,20 @@ function RootNavigator() {
 	return (
 		<ThemeProvider value={theme === 'dark' ? DarkTheme : DefaultTheme}>
 			<Stack screenOptions={{ headerShadowVisible: false, headerStyle: { backgroundColor: background }, headerTintColor: text }}>
+				{/* Authenticated routes */}
 				<Stack.Protected guard={!!session}>
 					<Stack.Screen name="profilesScreen" options={{ headerShown: true, headerTitle: "Profiles", headerBackVisible: false, headerRight: () => <LogoutButton /> }} />
 					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-					<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Indicator", headerBackVisible: false, headerLeft: headerBack }} />
-					<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Chat", headerBackVisible: false, headerLeft: headerBack }} />
-					<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Annotation", headerBackVisible: false, headerLeft: headerBack }} />
+					<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Indicator", headerBackVisible: false, headerLeft: () => (<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.back()} accessibilityLabel="Go back" /> )}} />
+					<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Chat", headerBackVisible: false, headerLeft: () => (<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.back()} accessibilityLabel="Go back" /> )}} />
+					<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Annotation", headerBackVisible: false, headerLeft: () => (<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.back()} accessibilityLabel="Go back" /> )}} />
 					<Stack.Screen name="createInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Annotation' }} />
 					<Stack.Screen name="editInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'Edit Annotation' }} />
 					<Stack.Screen name="createProfileModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Profile' }} />
 					<Stack.Screen name="editProfileModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'Edit Profile' }} />
 				</Stack.Protected>
 
+				{/* Unauthenticated routes (launch screen) */}
 				<Stack.Protected guard={!session}>
 					<Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
 				</Stack.Protected>

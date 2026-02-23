@@ -2,7 +2,12 @@ from typing import List
 import json
 from openai import AzureOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
-from app.schemas.schemas import TranscriptSegment, AIFeatures
+from app.structures.schemas import TranscriptSegment, AIFeatures
+
+"""
+AI feature extraction using Azure's Enterprise OpenAI API
+System prompt adapted from: https://arxiv.org/pdf/2412.15772
+"""
 
 # Create client with the OpenAI SDK for Azure
 client = AzureOpenAI(
@@ -39,7 +44,7 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
             all_speakers.add(speaker)
 
     speakers = sorted(all_speakers)
-
+    
     system_prompt = """
     You are an experienced doctor studying patients with dementia. You understand how the disease affects language abilities.
 
@@ -75,6 +80,7 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     )
 
     # Call Azure OpenAI API
+    # JSON response was selected over structured outputs due to sometimes not returning correct values using beta API.
     response = client.chat.completions.create(
         model = OPENAI_MODEL,
         messages = [
@@ -85,9 +91,4 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
         temperature=0, # Most deterministic output for stability
     )
 
-    # Extract the response from the API
-    raw_response = response.choices[0].message.content
-
-    # Convert the response to a JSON object
-    json_response = json.loads(raw_response)
-    return AIFeatures(**json_response)
+    return AIFeatures.model_validate_json(response.choices[0].message.content)

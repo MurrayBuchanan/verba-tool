@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from app.core.database import get_db
 from app.core.authentication import get_user_id
-from app.schemas.models import Profile as ProfileModel, TranscriptMetadata, TranscriptFeatures, TranscriptSegment, Intervention as InterventionModel
-from app.schemas.schemas import Profile as ProfileSchema
+from app.structures.models import Profile as ProfileModel, TranscriptMetadata, TranscriptFeatures, TranscriptSegment, Intervention as InterventionModel
+from app.structures.schemas import Profile as ProfileSchema
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
@@ -35,7 +35,7 @@ async def create_profile(profile: ProfileSchema, user_id: str = Depends(get_user
 async def get_profiles(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
         # Get all profiles for user
-        result = await db.execute(select(ProfileModel).filter(ProfileModel.user_id == user_id).order_by(ProfileModel.id.desc()))
+        result = await db.execute(select(ProfileModel).where(ProfileModel.user_id == user_id).order_by(ProfileModel.id.desc()))
         profiles = result.scalars().all()
 
         db_profiles = []

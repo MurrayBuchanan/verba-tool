@@ -8,12 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.database import get_db
 from app.core.authentication import get_user_id
-from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, Profile as ProfileModel
-from app.schemas.schemas import Transcript
+from app.structures.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, Profile as ProfileModel
+from app.structures.schemas import Transcript
 from app.services.audio_converter import AudioConverter
 from app.services.speech_service import SpeechService
 from app.services.conversation_analytics import ConversationAnalytics
-from app.services.quality_gate import check_quality_gates
+from app.services.quality_gate import check_quality_gate
 from app.core.config import SPEECH_KEY, SPEECH_REGION
 
 router = APIRouter(prefix="/upload", tags=["upload"])
@@ -35,7 +35,8 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         raise HTTPException(status_code=400, detail="Invalid creation date")
     
     # Check if profile exists
-    profile = (await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))).scalar_one_or_none()
+    result = await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))
+    profile = result.scalar_one_or_none()
     if profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
 
@@ -62,13 +63,13 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
             # Perform feature extraction
             analytics: Transcript = conversation_analytics.analyse(segments)
 
-        quality_error = check_quality_gates(analytics)
+        quality_error = check_quality_gate(analytics)
         if quality_error:
             raise HTTPException(status_code=400, detail=quality_error)
 
         # Add the transcript metadata to the database
         transcript_metadata = TranscriptMetadata(
-            profile_id=profile_id,
+            profile_id=profile.id,
             created_at=created_at,
             total_duration=analytics.total_duration or 0.0,
         )
@@ -78,12 +79,12 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         # Add the transcript features to the database
         transcript_features = TranscriptFeatures(
             transcript_metadata_id=transcript_metadata.id,
-            wpm_per_speaker=json.dumps(analytics.wpm_per_speaker or {}),
-            avg_word_length=json.dumps(analytics.avg_word_length or {}),
+            words_per_minute=json.dumps(analytics.words_per_minute or {}),
+            average_word_length=json.dumps(analytics.average_word_length or {}),
             adverb_ratio=json.dumps(analytics.adverb_ratio or {}),
-            flesch_kincaid=json.dumps(analytics.flesch_kincaid or {}),
-            prp_ratio=json.dumps(analytics.prp_ratio or {}),
-            num_unique_words=json.dumps(analytics.num_unique_words or {}),
+            flesch_kincaid_grade=json.dumps(analytics.flesch_kincaid_grade or {}),
+            personal_pronoun_ratio=json.dumps(analytics.personal_pronoun_ratio or {}),
+            number_of_unique_words=json.dumps(analytics.number_of_unique_words or {}),
             impoverished_vocabulary=json.dumps(analytics.impoverished_vocabulary or {}),
             word_finding_difficulties=json.dumps(analytics.word_finding_difficulties or {}),
             semantic_paraphasias=json.dumps(analytics.semantic_paraphasias or {}),

@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Plus, AlertCircle } from 'lucide-react-native';
+import { Plus, AlertCircle, User } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { Item } from "@/components/list-item";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -54,6 +54,11 @@ export default function ProfilesScreen() {
 				<View style={styles.center}>
 					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
 					<Text align="center" style={{ color: warningColour }}>{error}</Text>
+				</View>
+			) : profiles.length === 0 ? (
+				<View style={styles.center}>
+					<User size={36} color={iconColour} style={styles.placeholder} />
+					<Text align="center">No profiles, try creating a new profile!</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

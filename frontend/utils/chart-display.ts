@@ -148,3 +148,33 @@ export function getMetricProgression(transcripts: TranscriptWithFeatures[], metr
 	}
 	return result;
 }
+
+// Baseline
+export function calculateMean(values: number[]): number {
+    if (values.length === 0) {
+        return 0;
+    }
+    
+    let sum = 0;
+    for (let i = 0; i < values.length; i++) {
+        sum += values[i];
+    }
+    return sum / values.length;
+}
+
+// Upper/Lower Control Limits
+export function calculateStandardDeviation(values: number[], mean: number): number {
+    if (values.length < 2) {
+        return 0;
+    }
+    
+    let sumSquaredDifferences = 0;
+    for (let i = 0; i < values.length; i++) {
+        const difference = values[i] - mean;
+        const squared = difference * difference;
+        sumSquaredDifferences += squared;
+    }
+    
+    const variance = sumSquaredDifferences / (values.length - 1);
+    return Math.sqrt(variance);
+}

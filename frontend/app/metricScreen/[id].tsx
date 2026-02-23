@@ -9,7 +9,7 @@ import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { TranscriptWithFeatures, Intervention } from "@/constants/interfaces";
 import { getTranscripts } from "@/services/transcript-service";
 import { getInterventions } from "@/services/intervention-service";
-import { getMetricProgression } from "@/utils/metric-progression";
+import { getMetricProgression } from "@/utils/chart-display";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
@@ -30,7 +30,7 @@ export default function MetricDisplayScreen() {
 	const [interventions, setInterventions] = useState<Intervention[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [selectedMetric, setSelectedMetric] = useState<string>(id || "wpm_per_speaker");
+	const [selectedMetric, setSelectedMetric] = useState<string>(id || "words_per_minute");
 	const [showMean, setShowMean] = useState<boolean>(true);
 	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
 	const [showInterventions, setShowInterventions] = useState<boolean>(true);
@@ -125,6 +125,7 @@ export default function MetricDisplayScreen() {
 						{metricData.length > 0 && (
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
+								<Divider />
 								<List divider>
 									<Switch label="Show Baseline" value={showMean} onValueChange={setShowMean} />
 									<Switch label="Show Variation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
@@ -170,5 +171,5 @@ const styles = StyleSheet.create({
 	},
 	placeholder: {
 		marginBottom: 16,
-	},
+	}
 });

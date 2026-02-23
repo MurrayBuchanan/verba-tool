@@ -1,8 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from statistics import median
 from typing import List
-from app.schemas.schemas import TranscriptSegment, AIFeatures
+from app.structures.schemas import TranscriptSegment, AIFeatures
 from app.services.ai_features import extract_features
+
+"""
+Median aggregation of 3 LLMs to extract features from a transcript
+"""
 
 def _aggregate_metric(runs: List[AIFeatures], metric: str) -> dict:
     # Get scores for each speaker from a run

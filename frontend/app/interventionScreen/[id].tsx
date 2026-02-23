@@ -12,7 +12,7 @@ import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { getIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/interfaces";
-import { getMetricProgression } from "@/utils/metric-progression";
+import { getMetricProgression } from "@/utils/chart-display";
 import { CHART_DEFINITION, METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -51,8 +51,8 @@ export default function InterventionDetailScreen() {
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [selectedMetric, setSelectedMetric] = useState<string>("wpm_per_speaker");
-	const [annotationView, setAnnotationView] = useState<string>("annotation");
+	const [selectedMetric, setSelectedMetric] = useState<string>("words_per_minute");
+	const [interventionView, setInterventionView] = useState<string>("intervention");
 	const [showMean, setShowMean] = useState<boolean>(true);
 	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
 
@@ -130,8 +130,8 @@ export default function InterventionDetailScreen() {
 		}));
 	}, []);
 
-	const annotationViewOptions = useMemo(() => [
-			{ label: "Intervention Details", value: "annotation" },
+	const interventionViewOptions = useMemo(() => [
+			{ label: "Intervention Details", value: "intervention" },
 			{ label: "Indicator Information", value: "metric" },
 		], []
 	);
@@ -150,20 +150,17 @@ export default function InterventionDetailScreen() {
 			) : (
 				<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
 					<View style={[styles.quickSelectHeader, { backgroundColor: sectionBackground, borderTopColor: borderColour, borderBottomColor: borderColour }]}>
-						<MetricSelector
-							views={metricKeys}
-							selectedValue={selectedMetric}
-							onValueChange={setSelectedMetric}
-						/>
+						<MetricSelector views={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
 					</View>
 					<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
 						{metricData.length > 0 ? (
 							<View style={styles.section}>
+								{/* Chart configuration */}
 								<Chart
 									data={metricData}
 									xAxisLabel={(value) => {
-										const point = metricData.find(data => data.x === value); 
-										return point?.label ?? ""; 
+										const point = metricData.find((data) => data.x === value);
+										return point?.label ?? "";
 									}}
 									title={`Changes to ${metricDetails.name} during intervention`}
 									showMean={showMean}
@@ -178,8 +175,8 @@ export default function InterventionDetailScreen() {
 						)}
 
 						<View>
-							<AnnotationSelector views={annotationViewOptions} selectedValue={annotationView} onValueChange={setAnnotationView} />
-								{annotationView === "annotation" ? (
+							<AnnotationSelector views={interventionViewOptions} selectedValue={interventionView} onValueChange={setInterventionView} />
+								{interventionView === "intervention" ? (
 								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 									<View style={styles.detailsRow}>
 										<Text type="heading">Intervention Details</Text>

@@ -1,7 +1,7 @@
 from typing import Dict, List
 import spacy
 import textstat
-from app.schemas.schemas import Feature, TranscriptSegment
+from app.structures.schemas import Feature, TranscriptSegment
 
 try:
     nlp = spacy.load("en_core_web_sm")
@@ -34,6 +34,10 @@ class NLPFeatureExtraction:
                 result[speaker] = []
             result[speaker].append(segment)
         return result
+
+    # Future work: potential to add more per speaker metrics here e.g. turn taking, mlu, num_of_x etc
+
+
 
     # Calculate words per minute using the formula: total words / (total seconds / 60)
     def calculate_wpm(self, segments: List[TranscriptSegment]) -> float:

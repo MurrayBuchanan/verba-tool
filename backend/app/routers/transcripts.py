@@ -6,17 +6,9 @@ from sqlalchemy import select, desc, delete
 
 from app.core.database import get_db
 from app.core.authentication import get_user_id
-from app.schemas.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, Profile as ProfileModel
+from app.structures.models import TranscriptMetadata, TranscriptFeatures, TranscriptSegment, Profile as ProfileModel
 
 router = APIRouter(prefix="/transcripts", tags=["transcripts"])
-
-# Helper to unmarshall the transcript features from the database to a dictionary
-def _get_feature(features, feature):
-    value = getattr(features, feature, None)
-    if value:
-        return json.loads(value)
-    else:
-        return {}
 
 @router.get("")
 async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db), profile_id: int = Query(...)) -> JSONResponse:
@@ -37,17 +29,17 @@ async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession 
                 "profile_id": transcript.profile_id,
                 "total_duration": transcript.total_duration,
                 "created_at": transcript.created_at.isoformat(),
-                "wpm_per_speaker": _get_feature(features, "wpm_per_speaker"),
-                "avg_word_length": _get_feature(features, "avg_word_length"),
-                "adverb_ratio": _get_feature(features, "adverb_ratio"),
-                "flesch_kincaid": _get_feature(features, "flesch_kincaid"),
-                "prp_ratio": _get_feature(features, "prp_ratio"),
-                "num_unique_words": _get_feature(features, "num_unique_words"),
-                "impoverished_vocabulary": _get_feature(features, "impoverished_vocabulary"),
-                "word_finding_difficulties": _get_feature(features, "word_finding_difficulties"),
-                "semantic_paraphasias": _get_feature(features, "semantic_paraphasias"),
-                "syntactic_simplification": _get_feature(features, "syntactic_simplification"),
-                "discourse_impairment": _get_feature(features, "discourse_impairment"),
+                "words_per_minute": json.loads(features.words_per_minute),
+                "average_word_length": json.loads(features.average_word_length),
+                "adverb_ratio": json.loads(features.adverb_ratio),
+                "flesch_kincaid_grade": json.loads(features.flesch_kincaid_grade),
+                "personal_pronoun_ratio": json.loads(features.personal_pronoun_ratio),
+                "number_of_unique_words": json.loads(features.number_of_unique_words),
+                "impoverished_vocabulary": json.loads(features.impoverished_vocabulary),
+                "word_finding_difficulties": json.loads(features.word_finding_difficulties),
+                "semantic_paraphasias": json.loads(features.semantic_paraphasias),
+                "syntactic_simplification": json.loads(features.syntactic_simplification),
+                "discourse_impairment": json.loads(features.discourse_impairment),
             })
 
         return JSONResponse(content={"transcripts": db_transcripts})

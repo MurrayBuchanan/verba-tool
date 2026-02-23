@@ -49,5 +49,5 @@ const styles = StyleSheet.create({
 		left: 20,
 		right: 20,
 		width: '100%',
-	},
+	}
 });

@@ -33,28 +33,28 @@ export default function TabLayout() {
 				name='recordAudioScreen'
 				options={{
 					title: 'Record',
-					tabBarIcon: ({ color }) => <Mic size={22} color={color} />,
+					tabBarIcon: ({ color }) => <Mic size={22} color={color} />
 				}}
 			/>
 			<Tabs.Screen
 				name='metricsScreen'
 				options={{
 					title: 'Indicators',
-					tabBarIcon: ({ color }) => <ChartLine size={22} color={color} />,
+					tabBarIcon: ({ color }) => <ChartLine size={22} color={color} />
 				}}
 			/>
 			<Tabs.Screen
 				name='interventionScreen'
 				options={{
-					title: 'Annotations',
-					tabBarIcon: ({ color }) => <ClipboardList size={22} color={color} />,
+					title: 'Interventions',
+					tabBarIcon: ({ color }) => <ClipboardList size={22} color={color} />
 				}}
 			/>
 			<Tabs.Screen
 				name='conversationHistoryScreen'
 				options={{
 					title: 'Chat History',
-					tabBarIcon: ({ color }) => <History size={22} color={color} />,
+					tabBarIcon: ({ color }) => <History size={22} color={color} />
 				}}
 			/>
 		</Tabs>

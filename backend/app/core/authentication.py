@@ -3,9 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
 from app.core.database import get_db
 from app.core.config import API_TOKEN
-from app.schemas.models import User
+from app.structures.models import User
 
-async def get_current_user(authorisation: Optional[str] = Header(None, alias="Authorisation"), user: Optional[str] = Header(None, alias="User-Id"), db: AsyncSession = Depends(get_db)) -> User:
+"""
+Authenticate user if they have a valid API token, and if they have a valid user ID.
+"""
+
+async def get_current_user(authorisation: Optional[str] = Header(None, alias="Authorisation"), user: Optional[str] = Header(None, alias="UserID"), db: AsyncSession = Depends(get_db)) -> User:
     if not authorisation:
         raise HTTPException(status_code=401, detail="No API token provided")
     if authorisation != API_TOKEN:

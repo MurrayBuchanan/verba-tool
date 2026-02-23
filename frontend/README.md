@@ -65,14 +65,17 @@ Content coming soon...
       ```bash
       eas login
       ```
+
    2. Configure the project
       ```bash
       eas build:configure
       ```
-   3. Create development build
-      ```bash
-      eas build --platform all
-      ```
+
+   3. Create development build (Select one)
+      
+      Production Builds ```eas build --platform all```
+      iOS Development Build ```eas build --platform ios --profile development```
+      Android Development Build ```eas build --platform android --profile development```
 
 ## How to run
 
