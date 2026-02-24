@@ -1,22 +1,22 @@
-import { apiService } from '@/services/api-service';
+import { apiService } from "@/services/api-service";
 
 export async function upload(profileId: number, audioUri: string, createdAt: Date) {
 	
 	// Send audio as a FormData object
 	const formData = new FormData();
-	formData.append('file', {
+	formData.append("file", {
 		uri: audioUri,
-		type: 'audio/m4a',
-		name: 'conversation-recording.m4a'
+		type: "audio/m4a",
+		name: "conversation-recording.m4a"
 	} as any);
 
 	// Upload recording to API
-	const response = await apiService.post('/upload', formData, {
+	const response = await apiService.post("/upload", formData, {
 		timeout: 1000 * 60 * 10,
 		headers: {
-			'Profile-Id': String(profileId),
-			'Created-At': createdAt.toISOString(),
-			'Content-Type': undefined
+			"Profile-Id": String(profileId),
+			"Created-At": createdAt.toISOString(),
+			"Content-Type": undefined
 		}
 	});
 	console.log(response.data);

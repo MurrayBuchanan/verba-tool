@@ -7,11 +7,11 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { AlertCircle, Calendar, Check, ClipboardList, Lightbulb, Plus } from 'lucide-react-native';
 import { List } from "@/components/list";
 import { Item } from "@/components/list-item";
+import { useProfile } from "@/context/ProfileContext";
 import { Intervention } from "@/constants/interfaces";
 import { getInterventions } from "@/services/intervention-service";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { useProfile } from "@/context/ProfileContext";
 
 export default function InterventionScreen() {
 	const router = useRouter();
@@ -20,9 +20,9 @@ export default function InterventionScreen() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
-	const warningColour = useThemeColor({}, 'warning');
-	const iconColour = useThemeColor({}, 'icon');
-	const accentColour = useThemeColor({}, 'accent');
+	const warning = useThemeColor({}, 'warning');
+	const icon = useThemeColor({}, 'icon');
+	const accent = useThemeColor({}, 'accent');
 	const textSecondary = useThemeColor({}, 'textSecondary');
 	const backgroundSecondary = useThemeColor({}, 'backgroundSecondary');
 
@@ -51,18 +51,18 @@ export default function InterventionScreen() {
 
 	return (
 		<View style={styles.container}>
-			{loading ? (
+			{ loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={iconColour} />
+					<ActivityIndicator size="small" color={icon} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
-					<Text align="center" style={{ color: warningColour }}>{error}</Text>
+					<AlertCircle size={36} color={warning} style={styles.placeholder} />
+					<Text align="center" style={{ color: warning }}>{error}</Text>
 				</View>
 			) : interventions.length === 0 ? (
 				<View style={styles.center}>
-					<ClipboardList size={36} color={iconColour} style={styles.placeholder} />
+					<ClipboardList size={36} color={icon} style={styles.placeholder} />
 					<Text align="center">No interventions, try creating a new intervention!</Text>
 				</View>
 			) : (
@@ -79,7 +79,7 @@ export default function InterventionScreen() {
 							<Item
 								key={intervention.id}
 								name={intervention.name}
-								icon={intervention.success ? <Check size={14} color={accentColour} /> : <Calendar size={14} color={iconColour} />}
+								icon={intervention.success ? <Check size={14} color={accent} /> : <Calendar size={14} color={icon} />}
 								subtitle={`${formatDisplayDate(intervention.start_date)} - ${formatDisplayDate(intervention.end_date)}${intervention.success ? " · Success" : ""}`}
 								onPress={() => router.push(`/interventionScreen/${intervention.id}`)}
 							/>
@@ -87,8 +87,8 @@ export default function InterventionScreen() {
 					</List>
 				</ScrollView>
 			)}
-			{!loading && !error && (
-				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createInterventionModal")}>
+			{ !loading && !error && (
+				<TouchableOpacity style={[styles.button, { backgroundColor: accent }]} onPress={() => router.push("/createInterventionModal")}>
 					<Plus size={32} color="#FFF"/>
 				</TouchableOpacity>
 			)}

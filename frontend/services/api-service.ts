@@ -1,5 +1,5 @@
-import axios, { AxiosInstance } from 'axios';
-import { getUserId } from '@/services/authentication-service';
+import axios, { AxiosInstance } from "axios";
+import { getUserId } from "@/services/authentication-service";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || "";
 const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN || "";
@@ -8,7 +8,7 @@ const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN || "";
 export const apiService: AxiosInstance = axios.create({
 	baseURL: API_URL,
 	headers: {
-		'Content-Type': 'application/json',
+		"Content-Type": "application/json",
 	}
 });
 
@@ -18,7 +18,7 @@ apiService.interceptors.request.use(async (config) => {
 
 	const userId = await getUserId();
 	if (userId) {
-		config.headers['UserID'] = userId;
+		config.headers["UserID"] = userId;
 	}
 	return config;
 });

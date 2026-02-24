@@ -1,10 +1,12 @@
-import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder, useAudioRecorderState } from 'expo-audio';
-import React, { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
-import { BlockButton } from '@/components/block-button';
-import { upload } from '@/services/upload-service';
-import { useProfile } from '@/context/ProfileContext';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder, useAudioRecorderState } from "expo-audio";
+import React, { useEffect, useState } from "react";
+import { Alert } from "react-native";
+import { BlockButton } from "@/components/block-button";
+import { upload } from "@/services/upload-service";
+import { useProfile } from "@/context/ProfileContext";
+import { useThemeColor } from "@/hooks/use-theme-color";
+
+// Future work: this could just be a hook instead of a component
 
 export const RecordButton = () => {
 	const { profileId } = useProfile();
@@ -12,9 +14,9 @@ export const RecordButton = () => {
 	const recorderState = useAudioRecorderState(recorder);
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [createdAt, setCreatedAt] = useState<Date | null>(null);
-	const accentColour = useThemeColor({}, 'accent');
-	const warningColour = useThemeColor({}, 'warning');
-	const meanColour = useThemeColor({}, 'meanColour');
+	const accentColour = useThemeColor({}, "accent");
+	const warningColour = useThemeColor({}, "warning");
+	const meanColour = useThemeColor({}, "meanColour");
 
 	// Request microphone permission
 	useEffect(() => {
@@ -70,8 +72,8 @@ export const RecordButton = () => {
 	};
 
 	const getLabel = () => {
-		if (isProcessing) return 'Processing';
-		return recorderState.isRecording ? 'End Recording' : 'Start Recording';
+		if (isProcessing) return "Analysing";
+		return recorderState.isRecording ? "End Recording" : "Start Recording";
 	};
 
 	const getButtonColour = () => {

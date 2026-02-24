@@ -1,7 +1,7 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { ThemedText as Text } from '@/components/themed-text';
-import { ChevronRight } from 'lucide-react-native';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { ThemedText as Text } from "@/components/themed-text";
+import { ChevronRight } from "lucide-react-native";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 type Props = {
     name: string;
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export function Item({ name, onPress, icon, subtitle }: Props) {
-	const iconColour = useThemeColor({}, 'icon');
+	const iconColour = useThemeColor({}, "icon");
 	return (
 		<TouchableOpacity onPress={onPress} style={styles.container}>
 			<View style={styles.row}>
@@ -36,16 +36,16 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 	},
 	row: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
 	},
 	content: {
 		flex: 1,
 	},
 	subtitle: {
-		flexDirection: 'row',
-		alignItems: 'center',
+		flexDirection: "row",
+		alignItems: "center",
 	},
 	icon: {
 		marginRight: 6,

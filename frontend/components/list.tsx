@@ -1,6 +1,5 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { Divider } from "@/components/divider";
 
 type Props = {
@@ -9,7 +8,6 @@ type Props = {
 };
 
 export function List({ children, divider = false }: Props) {
-	const dividerColor = useThemeColor({}, "backgroundTertiary");
 	const items = React.Children.toArray(children);
 
 	return (

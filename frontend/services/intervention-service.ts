@@ -1,5 +1,5 @@
-import { Intervention } from '@/constants/interfaces';
-import { apiService } from '@/services/api-service';
+import { Intervention } from "@/constants/interfaces";
+import { apiService } from "@/services/api-service";
 
 export async function getInterventions(profileId: number): Promise<Intervention[]> {
 	try {

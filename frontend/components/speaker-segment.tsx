@@ -19,9 +19,9 @@ type Props = {
 };
 
 export function SpeakerSegment({ speaker, speakerTitle, text, createdAt, offsetSeconds }: Props) {
-    const bubbleColour = useThemeColor({}, "backgroundSecondary");
+    const backgroundSecondary = useThemeColor({}, "backgroundSecondary");
     const textColour = useThemeColor({}, "text");
-    const textSecondaryColour = useThemeColor({}, "textSecondary");
+    const textSecondary = useThemeColor({}, "textSecondary");
 
     const isLeft = speaker === "Guest-1";
     const timestamp = createdAt != null && offsetSeconds != null ? calculateTimestamp(createdAt, offsetSeconds) : null;
@@ -29,13 +29,13 @@ export function SpeakerSegment({ speaker, speakerTitle, text, createdAt, offsetS
     return (
         <ThemedView style={[styles.container, isLeft ? styles.left : styles.right]}>
             <View style={styles.segmentColumn}>
-                <Text type="caption" lightColour={textSecondaryColour} darkColour={textSecondaryColour} style={isLeft ? styles.titleLeft : styles.titleRight}>{speakerTitle}</Text>
-                <ThemedView lightColour={bubbleColour} darkColour={bubbleColour} style={styles.bubble}>
+                <Text type="caption" lightColour={textSecondary} darkColour={textSecondary} style={isLeft ? styles.titleLeft : styles.titleRight}>{speakerTitle}</Text>
+                <ThemedView lightColour={backgroundSecondary} darkColour={backgroundSecondary} style={styles.bubble}>
                     <View>
                         <Text lightColour={textColour} darkColour={textColour}>{text}</Text>
                         { timestamp && (
                             <View style={styles.timestamp}>
-                                <Text type="caption" lightColour={textSecondaryColour} darkColour={textSecondaryColour}>{timestamp}</Text>
+                                <Text type="caption" lightColour={textSecondary} darkColour={textSecondary}>{timestamp}</Text>
                             </View>
                         )}
                     </View>
@@ -78,5 +78,5 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-end",
         marginTop: 2,
-    },
+    }
 });

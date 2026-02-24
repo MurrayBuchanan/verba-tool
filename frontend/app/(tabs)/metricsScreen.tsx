@@ -16,12 +16,12 @@ import { AlertCircle, ChartLine } from "lucide-react-native";
 export default function MetricsScreen() {
 	const router = useRouter();
 	const { profileId } = useProfile();
-	const warningColour = useThemeColor({}, 'warning');
-	const iconColour = useThemeColor({}, 'icon');
 	const [loading, setLoading] = useState(true);
 	const [hasConversations, setHasConversations] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
+	const warning = useThemeColor({}, 'warning');
+	const icon = useThemeColor({}, 'icon');
 
 	useFocusEffect(
 		useCallback(() => {
@@ -48,18 +48,18 @@ export default function MetricsScreen() {
 
 	return (
 		<View style={styles.container}>
-			{loading ? (
+			{ loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={iconColour} />
+					<ActivityIndicator size="small" color={icon} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
-					<Text align="center" style={{ color: warningColour }}>{error}</Text>
+					<AlertCircle size={36} color={warning} style={styles.placeholder} />
+					<Text align="center" style={{ color: warning }}>{error}</Text>
 				</View>
 			) : (!hasConversations) ? (
 				<View style={styles.center}>
-					<ChartLine size={36} color={iconColour} style={styles.placeholder} />
+					<ChartLine size={36} color={icon} style={styles.placeholder} />
 					<Text align="center">No indicators exist, record a conversation to see indicators!</Text>
 				</View>
 			) : (

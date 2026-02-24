@@ -16,7 +16,7 @@ type DateGroup = {
 	transcripts: TranscriptWithFeatures[];
 };
 
-function getTimeGrouping(startDate: Date, endDate: Date): "Day" | "Week" | "Month" {
+function dateGrouping(startDate: Date, endDate: Date): "Day" | "Week" | "Month" {
 	const difference = Math.abs(endDate.getTime() - startDate.getTime());
 	const days = Math.ceil(difference / 86400000);
 	
@@ -130,7 +130,7 @@ export function getMetricProgression(transcripts: TranscriptWithFeatures[], metr
 	const startDate = dates[0];
 	const endDate = dates[dates.length - 1];
 	
-	const grouping = getTimeGrouping(startDate, endDate);
+	const grouping = dateGrouping(startDate, endDate);
 	const groups = groupByTimePeriod(transcripts, grouping);
 	
 	const result = [];

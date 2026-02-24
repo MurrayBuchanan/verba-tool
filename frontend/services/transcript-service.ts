@@ -1,5 +1,5 @@
-import { TranscriptWithFeatures, TranscriptWithSegments } from '@/constants/interfaces';
-import { apiService } from '@/services/api-service';
+import { TranscriptWithFeatures, TranscriptWithSegments } from "@/constants/interfaces";
+import { apiService } from "@/services/api-service";
 
 export async function getTranscripts(profileId: number): Promise<TranscriptWithFeatures[]> {
 	try {

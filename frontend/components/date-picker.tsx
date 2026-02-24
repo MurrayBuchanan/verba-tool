@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet, Platform, Keyboard } from "react-na
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Collapsible from "react-native-collapsible";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Calendar } from 'lucide-react-native';
+import { Calendar } from "lucide-react-native";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
@@ -18,11 +18,11 @@ type Props = {
 
 export function DatePicker({ label, value, onDateChange, minimumDate, maximumDate, error }: Props) {
 	const [showPicker, setShowPicker] = useState(false);
-	const accentColour = useThemeColor({}, 'accent');
-	const iconColour = useThemeColor({}, 'icon');
-	const backgroundColour = useThemeColor({}, 'active');
-	const warningColour = useThemeColor({}, 'warning');
-	const borderColour = error ? warningColour : showPicker ? accentColour : 'transparent';
+	const accent = useThemeColor({}, "accent");
+	const icon = useThemeColor({}, "icon");
+	const background = useThemeColor({}, "active");
+	const warning = useThemeColor({}, "warning");
+	const border = error ? warning : showPicker ? accent : "transparent";
 
 	const handleDateChange = (event: any, selectedDate?: Date) => {
 		if (Platform.OS === "android") {
@@ -45,13 +45,13 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 	return (
 		<View>
 			<Text type="strong">{label}</Text>
-			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: borderColour, backgroundColor: backgroundColour }]}>
+			<TouchableOpacity onPress={handlePress} style={[styles.input, { borderColor: border, backgroundColor: background }]}>
 				<View style={styles.row}>
 					<Text type="caption">{formatDisplayDate(value)}</Text>
-					<Calendar size={20} color={iconColour} />
+					<Calendar size={20} color={icon} />
 				</View>
 			</TouchableOpacity>
-			{ error ? <Text type="caption" style={{ color: warningColour }}>{error}</Text> : null}
+			{ error ? <Text type="caption" style={{ color: warning }}>{error}</Text> : null}
 			{Platform.OS === "android" ? (
 				showPicker && (
 					<DateTimePicker
@@ -65,7 +65,7 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 				)
 			) : (
 				<Collapsible collapsed={!showPicker}>
-					<View style={[styles.collapsible, { backgroundColor: backgroundColour }]}>
+					<View style={[styles.collapsible, { backgroundColor: background }]}>
 						<DateTimePicker
 							value={value}
 							mode="date"
@@ -93,19 +93,19 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	row: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
 	},
 	collapsible: {
 		borderRadius: 16,
-		overflow: 'hidden',
+		overflow: "hidden",
 		marginTop: 4,
 		alignItems: "center",
 		justifyContent: "center",
 	},
 	select: {
-		alignItems: 'center',
+		alignItems: "center",
 		paddingVertical: 12,
 	}
 });

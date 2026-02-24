@@ -1,6 +1,6 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native';
-import { ThemedText as Text } from '@/components/themed-text';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
+import { ThemedText as Text } from "@/components/themed-text";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 type Views = {
 	label: string;
@@ -14,9 +14,9 @@ type Props = {
 };
 
 export function MetricSelector({ views, selectedValue, onValueChange }: Props) {
-	const accentColour = useThemeColor({}, 'accent');
-	const backgroundSecondary = useThemeColor({}, 'backgroundSecondary');
-	const textColour = useThemeColor({}, 'text');
+	const accentColour = useThemeColor({}, "accent");
+	const backgroundSecondary = useThemeColor({}, "backgroundSecondary");
+	const textColour = useThemeColor({}, "text");
 
 	return (
 		<>
@@ -29,7 +29,7 @@ export function MetricSelector({ views, selectedValue, onValueChange }: Props) {
 							onPress={() => onValueChange(view.value)}
 							style={[styles.item, { backgroundColor: backgroundSecondary, borderWidth: 1, borderColor: isSelected ? accentColour : backgroundSecondary }]}
 						>
-							<Text type='caption' style={{ color: textColour }} numberOfLines={1}>{view.label}</Text>
+							<Text type="caption" style={{ color: textColour }} numberOfLines={1}>{view.label}</Text>
 						</TouchableOpacity>
 					);
 				})}
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		paddingVertical: 10,
 		borderRadius: 10,
-		alignItems: 'center',
-		justifyContent: 'center',
+		alignItems: "center",
+		justifyContent: "center",
 	},
 });

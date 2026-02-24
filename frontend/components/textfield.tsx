@@ -14,33 +14,27 @@ type Props = {
 
 export function TextField({ label, value, onChangeText, placeholder, multiline = false, error }: Props) {
 	const [focused, setFocused] = useState(false);
-	const accentColour = useThemeColor({}, 'accent');
-	const textColour = useThemeColor({}, 'text');
-	const placeholderColour = useThemeColor({}, 'textSecondary');
-	const backgroundColour = useThemeColor({}, 'active');
-	const warningColour = useThemeColor({}, 'warning');
-	const borderColour = error ? warningColour : focused ? accentColour : 'transparent';
+	const accent = useThemeColor({}, "accent");
+	const text = useThemeColor({}, "text");
+	const placeholderText = useThemeColor({}, "textSecondary");
+	const background = useThemeColor({}, "active");
+	const warning = useThemeColor({}, "warning");
+	const border = error ? warning : focused ? accent : "transparent";
 
 	return (
 		<View>
 			<Text type="strong">{label}</Text>
 			<TextInput
-				style={[ styles.input, multiline && styles.textArea,
-					{
-						borderColor: borderColour,
-						color: textColour,
-						backgroundColor: backgroundColour,
-					}
-				]}
+				style={[ styles.input, multiline && styles.textArea, { borderColor: border, color: text, backgroundColor: background }]}
 				value={value}
 				onChangeText={onChangeText}
 				placeholder={placeholder}
-				placeholderTextColor={placeholderColour}
+				placeholderTextColor={placeholderText}
 				multiline={multiline}
 				onFocus={() => setFocused(true)}
 				onBlur={() => setFocused(false)}
 			/>
-			{ error ? <Text type="caption" style={{ color: warningColour }}>{error}</Text> : null }
+			{ error ? <Text type="caption" style={{ color: warning }}>{error}</Text> : null }
 		</View>
 	);
 }
@@ -51,11 +45,11 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		padding: 12,
 		marginTop: 16,
-		marginBottom: 10,
+		marginBottom: 10
 	},
 	textArea: {
 		minHeight: 100,
 		textAlignVertical: "top",
-		borderRadius: 12,
-	},
+		borderRadius: 12
+	}
 });

@@ -1,5 +1,5 @@
-import { apiService } from '@/services/api-service';
-import { Profile } from '@/constants/interfaces';
+import { apiService } from "@/services/api-service";
+import { Profile } from "@/constants/interfaces";
 
 export async function getProfiles(): Promise<Profile[]> {
 	try {

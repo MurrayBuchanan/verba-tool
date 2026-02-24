@@ -1,6 +1,6 @@
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { ThemedText as Text } from '@/components/themed-text';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { ThemedText as Text } from "@/components/themed-text";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 type Views = {
 	label: string;
@@ -14,17 +14,17 @@ type Props = {
 };
 
 export function AnnotationSelector({ views, selectedValue, onValueChange }: Props) {
-	const accentColour = useThemeColor({}, 'accent');
-	const textColour = useThemeColor({}, 'text');
-	const backgroundSecondary = useThemeColor({}, 'backgroundSecondary');
+	const accent = useThemeColor({}, "accent");
+	const text = useThemeColor({}, "text");
+	const backgroundSecondary = useThemeColor({}, "backgroundSecondary");
 
 	return (
 		<View style={styles.container}>
 			{views.map((view) => {
 				const isSelected = view.value === selectedValue;
 				return (
-					<TouchableOpacity key={view.value} onPress={() => onValueChange(view.value)} style={[styles.item, { backgroundColor: backgroundSecondary, borderWidth: 1, borderColor: isSelected ? accentColour : backgroundSecondary }]}>
-						<Text type="caption" style={{ color: textColour }} numberOfLines={1}>{view.label}</Text>
+					<TouchableOpacity key={view.value} onPress={() => onValueChange(view.value)} style={[styles.item, { backgroundColor: backgroundSecondary, borderWidth: 1, borderColor: isSelected ? accent : backgroundSecondary }]}>
+						<Text type="caption" style={{ color: text }} numberOfLines={1}>{view.label}</Text>
 					</TouchableOpacity>
 				);
 			})}
@@ -34,7 +34,7 @@ export function AnnotationSelector({ views, selectedValue, onValueChange }: Prop
 
 const styles = StyleSheet.create({
 	container: {
-		flexDirection: 'row',
+		flexDirection: "row",
 		gap: 10,
 		marginHorizontal: 20,
 		marginVertical: 10,
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		paddingVertical: 10,
 		borderRadius: 10,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
+		alignItems: "center",
+		justifyContent: "center",
+	}
 });

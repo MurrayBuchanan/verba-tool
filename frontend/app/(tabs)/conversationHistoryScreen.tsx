@@ -6,22 +6,22 @@ import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { List } from "@/components/list";
 import { Item } from "@/components/list-item";
+import { useProfile } from "@/context/ProfileContext";
+import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { getTranscripts } from "@/services/transcript-service";
 import { AlertCircle, Clock, MessageSquare } from "lucide-react-native";
-import { TranscriptWithFeatures } from "@/constants/interfaces";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { useProfile } from "@/context/ProfileContext";
 import { formatDuration, formatDisplayDateTime } from "@/utils/datetime-formatting";
 
 export default function ConversationHistoryScreen() {
 	const router = useRouter();
 	const { profileId } = useProfile();
-	const warningColour = useThemeColor({}, 'warning');
-	const iconColour = useThemeColor({}, 'icon');
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
+	const warning = useThemeColor({}, 'warning');
+	const icon = useThemeColor({}, 'icon');
 
 	useFocusEffect(
 		useCallback(() => {
@@ -47,18 +47,18 @@ export default function ConversationHistoryScreen() {
 
 	return (
 		<View style={styles.container}>
-			{loading ? (
+			{ loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={iconColour} />
+					<ActivityIndicator size="small" color={icon} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
-					<Text align="center" style={{ color: warningColour }}>{error}</Text>
+					<AlertCircle size={36} color={warning} style={styles.placeholder} />
+					<Text align="center" style={{ color: warning }}>{error}</Text>
 				</View>
 			) : transcripts.length === 0 ? (
 				<View style={styles.center}>
-					<MessageSquare size={36} color={iconColour} style={styles.placeholder} />
+					<MessageSquare size={36} color={icon} style={styles.placeholder} />
 					<Text align="center">No conversations, try starting a new chat!</Text>
 				</View>
 			) : (
@@ -69,7 +69,7 @@ export default function ConversationHistoryScreen() {
 								<Item
 									key={transcript.id}
 									name={formatDisplayDateTime(transcript.created_at)}
-									icon={<Clock size={14} color={iconColour} />}
+									icon={<Clock size={14} color={icon} />}
 									subtitle={formatDuration(transcript.total_duration)}
 									onPress={() => router.push(`/conversationScreen/${transcript.id}`)}
 								/>

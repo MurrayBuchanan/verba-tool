@@ -4,25 +4,25 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Trash, AlertCircle } from 'lucide-react-native';
 import { SpeakerSegment } from "@/components/speaker-segment";
+import { getProfile } from "@/services/profile-service";
 import { TranscriptWithSegments } from "@/constants/interfaces";
 import { getTranscript, deleteTranscript } from "@/services/transcript-service";
-import { getProfile } from "@/services/profile-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
+import { AlertCircle, Trash } from "lucide-react-native";
 import { IconButton } from "@/components/icon-button";
 
 export default function ConversationDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const router = useRouter();
 	const navigation = useNavigation();
-	const warningColour = useThemeColor({}, 'warning');
-	const iconColour = useThemeColor({}, 'icon');
 	const [transcript, setTranscript] = useState<TranscriptWithSegments | null>(null);
 	const [profileName, setProfileName] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const loadedId = useRef<string | undefined>(undefined);
+	const warning = useThemeColor({}, "warning");
+	const icon = useThemeColor({}, "icon");
 
 	const handleDelete = useCallback(() => {
 		Alert.alert("Delete Conversation", "Are you sure you want to delete this conversation? This will permanently delete the conversation and the indicators associated with it.", [
@@ -42,10 +42,10 @@ export default function ConversationDisplayScreen() {
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<IconButton icon={<Trash size={22} color={warningColour} />} onPress={handleDelete} />
+				<IconButton icon={<Trash size={22} color={warning} />} onPress={handleDelete} />
 			),
 		});
-	}, [navigation, handleDelete, warningColour]);
+	}, [navigation, handleDelete, warning]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -80,14 +80,14 @@ export default function ConversationDisplayScreen() {
 	
 	return (
 		<View style={styles.container}>
-			{loading ? (
+			{ loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={iconColour} />
+					<ActivityIndicator size="small" color={icon} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
-					<Text align="center" style={{ color: warningColour }}>{error}</Text>
+					<AlertCircle size={36} color={warning} style={styles.placeholder} />
+					<Text align="center" style={{ color: warning }}>{error}</Text>
 				</View>
 			) : (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

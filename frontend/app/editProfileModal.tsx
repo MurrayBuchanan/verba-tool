@@ -101,7 +101,7 @@ export default function EditProfileModal() {
 					/>
 				</ScrollView>
 				<View style={styles.bottomButton}>
-				<BlockButton
+					<BlockButton
 						title="Switch Profile"
 						onPress={handleSwitchProfile}
 						lightColour={accentColour}

@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { router } from 'expo-router';
-import { getToken, signIn, signOut } from '@/services/authentication-service';
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { router } from "expo-router";
+import { getToken, signIn, signOut } from "@/services/authentication-service";
 
 interface SessionContext {
 	signIn: () => Promise<void>;
@@ -33,7 +33,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 	const handleSignOut = async () => {
 		await signOut();
 		setSession(null);
-		router.replace('/');
+		router.replace("/");
 	};
 
 	return (
@@ -46,7 +46,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 export function useAuthentication() {
 	const context = useContext(SessionContext);
 	if (!context) {
-		throw new Error('useAuthentication must be used within a SessionProvider');
+		throw new Error("useAuthentication must be used within a SessionProvider");
 	}
 	return context;
 }

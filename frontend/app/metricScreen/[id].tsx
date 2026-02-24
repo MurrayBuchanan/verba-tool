@@ -21,11 +21,6 @@ import { CHART_DEFINITION } from "@/constants/metrics";
 export default function MetricDisplayScreen() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const { profileId } = useProfile();
-	const warningColour = useThemeColor({}, 'warning');
-	const iconColour = useThemeColor({}, 'icon');
-	const sectionBackground = useThemeColor({}, 'background');
-	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
-	const borderColour = useThemeColor({}, 'backgroundTertiary');
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [interventions, setInterventions] = useState<Intervention[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -35,6 +30,11 @@ export default function MetricDisplayScreen() {
 	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
 	const [showInterventions, setShowInterventions] = useState<boolean>(true);
 	const metricDetails = METRIC_DEFINITIONS[selectedMetric];
+	const warning = useThemeColor({}, 'warning');
+	const icon = useThemeColor({}, 'icon');
+	const background = useThemeColor({}, 'background');
+	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
+	const border = useThemeColor({}, 'backgroundTertiary');
 
 	useEffect(() => {
 		setSelectedMetric(id);
@@ -75,23 +75,19 @@ export default function MetricDisplayScreen() {
 
 	return (
 		<ThemedView style={styles.container}>
-			{loading ? (
+			{ loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={iconColour} />
+					<ActivityIndicator size="small" color={icon} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
-					<Text align="center" style={{ color: warningColour }}>{error}</Text>
+					<AlertCircle size={36} color={warning} style={styles.placeholder} />
+					<Text align="center" style={{ color: warning }}>{error}</Text>
 				</View>
 			) : (
 				<>
-					<View style={[styles.quickSelectHeader, { backgroundColor: sectionBackground, borderTopColor: borderColour, borderBottomColor: borderColour }]}>
-						<MetricSelector
-							views={metricKeys}
-							selectedValue={selectedMetric}
-							onValueChange={setSelectedMetric}
-						/>
+					<View style={[styles.quickSelectHeader, { backgroundColor: background, borderTopColor: border, borderBottomColor: border }]}>
+						<MetricSelector views={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
 					</View>
 					<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 						{ metricData.length > 0 ? (
@@ -122,7 +118,7 @@ export default function MetricDisplayScreen() {
 								<Text type="caption">{metricDetails.description}</Text>
 						</View>
 
-						{metricData.length > 0 && (
+						{ metricData.length > 0 && (
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
 								<Divider />
@@ -162,7 +158,6 @@ const styles = StyleSheet.create({
 		padding: 20,
 		gap: 16,
 	},
-
 	center: {
 		flex: 1,
 		justifyContent: "center",

@@ -4,11 +4,12 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Trash, Pencil, AlertCircle } from "lucide-react-native";
+import { AlertCircle, Pencil, Trash } from "lucide-react-native";
 import { MetricChart as Chart } from "@/components/metric-chart";
 import { MetricSelector } from "@/components/metric-selector";
 import { AnnotationSelector } from "@/components/annotation-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
+import { useProfile } from "@/context/ProfileContext";
 import { getIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/interfaces";
@@ -16,7 +17,6 @@ import { getMetricProgression } from "@/utils/chart-display";
 import { CHART_DEFINITION, METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { useProfile } from "@/context/ProfileContext";
 import { IconButton } from "@/components/icon-button";
 import { List } from "@/components/list";
 import { Divider } from "@/components/divider";
@@ -41,12 +41,6 @@ export default function InterventionDetailScreen() {
 	const router = useRouter();
 	const navigation = useNavigation();
 	const { profileId } = useProfile();
-	const warningColour = useThemeColor({}, 'warning');
-	const accentColour = useThemeColor({}, 'accent');
-	const iconColour = useThemeColor({}, 'icon');
-	const sectionBackground = useThemeColor({}, 'background');
-	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
-	const borderColour = useThemeColor({}, 'backgroundTertiary');
 	const [intervention, setIntervention] = useState<any>(null);
 	const [transcripts, setTranscripts] = useState<TranscriptWithFeatures[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -55,6 +49,12 @@ export default function InterventionDetailScreen() {
 	const [interventionView, setInterventionView] = useState<string>("intervention");
 	const [showMean, setShowMean] = useState<boolean>(true);
 	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
+	const warning = useThemeColor({}, 'warning');
+	const accent = useThemeColor({}, 'accent');
+	const icon = useThemeColor({}, 'icon');
+	const background = useThemeColor({}, 'background');
+	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
+	const border = useThemeColor({}, 'backgroundTertiary');
 
 	const handleDeleteIntervention = useCallback(() => {
 		Alert.alert("Delete Intervention", "Are you sure you want to delete this intervention?", [
@@ -80,9 +80,9 @@ export default function InterventionDetailScreen() {
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
-			headerRight: () => (<IconButton icon={<Trash size={22} color={warningColour} />} onPress={handleDeleteIntervention} accessibilityLabel="Delete Intervention" />),
+			headerRight: () => (<IconButton icon={<Trash size={22} color={warning} />} onPress={handleDeleteIntervention} accessibilityLabel="Delete Intervention" />),
 		});
-	}, [navigation, handleDeleteIntervention, warningColour]);
+	}, [navigation, handleDeleteIntervention, warning]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -138,30 +138,26 @@ export default function InterventionDetailScreen() {
 
 	return (
 		<ThemedView style={styles.container}>
-			{loading ? (
+			{ loading ? (
 				<View style={styles.center}>
-					<ActivityIndicator size="large" color={iconColour} />
+					<ActivityIndicator size="small" color={icon} />
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<AlertCircle size={36} color={warningColour} style={styles.placeholder} />
-					<Text align="center" style={{ color: warningColour }}>{error}</Text>
+					<AlertCircle size={36} color={warning} style={styles.placeholder} />
+					<Text align="center" style={{ color: warning }}>{error}</Text>
 				</View>
 			) : (
 				<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
-					<View style={[styles.quickSelectHeader, { backgroundColor: sectionBackground, borderTopColor: borderColour, borderBottomColor: borderColour }]}>
+					<View style={[styles.quickSelectHeader, { backgroundColor: background, borderTopColor: border, borderBottomColor: border }]}>
 						<MetricSelector views={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
 					</View>
 					<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-						{metricData.length > 0 ? (
+						{ metricData.length > 0 ? (
 							<View style={styles.section}>
 								{/* Chart configuration */}
 								<Chart
 									data={metricData}
-									xAxisLabel={(value) => {
-										const point = metricData.find((data) => data.x === value);
-										return point?.label ?? "";
-									}}
 									title={`Changes to ${metricDetails.name} during intervention`}
 									showMean={showMean}
 									showRange={showStandardDeviation}
@@ -180,7 +176,7 @@ export default function InterventionDetailScreen() {
 								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 									<View style={styles.detailsRow}>
 										<Text type="heading">Intervention Details</Text>
-										<IconButton icon={<Pencil size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Edit" />
+										<IconButton icon={<Pencil size={22} color={accent} />} onPress={handleUpdateIntervention} accessibilityLabel="Edit" />
 									</View>
 									<Divider />
 									<Text type="strong">Name</Text>

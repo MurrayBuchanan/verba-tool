@@ -3,6 +3,11 @@ import * as SecureStore from "expo-secure-store";
 import * as WebBrowser from "expo-web-browser";
 import { jwtDecode } from "jwt-decode";
 
+/*
+Authentication Service to authenticate users
+Adapted from: https://github.com/expo/examples/blob/master/with-auth0
+*/
+
 // Ensures the in-app browser is properly completed/closed
 WebBrowser.maybeCompleteAuthSession();
 
