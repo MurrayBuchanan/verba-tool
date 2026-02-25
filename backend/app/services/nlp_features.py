@@ -118,6 +118,8 @@ class NLPFeatureExtraction:
     # Calculate flesch-kincaid grade level using the textstat library
     def calculate_flesch_kincaid(self, segments: List[TranscriptSegment]) -> float:
         text = self._combine_segments(segments)
+        if self._count_words(text) == 0:
+            return 0.0
         return textstat.flesch_kincaid_grade(text)
     
     def flesch_kincaid_per_speaker(self, segments: List[TranscriptSegment]) -> Feature:
@@ -133,6 +135,7 @@ class NLPFeatureExtraction:
 
 
     # Calculate personal pronoun ratio using the formula: total pronouns / (total pronouns + total nouns)
+    # Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC7959106/
     def calculate_prp_ratio(self, segments: List[TranscriptSegment]) -> float:
         text = self._combine_segments(segments)
         tokens = self.nlp(text)
@@ -145,7 +148,7 @@ class NLPFeatureExtraction:
                     pronouns += 1
                 elif token.pos_ == "NOUN":
                     nouns += 1
-        
+
         if pronouns + nouns == 0:
             return 0.0
         
