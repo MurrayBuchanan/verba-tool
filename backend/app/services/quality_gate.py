@@ -1,7 +1,6 @@
 from typing import Optional
 from app.structures.schemas import Transcript
 
-
 """
 Quality gate to ensure the audio is long enough and has enough text to analyse
 """

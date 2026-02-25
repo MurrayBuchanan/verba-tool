@@ -1,5 +1,4 @@
 from typing import List
-import json
 from openai import AzureOpenAI
 from app.core.config import OPENAI_API_KEY, OPENAI_ENDPOINT, OPENAI_MODEL, OPENAI_VERSION
 from app.structures.schemas import TranscriptSegment, AIFeatures
@@ -7,6 +6,8 @@ from app.structures.schemas import TranscriptSegment, AIFeatures
 """
 AI feature extraction using Azure's Enterprise OpenAI API
 System prompt adapted from: https://arxiv.org/pdf/2412.15772
+Structured output advice: https://developers.openai.com/api/docs/guides/structured-outputs/
+Prompt engineering advice: https://machinelearningmastery.com/mastering-json-prompting-for-llms/
 """
 
 # Create client with the OpenAI SDK for Azure
@@ -46,11 +47,11 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     speakers = sorted(all_speakers)
     
     system_prompt = """
-    You are an experienced doctor studying patients with dementia. You understand how the disease affects language abilities.
+    You are an experienced speech and language therapist studying people with dementia. You understand how the disease affects language abilities.
 
-    Task: Extract language impairment features from the transcript per speaker. Rate each feature on an integer scale from 1 (no impairment) to 7 (severe impairment).
+    Task: For each speaker in the conversation, rate the following language impairment features on an integer scale from 1 (no impairment) to 7 (severe impairment):
 
-    Output: Return only a JSON object with these keys:
+    Expected Format:
     {
         "impoverished_vocabulary": { "<speaker>": 1-7, ... },
         "word_finding_difficulties": { "<speaker>": 1-7, ... },
@@ -67,10 +68,9 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     - Discourse Impairment: Poor coherence, topic maintenance issues, difficulty organising thoughts, tangential speech. 1 = coherent discourse, 7 = severely impaired discourse.
 
     Rules:
-    - Include every speaker from the provided speaker list.
-    - Scores must be integers between 1 and 7.
-    - Do not include extra keys or explanations.
-    - Respond as a JSON object.
+    - Include every speaker from the provided speaker list
+    - For each feature and every speaker, score must be an integer between 1 and 7
+    - Do not include extra keys or explanations
     """
     
     # Create the user prompt
@@ -80,15 +80,16 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
     )
 
     # Call Azure OpenAI API
-    # JSON response was selected over structured outputs due to sometimes not returning correct values using beta API.
+    # Structured JSON was selected over structured outputs due to sometimes returning incorrect/no values using beta API.
     response = client.chat.completions.create(
         model = OPENAI_MODEL,
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
+            {"role": "user", "content": user_prompt},
         ],
         response_format = {"type": "json_object"}, # Formats the response as a JSON
-        temperature=0, # Most deterministic output for stability
+        temperature=0 # Sets the output to be deterministic
     )
 
+    # Validates the response is in the correct format
     return AIFeatures.model_validate_json(response.choices[0].message.content)

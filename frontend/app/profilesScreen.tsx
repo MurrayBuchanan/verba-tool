@@ -74,7 +74,7 @@ export default function ProfilesScreen() {
 					</List>
 				</ScrollView>
 			)}
-			{!loading && !error && (
+			{ !loading && !error && (
 				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createProfileModal")}>
 					<Plus size={32} color="#FFF"/>
 				</TouchableOpacity>

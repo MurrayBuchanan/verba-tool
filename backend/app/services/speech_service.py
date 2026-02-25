@@ -19,6 +19,10 @@ class SpeechService:
     # Transcribe and perform speaker diarisation on audio file using the Azure Speech Service API
     def diarise_audio(self, file_path: str) -> List[TranscriptSegment]:
         speech_config = speechsdk.SpeechConfig(subscription = self.speech_key, region = self.speech_region)
+        
+        # Show disfluencies in the text segments
+        speech_config.set_property(property_id=speechsdk.PropertyId.SpeechServiceResponse_PostProcessingOption, value='TrueText')
+        
         speech_config.speech_recognition_language = "en-GB"
 
         # Enable speaker diarisation to label each speaker
