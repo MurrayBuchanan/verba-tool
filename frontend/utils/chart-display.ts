@@ -105,9 +105,13 @@ function formatGroupLabel(date: Date, grouping: "Day" | "Week" | "Month"): strin
 }
 
 function getMetricValue(transcript: TranscriptWithFeatures, metricKey: string): number {
-	const value = transcript[metricKey as keyof TranscriptWithFeatures] as Record<string, number>;
+	const value = transcript[metricKey as keyof TranscriptWithFeatures] as Record<string, number> | undefined;
+
+	if (!value) {
+		return 0;
+	}
 	const speakers = Object.keys(value).sort();
-	return value[speakers[1] || speakers[0]];
+	return value[speakers[1] || speakers[0]] ?? 0;
 }
 
 function getDates(transcripts: TranscriptWithFeatures[]): Date[] {
