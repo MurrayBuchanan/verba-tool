@@ -45,14 +45,14 @@ export function validateIntervention(values: InterventionProps): InterventionErr
 	if (!values.name?.trim()) {
 		return { name: "Name is required" };
 	}
-	if (values.name.length > 30) {
-		return { name: "Name must be less than 30 characters." };
+	if (values.name.length > 100) {
+		return { name: "Name must be less than 100 characters." };
 	}
-	if (values.description && values.description.length > 500) {
-		return { description: "Description must be less than 500 characters." };
+	if (values.description && values.description.length > 1000) {
+		return { description: "Description must be less than 1000 characters." };
 	}
-	if (values.goals && values.goals.length > 500) {
-		return { goals: "Goals must be less than 500 characters." };
+	if (values.goals && values.goals.length > 1000) {
+		return { goals: "Goals must be less than 1000 characters." };
 	}
 	if (values.startDate && values.endDate && dateToMidnight(values.startDate).getTime() >= dateToMidnight(values.endDate).getTime()) {
 		return { endDate: "End date must be after start date" };
