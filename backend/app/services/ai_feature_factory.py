@@ -34,7 +34,7 @@ def _aggregate_metric(runs: List[AIFeatures], metric: str) -> dict:
 def extract_features_factory(segments: List[TranscriptSegment]) -> AIFeatures:
     results = []
 
-    with ThreadPoolExecutor(max_workers=3) as executor:
+    with ThreadPoolExecutor(max_workers=5) as executor: # 5 significant improvement > 1
         future_to_run = {executor.submit(extract_features, segments): n for n in range(3)}
         for future in as_completed(future_to_run):
             try:
