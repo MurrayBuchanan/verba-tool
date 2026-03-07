@@ -13,12 +13,11 @@ import { useProfile } from "@/context/ProfileContext";
 import { getIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/interfaces";
-import { getMetricProgression } from "@/utils/chart-display";
+import { getMetricProgression } from "@/utils/chart-grouping";
 import { CHART_DEFINITION, METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { IconButton } from "@/components/icon-button";
-import { List } from "@/components/list";
+import { IconButton } from "@/components/icon-button";;
 import { Divider } from "@/components/divider";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
@@ -232,10 +231,8 @@ export default function InterventionDetailScreen() {
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
 								<Divider />
-								<List divider>
-									<Switch label="Show Baseline" value={showMean} onValueChange={setShowMean} />
-									<Switch label="Show Variation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
-								</List>
+								<Switch label="Show Baseline" value={showMean} onValueChange={setShowMean} />
+								<Switch label="Show Variation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
 							</View>
 						)}
 					</ScrollView>

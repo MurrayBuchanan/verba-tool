@@ -9,11 +9,10 @@ import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { TranscriptWithFeatures, Intervention } from "@/constants/interfaces";
 import { getTranscripts } from "@/services/transcript-service";
 import { getInterventions } from "@/services/intervention-service";
-import { getMetricProgression } from "@/utils/chart-display";
+import { getMetricProgression, type Data } from "@/utils/chart-grouping";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { useProfile } from "@/context/ProfileContext";
-import { List } from "@/components/list";
+import { useProfile } from "@/context/ProfileContext";;
 import { AlertCircle } from "lucide-react-native";
 import { Divider } from "@/components/divider";
 import { CHART_DEFINITION } from "@/constants/metrics";
@@ -64,7 +63,7 @@ export default function MetricDisplayScreen() {
 		}, [profileId])
 	);
 
-	const metricData = useMemo(() => getMetricProgression(transcripts, selectedMetric), [transcripts, selectedMetric]);
+	const chartData = useMemo(() => getMetricProgression(transcripts, selectedMetric), [transcripts, selectedMetric]);
 
 	const metricKeys = useMemo(() => {
 		return Object.keys(METRIC_DEFINITIONS).map((metricKey) => ({
@@ -90,10 +89,10 @@ export default function MetricDisplayScreen() {
 						<MetricSelector views={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
 					</View>
 					<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-						{ metricData.length > 0 ? (
+						{ chartData.length > 0 ? (
 							<View style={styles.section}>
 								<Chart 
-									data={metricData} 
+									data={chartData} 
 									title={`All time changes to ${metricDetails.name}`}
 									interventions={interventions}
 									showMean={showMean}
@@ -118,15 +117,13 @@ export default function MetricDisplayScreen() {
 								<Text type="caption">{metricDetails.description}</Text>
 						</View>
 
-						{ metricData.length > 0 && (
+						{ chartData.length > 0 && (
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
-								<Divider />
-								<List divider>
-									<Switch label="Show Baseline" value={showMean} onValueChange={setShowMean} />
-									<Switch label="Show Variation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
-									<Switch label="Show Interventions" value={showInterventions} onValueChange={setShowInterventions} />
-								</List>
+								<Divider />	
+								<Switch label="Show Baseline" value={showMean} onValueChange={setShowMean} />
+								<Switch label="Show Variation" value={showStandardDeviation} onValueChange={setShowStandardDeviation} />
+								<Switch label="Show Interventions" value={showInterventions} onValueChange={setShowInterventions} />
 							</View>
 						)}
 					</ScrollView>

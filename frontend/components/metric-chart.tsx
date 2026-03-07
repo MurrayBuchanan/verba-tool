@@ -4,12 +4,20 @@ import Animated, { useAnimatedReaction, runOnJS, useDerivedValue, useAnimatedSty
 import type { SharedValue } from "react-native-reanimated";
 import { ThemedText as Text } from "@/components/themed-text";
 import { Intervention } from "@/constants/interfaces";
-import { CartesianChart, Line, AreaRange, useChartPressState } from "victory-native";
+import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { useFont, Circle, Line as LinePath, Rect, vec } from "@shopify/react-native-skia";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Inter_500Medium } from "@expo-google-fonts/inter";
-import { Data, calculateMean, calculateStandardDeviation } from "@/utils/chart-display";
+import { Data, calculateMean, calculateStandardDeviation } from "@/utils/chart-grouping";
 
+// This is simplified SPC chart shows the baseline and control limits rather than rule-based quality 
+// controls as this is to visualise change in language for professional interpretation rather than an automated 
+// quality control system. Automated rule checks can lead to false-alarm considering the use of blackbox data.
+
+// The baseline is the mean of the data before the first intervention
+// The control limits are set at 3 standard deviations from the baseline as this is the traditional SPC rule
+
+// Documentation:
 // Victory Native Documentation: https://nearform.com/open-source/victory-native/docs/cartesian/cartesian-chart/
 // ToolTip: https://stackoverflow.com/questions/78615845/toolitips-with-victory-native-xl-cart
 // React Native Reanimated: https://docs.swmansion.com/react-native-reanimated/docs/2.x/fundamentals/shared-values/
@@ -63,6 +71,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
     const meanColour = useThemeColor({}, 'meanColour');
     const standardDeviationColour = useThemeColor({}, 'standardDeviationColour');
     const interventionColour = useThemeColor({}, 'interventionColour');
+    const warning = useThemeColor({}, "warning")
 
     const { state, isActive } = useChartPressState({
         x: 0,
@@ -85,20 +94,21 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
             return [];
         }
 
-        const allValues = data.map((d) => d.value);
-        const mean = calculateMean(allValues);
-        const standardDeviation = calculateStandardDeviation(allValues, mean);
+        const values = data.map((d) => d.value);
+
+        const mean = calculateMean(values);
+        const baselineStandardDeviation = calculateStandardDeviation(values, mean);
+
+        const upperControlLimit = mean + 3 * baselineStandardDeviation;
+        const lowerControlLimit = mean - 3 * baselineStandardDeviation;
 
         return data.map((point) => ({
-            x: point.x,
-            value: point.value,
-            mean,
-            upperBound: mean + standardDeviation,
-            lowerBound: mean - standardDeviation,
-            label: point.label,
-            date: point.date,
+            ...point,
+            mean: mean,
+            upperBound: upperControlLimit,
+            lowerBound: lowerControlLimit
         }));
-    }, [data]);
+    }, [data, interventions]);
 
     const tooltipPoint = useMemo(() => (pressedX == null ? null : findPointAtX(chartData, pressedX)), [pressedX, chartData]);
 
@@ -145,16 +155,21 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         });
     }, [interventions, data]);
 
-    function formatXLabel(value: number): string {
-        if (xAxisLabel) {
-            return xAxisLabel(value);
-        }
-        const point = data.find(dataPoint => dataPoint.x === value);
-        if (point && point.label) {
-            return point.label;
-        }
-        return "";
-    }
+    const formatXLabel = useCallback(
+        (value: number): string => {
+            if (xAxisLabel) {
+                return xAxisLabel(value);
+            }
+
+            if (!chartData.length) {
+                return "";
+            }
+
+            const point = findPointAtX(chartData, value);
+            return point?.label ?? "";
+        },
+        [xAxisLabel, chartData]
+    );
     
     return (
         <View style={styles.container}>
@@ -215,7 +230,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
 
                         return (
                             <>
-                            {showInterventions && interventionOverlay}
+                                {showInterventions && interventionOverlay}
                                 {isActive && (
                                     <>
                                         <ToolTipLine
@@ -282,7 +297,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                 {showRange && (
                     <View style={styles.labelItem}>
                         <View style={[styles.labelLine, { backgroundColor: standardDeviationColour }]} />
-                        <Text type="caption">Variation</Text>
+                        <Text type="caption">Control Limits (±3 SD)</Text>
                     </View>
                 )}
                 {showInterventions && interventionPeriods.length > 0 && (
