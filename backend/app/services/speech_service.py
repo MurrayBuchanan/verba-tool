@@ -20,11 +20,11 @@ class SpeechService:
     def diarise_audio(self, file_path: str) -> List[TranscriptSegment]:
         speech_config = speechsdk.SpeechConfig(subscription = self.speech_key, region = self.speech_region)
         
-        # Show disfluencies in the text segments
-        speech_config.set_property(property_id=speechsdk.PropertyId.SpeechServiceResponse_PostProcessingOption, value='TrueText')
-        
         speech_config.speech_recognition_language = "en-GB"
 
+        # Show disfluencies in the text segments
+        speech_config.set_property(speechsdk.PropertyId.SpeechServiceResponse_PostProcessingOption, "Default")
+        
         # Enable speaker diarisation to label each speaker
         speech_config.set_property(speechsdk.PropertyId.SpeechServiceResponse_DiarizeIntermediateResults, "true")
 

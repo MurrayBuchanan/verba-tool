@@ -54,7 +54,7 @@ class Intervention(Base):
     profile_id = Column(Integer, ForeignKey("profiles.id"))
     name = Column(String, nullable=False)
     description = Column(String)
-    goals = Column(Text)
+    goals = Column(String)
     success = Column(Boolean, default=False)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)

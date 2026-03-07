@@ -60,12 +60,12 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
             # Perform speaker diarisation
             segments = speech_service.diarise_audio(temp_wav)
 
+            quality_error = check_quality_gate(analytics)
+            if quality_error:
+                raise HTTPException(status_code=400, detail=quality_error)
+
             # Perform feature extraction
             analytics: Transcript = conversation_analytics.analyse(segments)
-
-        quality_error = check_quality_gate(analytics)
-        if quality_error:
-            raise HTTPException(status_code=400, detail=quality_error)
 
         # Add the transcript metadata to the database
         transcript_metadata = TranscriptMetadata(
@@ -75,6 +75,8 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         )
         db.add(transcript_metadata)
         await db.flush()
+        
+        # TODO MOVE TO TRANSCRIPTS ENDPOINT
         
         # Add the transcript features to the database
         transcript_features = TranscriptFeatures(

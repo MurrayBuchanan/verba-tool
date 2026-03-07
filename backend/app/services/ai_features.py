@@ -18,7 +18,7 @@ client = AzureOpenAI(
     api_key=OPENAI_API_KEY,
 )
 
-SYSTEM_PROMPT = """
+system_prompt = """
 You are an experienced healthcare professional studying patients with dementia. You understand how the disease affects language abilities.
 
 Task: Extract language impairment features from the transcript per speaker. Rate each feature on an integer scale from 1 (no impairment) to 7 (severe impairment).
@@ -83,7 +83,7 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
         messages = [
             {
                 "role": "system", 
-                "content": SYSTEM_PROMPT
+                "content": system_prompt
             }, 
             {
                 "role": "user", 

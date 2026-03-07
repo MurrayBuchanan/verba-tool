@@ -7,6 +7,12 @@ from app.core.authentication import get_user_id
 from app.structures.models import Intervention as InterventionModel, Profile
 from app.structures.schemas import Intervention as InterventionSchema
 
+
+"""
+Endpoint for interventions
+Examples of language-based interventions that support PCC can be found: https://pmc.ncbi.nlm.nih.gov/articles/PMC9996793/
+"""
+
 router = APIRouter(prefix="/interventions", tags=["interventions"])
 
 @router.post("")

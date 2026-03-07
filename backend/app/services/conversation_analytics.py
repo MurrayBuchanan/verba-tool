@@ -5,6 +5,9 @@ from app.structures.schemas import NLPFeatures, TranscriptSegment, Transcript, A
 
 """
 Conversation analytics to combine established and AI features into a single transcript
+
+Extracted features are from: 
+These are referenced in an SLT context here: https://www.asha.org/practice-portal/clinical-topics/spoken-language-disorders/
 """
 
 class ConversationAnalytics:
@@ -21,7 +24,7 @@ class ConversationAnalytics:
 
     def analyse(self, segments: List[TranscriptSegment]) -> Transcript:
         # ai_features = extract_features(segments) # Run a single LLM
-        ai_features = extract_features_factory(segments) # Run 3 LLMs
+        ai_features = extract_features_factory(segments) # Run an ensemble of LLMs (3)
 
         nlp_features = NLPFeatures(
             words_per_minute = self.nlp_feature_extraction.wpm_per_speaker(segments),
