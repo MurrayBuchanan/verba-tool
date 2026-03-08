@@ -46,9 +46,9 @@ function RootNavigator() {
 					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 					<Stack.Screen name="metricScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Indicator", headerBackVisible: false, headerLeft: () => (<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.back()} accessibilityLabel="Go back" /> )}} />
 					<Stack.Screen name="conversationScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Chat", headerBackVisible: false, headerLeft: () => (<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.back()} accessibilityLabel="Go back" /> )}} />
-					<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Annotation", headerBackVisible: false, headerLeft: () => (<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.back()} accessibilityLabel="Go back" /> )}} />
-					<Stack.Screen name="createInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Annotation' }} />
-					<Stack.Screen name="editInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'Edit Annotation' }} />
+					<Stack.Screen name="interventionScreen/[id]" options={{ headerShown: true, headerTitle: "Viewing Intervention", headerBackVisible: false, headerLeft: () => (<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.back()} accessibilityLabel="Go back" /> )}} />
+					<Stack.Screen name="createInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Intervention' }} />
+					<Stack.Screen name="editInterventionModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'Edit Intervention' }} />
 					<Stack.Screen name="createProfileModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'New Profile' }} />
 					<Stack.Screen name="editProfileModal" options={{ presentation: 'modal', headerShown: true, headerTitle: 'Edit Profile' }} />
 				</Stack.Protected>

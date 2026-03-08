@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
         textAlign: "right",
     },
     bubble: {
-        borderRadius: 18,
+        borderRadius: 12,
         paddingVertical: 10,
         paddingHorizontal: 14,
     },

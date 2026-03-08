@@ -1,4 +1,4 @@
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { ThemedView } from "@/components/themed-view";
 
@@ -12,15 +12,26 @@ export function IconButton({ icon, onPress, accessibilityLabel }: Props) {
     const activeColour = useThemeColor({}, "active");
 
     return (
-        <TouchableOpacity style={styles.container} onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel}>
-            <ThemedView lightColour={activeColour} darkColour={activeColour} style={styles.container}>{icon}</ThemedView>
+        <TouchableOpacity onPress={onPress} accessibilityRole="button" accessibilityLabel={accessibilityLabel}>
+            <View style={styles.container}>
+                <ThemedView lightColour={activeColour} darkColour={activeColour} style={styles.icon}>{icon}</ThemedView>
+            </View>
         </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        padding: 6,
+        minWidth: 40,
+        minHeight: 40,
         borderRadius: 100,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    icon: {
+        padding: 8,
+        borderRadius: 100,
+        alignItems: "center",
+        justifyContent: "center",
     },
 });

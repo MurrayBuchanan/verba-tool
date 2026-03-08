@@ -71,7 +71,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
     const meanColour = useThemeColor({}, 'meanColour');
     const standardDeviationColour = useThemeColor({}, 'standardDeviationColour');
     const interventionColour = useThemeColor({}, 'interventionColour');
-    const warning = useThemeColor({}, "warning")
+    const borderColour = useThemeColor({}, 'backgroundTertiary');
 
     const { state, isActive } = useChartPressState({
         x: 0,
@@ -170,9 +170,9 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         },
         [xAxisLabel, chartData]
     );
-    
+
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { borderColor: borderColour }]}>
             <Text type='strong' align='center' style={styles.title}>{title}</Text>
             <View style={styles.chart}>
 
@@ -312,13 +312,13 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
 }
 const styles = StyleSheet.create({
     title: {
-        fontSize: 16,
-        fontWeight: "600",
-        marginTop: 20,
-        marginBottom: 30,
+        marginVertical: 20,
     },
     container: {
         flex: 1,
+        borderRadius: 16,
+        borderWidth: StyleSheet.hairlineWidth,
+        paddingHorizontal: 20,
     },
     chart: {
         position: "relative",
@@ -345,11 +345,11 @@ const styles = StyleSheet.create({
     labelLine: {
         width: 10,
         height: 3,
-        borderRadius: 2,
+        borderRadius: 4,
     },
     labelDot: {
         width: 10,
         height: 10,
-        borderRadius: 5,
+        borderRadius: 4,
     }
 });

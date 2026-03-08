@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { ThemedText as Text } from "@/components/themed-text";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
@@ -14,43 +14,37 @@ type Props = {
 };
 
 export function MetricSelector({ views, selectedValue, onValueChange }: Props) {
-	const accentColour = useThemeColor({}, "accent");
+	const accent = useThemeColor({}, "accent");
+	const text = useThemeColor({}, "text");
 	const backgroundSecondary = useThemeColor({}, "backgroundSecondary");
-	const textColour = useThemeColor({}, "text");
 
 	return (
-		<>
-			<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.content}>
-				{views.map((view) => {
-					const isSelected = view.value === selectedValue;
-					return (
-						<TouchableOpacity
-							key={view.value}
-							onPress={() => onValueChange(view.value)}
-							style={[styles.item, { backgroundColor: backgroundSecondary, borderWidth: 1, borderColor: isSelected ? accentColour : backgroundSecondary }]}
-						>
-							<Text type="caption" style={{ color: textColour }} numberOfLines={1}>{view.label}</Text>
-						</TouchableOpacity>
-					);
-				})}
-			</ScrollView>
-		</>
+		<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.content}>
+			{views.map((view) => {
+				const isSelected = view.value === selectedValue;
+				return (
+					<TouchableOpacity key={view.value} onPress={() => onValueChange(view.value)} style={[styles.item, { backgroundColor: backgroundSecondary, borderWidth: 1, borderColor: isSelected ? accent : backgroundSecondary }]}>
+						<Text type="caption" style={{ color: text }} numberOfLines={1}>{view.label}</Text>
+					</TouchableOpacity>
+				);
+			})}
+		</ScrollView>
 	);
 }
 
 const styles = StyleSheet.create({
-	heading: {
-		paddingHorizontal: 20,
-	},
 	content: {
-		paddingHorizontal: 20,
-		gap: 10,
+		flexDirection: "row",
+		gap: 8,
+		paddingHorizontal: 16,
+		marginVertical: 8,
 	},
 	item: {
-		paddingHorizontal: 10,
+		paddingHorizontal: 16,
 		paddingVertical: 10,
-		borderRadius: 10,
+		borderRadius: 12,
 		alignItems: "center",
 		justifyContent: "center",
+		minHeight: 40,
 	},
 });

@@ -13,7 +13,7 @@ type Props = {
 	onValueChange: (value: string) => void;
 };
 
-export function AnnotationSelector({ views, selectedValue, onValueChange }: Props) {
+export function InformationSelector({ views, selectedValue, onValueChange }: Props) {
 	const accent = useThemeColor({}, "accent");
 	const text = useThemeColor({}, "text");
 	const backgroundSecondary = useThemeColor({}, "backgroundSecondary");
@@ -35,16 +35,17 @@ export function AnnotationSelector({ views, selectedValue, onValueChange }: Prop
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: "row",
-		gap: 10,
-		marginHorizontal: 20,
-		marginVertical: 10,
+		gap: 8,
+		marginHorizontal: 16,
+		marginVertical: 8,
 	},
 	item: {
 		flex: 1,
-		paddingHorizontal: 10,
+		paddingHorizontal: 16,
 		paddingVertical: 10,
-		borderRadius: 10,
+		borderRadius: 12,
 		alignItems: "center",
 		justifyContent: "center",
-	}
+		minHeight: 40
+	},
 });

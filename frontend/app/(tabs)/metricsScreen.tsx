@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
 	},
 	section: {
 		paddingHorizontal: 20,
-		borderRadius: 20,
+		borderRadius: 16,
 		marginBottom: 20,
 	},
 	categoryHeader: {

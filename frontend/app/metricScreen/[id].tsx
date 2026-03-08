@@ -90,7 +90,7 @@ export default function MetricDisplayScreen() {
 					</View>
 					<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 						{ chartData.length > 0 ? (
-							<View style={styles.section}>
+							<View style={[styles.section, styles.chart]}>
 								<Chart 
 									data={chartData} 
 									title={`All time changes to ${metricDetails.name}`}
@@ -110,11 +110,11 @@ export default function MetricDisplayScreen() {
 								<Text type="heading">Indicator Information</Text>
 								<Divider />
 								<Text type="strong">What Does This Show?</Text>
-								<Text type="caption">{metricDetails.alias}</Text>
-								<Text type="caption">{CHART_DEFINITION}</Text>
+								<Text>{metricDetails.alias}</Text>
+								<Text>{CHART_DEFINITION}</Text>
 								<Divider />
 								<Text type="strong">Description</Text>
-								<Text type="caption">{metricDetails.description}</Text>
+								<Text>{metricDetails.description}</Text>
 						</View>
 
 						{ chartData.length > 0 && (
@@ -154,6 +154,9 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 		padding: 20,
 		gap: 16,
+	},
+	chart: {
+		marginHorizontal: 0,
 	},
 	center: {
 		flex: 1,

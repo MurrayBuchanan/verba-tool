@@ -7,7 +7,7 @@ import { ThemedText as Text } from "@/components/themed-text";
 import { AlertCircle, Pencil, Trash } from "lucide-react-native";
 import { MetricChart as Chart } from "@/components/metric-chart";
 import { MetricSelector } from "@/components/metric-selector";
-import { AnnotationSelector } from "@/components/annotation-selector";
+import { InformationSelector } from "@/components/information-selector";
 import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { useProfile } from "@/context/ProfileContext";
 import { getIntervention, deleteIntervention } from "@/services/intervention-service";
@@ -113,7 +113,7 @@ export default function InterventionDetailScreen() {
 		return filterByDate(transcripts, intervention.start_date, intervention.end_date);
 	}, [transcripts, intervention]);
 
-	const metricData = useMemo(() => {
+	const chartData = useMemo(() => {
 		if (!filteredTranscripts.length) {
 			return [];
 		}
@@ -152,11 +152,11 @@ export default function InterventionDetailScreen() {
 						<MetricSelector views={metricKeys} selectedValue={selectedMetric} onValueChange={setSelectedMetric} />
 					</View>
 					<ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-						{ metricData.length > 0 ? (
-							<View style={styles.section}>
+						{ chartData.length > 0 ? (
+							<View style={[styles.section, styles.chart]}>
 								{/* Chart configuration */}
 								<Chart
-									data={metricData}
+									data={chartData}
 									title={`Changes to ${metricDetails.name} during intervention`}
 									showMean={showMean}
 									showRange={showStandardDeviation}
@@ -170,7 +170,7 @@ export default function InterventionDetailScreen() {
 						)}
 
 						<View>
-							<AnnotationSelector views={interventionViewOptions} selectedValue={interventionView} onValueChange={setInterventionView} />
+							<InformationSelector views={interventionViewOptions} selectedValue={interventionView} onValueChange={setInterventionView} />
 								{interventionView === "intervention" ? (
 								<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 									<View style={styles.detailsRow}>
@@ -179,7 +179,7 @@ export default function InterventionDetailScreen() {
 									</View>
 									<Divider />
 									<Text type="strong">Name</Text>
-									<Text type="caption">{intervention.name}</Text>
+									<Text>{intervention.name}</Text>
 									<Divider />
 									{ intervention.description && 
 										<>
@@ -197,16 +197,16 @@ export default function InterventionDetailScreen() {
 										</> 
 									}
 									<Text type="strong">Success</Text>
-									<Text type="caption">{intervention.success ? "Yes" : "No"}</Text>
+									<Text>{intervention.success ? "Yes" : "No"}</Text>
 									<Divider />
 									<View style={styles.row}>
 										<View>
 											<Text type="strong">Start Date</Text>
-											<Text type="caption">{formatDisplayDate(intervention.start_date)}</Text>
+											<Text>{formatDisplayDate(intervention.start_date)}</Text>
 										</View>
 										<View>
 											<Text type="strong">End Date</Text>
-											<Text type="caption">{formatDisplayDate(intervention.end_date)}</Text>
+											<Text>{formatDisplayDate(intervention.end_date)}</Text>
 										</View>
 									</View>
 									
@@ -218,16 +218,16 @@ export default function InterventionDetailScreen() {
 									</View>
 									<Divider />
 									<Text type="strong">What Does This Show?</Text>
-									<Text type="caption">{metricDetails.alias}</Text>
-									<Text type="caption">{CHART_DEFINITION}</Text>
+									<Text>{metricDetails.alias}</Text>
+									<Text>{CHART_DEFINITION}</Text>
 									<Divider />
 									<Text type="strong">Description</Text>
-									<Text type="caption">{metricDetails.description}</Text>
+									<Text>{metricDetails.description}</Text>
 								</View>
 							)}
 						</View>
 
-						{metricData.length > 0 && (
+						{chartData.length > 0 && (
 							<View style={[styles.section, { backgroundColor: secondaryBackground }]}>
 								<Text type="heading">Chart Controls</Text>
 								<Divider />
@@ -263,6 +263,9 @@ const styles = StyleSheet.create({
 		paddingBottom: 30,
 		gap: 14,
 		borderRadius: 16
+	},
+	chart: {
+		marginHorizontal: 0,
 	},
 	center: {
 		flex: 1,

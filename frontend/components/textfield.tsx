@@ -17,7 +17,7 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 	const accent = useThemeColor({}, "accent");
 	const text = useThemeColor({}, "text");
 	const placeholderText = useThemeColor({}, "textSecondary");
-	const background = useThemeColor({}, "active");
+	const background = useThemeColor({}, "backgroundSecondary");
 	const warning = useThemeColor({}, "warning");
 	const border = error ? warning : focused ? accent : "transparent";
 
@@ -42,7 +42,7 @@ export function TextField({ label, value, onChangeText, placeholder, multiline =
 const styles = StyleSheet.create({
 	input: {
 		borderWidth: 1,
-		borderRadius: 10,
+		borderRadius: 12,
 		padding: 12,
 		marginTop: 16,
 		marginBottom: 10

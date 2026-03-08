@@ -20,7 +20,7 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 	const [showPicker, setShowPicker] = useState(false);
 	const accent = useThemeColor({}, "accent");
 	const icon = useThemeColor({}, "icon");
-	const background = useThemeColor({}, "active");
+	const background = useThemeColor({}, "backgroundSecondary");
 	const warning = useThemeColor({}, "warning");
 	const border = error ? warning : showPicker ? accent : "transparent";
 
@@ -87,7 +87,7 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 const styles = StyleSheet.create({
 	input: {
 		borderWidth: 1,
-		borderRadius: 10,
+		borderRadius: 12,
 		padding: 12,
 		marginTop: 16,
 		marginBottom: 10,

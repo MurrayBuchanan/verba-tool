@@ -1,10 +1,11 @@
 import { useState, useCallback, useRef } from "react";
-import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { Plus, AlertCircle, User } from 'lucide-react-native';
+import { AlertCircle, User } from "lucide-react-native";
+import { CreateButton } from "@/components/create-button";
 import { List } from "@/components/list";
 import { Item } from "@/components/list-item";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -15,9 +16,8 @@ import { Profile } from "@/constants/interfaces";
 export default function ProfilesScreen() {
 	const router = useRouter();
 	const { setProfileId } = useProfile();
-	const accentColour = useThemeColor({}, 'accent');
-	const iconColour = useThemeColor({}, 'icon');
-	const warningColour = useThemeColor({}, 'warning');
+	const iconColour = useThemeColor({}, "icon");
+	const warningColour = useThemeColor({}, "warning");
 	const [profiles, setProfiles] = useState<Profile[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -75,9 +75,9 @@ export default function ProfilesScreen() {
 				</ScrollView>
 			)}
 			{ !loading && !error && (
-				<TouchableOpacity style={[styles.button, { backgroundColor: accentColour }]} onPress={() => router.push("/createProfileModal")}>
-					<Plus size={32} color="#FFF"/>
-				</TouchableOpacity>
+				<View style={styles.button}>
+					<CreateButton title="Add Profile" onPress={() => router.push("/createProfileModal")} />
+				</View>
 			)}
 		</View>
 	);
@@ -93,18 +93,9 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 	},
 	button: {
-		position: 'absolute',
-		justifyContent: 'center',
-		alignItems: 'center',
+		position: "absolute",
 		right: 20,
 		bottom: 20,
-		width: 68,
-		height: 68,
-		borderRadius: 34,
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.2,
-		shadowRadius: 4,
 	},
 	center: {
 		flex: 1,

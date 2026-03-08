@@ -17,7 +17,7 @@ export default function InterventionModal() {
 	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, "warning");
 	const accentColour = useThemeColor({}, "accent");
-	const secondaryBackground = useThemeColor({}, "backgroundSecondary");
+	const background = useThemeColor({}, "background");
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [goals, setGoals] = useState("");
@@ -52,7 +52,7 @@ export default function InterventionModal() {
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
-			headerStyle: { backgroundColor: secondaryBackground },
+			headerStyle: { backgroundColor: background },
 			headerLeft: () => (
 				<IconButton icon={<X size={22} color={warningColour} />} onPress={() => router.back()} accessibilityLabel="Cancel" />
 			),
@@ -60,10 +60,10 @@ export default function InterventionModal() {
 				<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleCreateIntervention} accessibilityLabel="Create" />
 			),
 		});
-	}, [navigation, handleCreateIntervention, warningColour, accentColour, secondaryBackground]);
+	}, [navigation, handleCreateIntervention, warningColour, accentColour, background]);
 
 	return (
-		<View style={[styles.container, { backgroundColor: secondaryBackground }]}>
+		<View style={[styles.container, { backgroundColor: background }]}>
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 					<TextField

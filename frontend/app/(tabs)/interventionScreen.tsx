@@ -1,10 +1,11 @@
-import { StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { useState, useCallback, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { AlertCircle, Calendar, Check, ClipboardList, Lightbulb, Plus } from 'lucide-react-native';
+import { AlertCircle, Calendar, Check, ClipboardList, Lightbulb } from "lucide-react-native";
+import { CreateButton } from "@/components/create-button";
 import { List } from "@/components/list";
 import { Item } from "@/components/list-item";
 import { useProfile } from "@/context/ProfileContext";
@@ -20,11 +21,11 @@ export default function InterventionScreen() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
-	const warning = useThemeColor({}, 'warning');
-	const icon = useThemeColor({}, 'icon');
-	const accent = useThemeColor({}, 'accent');
-	const textSecondary = useThemeColor({}, 'textSecondary');
-	const backgroundSecondary = useThemeColor({}, 'backgroundSecondary');
+	const warning = useThemeColor({}, "warning");
+	const icon = useThemeColor({}, "icon");
+	const accent = useThemeColor({}, "accent");
+	const textSecondary = useThemeColor({}, "textSecondary");
+	const backgroundSecondary = useThemeColor({}, "backgroundSecondary");
 
 	useFocusEffect(
 		useCallback(() => {
@@ -72,7 +73,7 @@ export default function InterventionScreen() {
 							<Lightbulb size={18} color={textSecondary} />
 							<Text type="caption">About this</Text>
 						</View>
-						<Text>Interventions are used to document and visualise strategies that support language recovery.</Text>
+						<Text>Interventions are used to document and visualise strategies that support language rehabilitation.</Text>
 					</View>
 					<List divider={true}>
 						{ interventions.map((intervention) => (
@@ -88,9 +89,9 @@ export default function InterventionScreen() {
 				</ScrollView>
 			)}
 			{ !loading && !error && (
-				<TouchableOpacity style={[styles.button, { backgroundColor: accent }]} onPress={() => router.push("/createInterventionModal")}>
-					<Plus size={32} color="#FFF"/>
-				</TouchableOpacity>
+				<View style={styles.button}>
+					<CreateButton title="Add Intervention" onPress={() => router.push("/createInterventionModal")} />
+				</View>
 			)}
 		</View>
 	);
@@ -118,18 +119,9 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 	},
 	button: {
-		position: 'absolute',
-		justifyContent: 'center',
-		alignItems: 'center',
+		position: "absolute",
 		right: 20,
 		bottom: 20,
-		width: 68,
-		height: 68,
-		borderRadius: 34,
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.2,
-		shadowRadius: 4,
 	},
 	center: {
 		flex: 1,

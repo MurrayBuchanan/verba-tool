@@ -19,7 +19,7 @@ export default function EditInterventionModal() {
 	const { profileId } = useProfile();
 	const warningColour = useThemeColor({}, "warning");
 	const accentColour = useThemeColor({}, "accent");
-	const secondaryBackground = useThemeColor({}, "backgroundSecondary");
+	const background = useThemeColor({}, "background");
 
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
@@ -72,7 +72,7 @@ export default function EditInterventionModal() {
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
-			headerStyle: { backgroundColor: secondaryBackground },
+			headerStyle: { backgroundColor: background },
 			headerLeft: () => (
 				<IconButton icon={<X size={22} color={warningColour} />} onPress={() => router.back()} accessibilityLabel="Cancel" />
 			),
@@ -80,10 +80,10 @@ export default function EditInterventionModal() {
 				<IconButton icon={<Check size={22} color={accentColour} />} onPress={handleUpdateIntervention} accessibilityLabel="Save" />
 			),
 		});
-	}, [navigation, handleUpdateIntervention, warningColour, accentColour, secondaryBackground]);
+	}, [navigation, handleUpdateIntervention, warningColour, accentColour, background]);
 
 	return (
-		<View style={[styles.container, { backgroundColor: secondaryBackground }]}>
+		<View style={[styles.container, { backgroundColor: background }]}>
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 					<TextField
