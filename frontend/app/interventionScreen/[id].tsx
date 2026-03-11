@@ -157,7 +157,7 @@ export default function InterventionDetailScreen() {
 								{/* Chart configuration */}
 								<Chart
 									data={chartData}
-									title={`Changes to ${metricDetails.name} during intervention`}
+									title={`Changes to ${metricDetails.name} During Intervention Period`}
 									showMean={showMean}
 									showRange={showStandardDeviation}
 									showInterventions={false}

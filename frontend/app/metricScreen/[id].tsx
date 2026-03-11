@@ -93,7 +93,7 @@ export default function MetricDisplayScreen() {
 							<View style={[styles.section, styles.chart]}>
 								<Chart 
 									data={chartData} 
-									title={`All time changes to ${metricDetails.name}`}
+									title={`Changes to ${metricDetails.name} Over Time`}
 									interventions={interventions}
 									showMean={showMean}
 									showRange={showStandardDeviation}
