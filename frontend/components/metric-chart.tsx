@@ -9,6 +9,7 @@ import { useFont, Circle, Line as LinePath, Rect, vec } from "@shopify/react-nat
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Inter_500Medium } from "@expo-google-fonts/inter";
 import { Data, calculateMean, calculateStandardDeviation } from "@/utils/chart-grouping";
+import { nelsonRule1, nelsonRule2, nelsonRule3 } from "@/utils/chart-rules";
 
 // This is simplified SPC chart shows the baseline and control limits rather than rule-based quality 
 // controls as this is to visualise change in language for professional interpretation rather than an automated 
@@ -72,6 +73,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
     const standardDeviationColour = useThemeColor({}, 'standardDeviationColour');
     const interventionColour = useThemeColor({}, 'interventionColour');
     const borderColour = useThemeColor({}, 'backgroundTertiary');
+    const warning = useThemeColor({}, 'warning');
 
     const { state, isActive } = useChartPressState({
         x: 0,
@@ -98,16 +100,27 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
 
         const mean = calculateMean(values);
         const baselineStandardDeviation = calculateStandardDeviation(values, mean);
-
         const upperControlLimit = mean + 3 * baselineStandardDeviation;
         const lowerControlLimit = mean - 3 * baselineStandardDeviation;
 
-        return data.map((point) => ({
-            ...point,
-            mean: mean,
-            upperBound: upperControlLimit,
-            lowerBound: lowerControlLimit
-        }));
+        const rule1 = nelsonRule1(values);
+        const rule2 = nelsonRule2(values);
+        const rule3 = nelsonRule3(values);
+
+        return data.map((point, index) => {
+            const ruleBreached =
+                rule1.positions.includes(index) ||
+                rule2.positions.includes(index) ||
+                rule3.positions.includes(index);
+
+            return {
+                ...point,
+                mean: mean,
+                upperBound: upperControlLimit,
+                lowerBound: lowerControlLimit,
+                ruleBreached,
+            };
+        });
     }, [data, interventions]);
 
     const tooltipPoint = useMemo(() => (pressedX == null ? null : findPointAtX(chartData, pressedX)), [pressedX, chartData]);
@@ -276,6 +289,20 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                                     strokeCap="round"
                                     strokeJoin="round"
                                 />
+                                {valuePoints.map((point, index) => {
+                                    if (!chartData[index]?.ruleBreached || point.x == null || point.y == null) {
+                                        return null;
+                                    }
+                                    return (
+                                        <Circle
+                                            key={`rule-${index}`}
+                                            cx={point.x as number}
+                                            cy={point.y as number}
+                                            r={5}
+                                            color={warning}
+                                        />
+                                    );
+                                })}
                             </>
                         );
                     }}

@@ -26,8 +26,8 @@ export default function Index() {
 					style={styles.image}
 					contentFit="contain"
 				/>
-				<Text type='title' align='center' style={styles.title}>Conversation Insights</Text>
-				<Text align='center'>Monitor and understand changes in communication patterns over time</Text>
+				<Text type='title' align='center' style={styles.title}>More Insights</Text>
+				<Text align='center'>Monitor and understand changes in communication patterns over time in relation to rehabilitation progress.</Text>
 			</View>
 
 			<View style={styles.footer}>
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		paddingVertical: 40,
+		padding: 40,
 	},
 	title: {
 		marginTop: 24,
