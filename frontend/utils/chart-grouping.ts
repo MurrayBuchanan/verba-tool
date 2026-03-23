@@ -111,11 +111,12 @@ function groupByTimePeriod(transcripts: TranscriptWithFeatures[], grouping: stri
 
 function formatGroupLabel(date: Date, grouping: string): string {
 	const day = String(date.getDate()).padStart(2, "0");
+	const monthNum = String(date.getMonth() + 1).padStart(2, "0");
 	const monthName = MONTH_NAMES[date.getMonth()];
 	const yearShort = String(date.getFullYear()).slice(2);
 
 	if (grouping === DateGrouping.Day || grouping === DateGrouping.Week) {
-		return `${day} ${monthName}`;
+		return `${day}/${monthNum}`;
 	}
 
 	return `${monthName} '${yearShort}`;
@@ -195,6 +196,6 @@ export function calculateStandardDeviation(values: number[], mean: number): numb
         sumSquaredDifferences += difference * difference;
     }
     
-    const variance = sumSquaredDifferences / (values.length - 1);
+    const variance = sumSquaredDifferences / values.length;
     return Math.sqrt(variance);
 }
