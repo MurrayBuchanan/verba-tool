@@ -99,9 +99,9 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         const values = data.map((d) => d.value);
 
         const mean = calculateMean(values);
-        const baselineStandardDeviation = calculateStandardDeviation(values, mean);
-        const upperControlLimit = mean + 3 * baselineStandardDeviation;
-        const lowerControlLimit = mean - 3 * baselineStandardDeviation;
+        const standardDeviation = calculateStandardDeviation(values, mean);
+        const upperControlLimit = mean + 3 * standardDeviation;
+        const lowerControlLimit = mean - 3 * standardDeviation;
 
         const rule1 = nelsonRule1(values);
         const rule2 = nelsonRule2(values);

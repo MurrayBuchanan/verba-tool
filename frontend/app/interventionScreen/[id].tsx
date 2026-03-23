@@ -17,7 +17,7 @@ import { getMetricProgression } from "@/utils/chart-grouping";
 import { CHART_DEFINITION, METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { IconButton } from "@/components/icon-button";;
+import { IconButton } from "@/components/icon-button";
 import { Divider } from "@/components/divider";
 
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
