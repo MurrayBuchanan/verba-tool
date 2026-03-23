@@ -7,8 +7,8 @@ Quality gate to ensure the audio is long enough and has enough text to analyse
 
 def check_quality_gate(transcript: Transcript) -> Optional[str]:
     duration = transcript.total_duration
-    if duration > 600:
-        return "Audio must be less than 10 minutes."
+    if duration > (20 * 60):
+        return "Audio must be less than 20 minutes."
 
     segments = transcript.raw_segments
     contains_words = False

@@ -24,8 +24,6 @@ def test_count_words():
     assert nlp._count_words("") == 0
     assert nlp._count_words(None) == 0
 
-
-
 # Words per minute
 def test_calculate_wpm_null():
     nlp = NLPFeatureExtraction()
@@ -49,8 +47,6 @@ def test_wpm_per_speaker():
     wpm = nlp.wpm_per_speaker(segments)
     assert wpm["Speaker-1"] == pytest.approx(38, 1)
     assert wpm["Speaker-2"] == pytest.approx(43, 1)
-
-
 
 # Average word length
 def test_calculate_avg_word_length_null():
@@ -76,8 +72,6 @@ def test_avg_word_length_per_speaker():
     assert avg_word_length["Speaker-1"] == pytest.approx(4.3, 1)
     assert avg_word_length["Speaker-2"] == pytest.approx(4.3, 1)
 
-
-
 # Adverb ratio
 def test_calculate_adverb_ratio_null():
     nlp = NLPFeatureExtraction()
@@ -101,8 +95,6 @@ def test_adverb_ratio_per_speaker():
     adverb_ratio = nlp.adverb_ratio_per_speaker(segments)
     assert adverb_ratio["Speaker-1"] == pytest.approx(0.2, 0.1)
     assert adverb_ratio["Speaker-2"] == pytest.approx(0.0, 0)
-
-
 
 # Flesch-Kincaid Grade
 # Reference: https://quanteda.io/reference/textstat_readability.html
@@ -131,8 +123,6 @@ def test_flesch_kincaid_per_speaker():
     assert flesch_kincaid_grade["Speaker-1"] == pytest.approx(2.5, 0)
     assert flesch_kincaid_grade["Speaker-2"] == pytest.approx(5.4, 0)
 
-
-
 # Personal pronoun ratio
 def test_calculate_prp_ratio_null():
     nlp = NLPFeatureExtraction()
@@ -156,8 +146,6 @@ def test_prp_ratio_per_speaker():
     prp_ratio = nlp.prp_ratio_per_speaker(segments)
     assert prp_ratio["Speaker-1"] == 0.67
     assert prp_ratio["Speaker-2"] == 0.25
-
-
 
 # Number of unique words
 def test_calculate_n_unique_words_null():

@@ -1,7 +1,7 @@
 from unittest.mock import AsyncMock, MagicMock
-from datetime import datetime
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from datetime import datetime
 import json
 
 from app.routers.transcripts import router
@@ -12,30 +12,30 @@ from app.structures.models import TranscriptMetadata, TranscriptFeatures, Transc
 app = FastAPI()
 app.include_router(router)
 
-MOCK_ID = 1
-
 """
 Tests for the transcripts router
 
 Run using: python -m pytest app/tests/test_transcripts_router.py
 """
 
-# Helpers
+VALID_ACCOUNT_ID = 1
+INVALID_ACCOUNT_ID = 2
+
 def mock_user_id():
-    return MOCK_ID
+    return VALID_ACCOUNT_ID
 
 def mock_transcript():
     return TranscriptMetadata(
-        id=MOCK_ID,
-        profile_id=MOCK_ID,
+        id=VALID_ACCOUNT_ID,
+        profile_id=VALID_ACCOUNT_ID,
         total_duration=210.0,
         created_at=datetime(2026, 3, 4, 12, 0, 0)
     )
 
 def mock_features():
     return TranscriptFeatures(
-        id=MOCK_ID,
-        transcript_metadata_id=MOCK_ID,
+        id=VALID_ACCOUNT_ID,
+        transcript_metadata_id=VALID_ACCOUNT_ID,
         words_per_minute=json.dumps(115.0),
         average_word_length=json.dumps(4.5),
         adverb_ratio=json.dumps(0.04),
@@ -51,8 +51,8 @@ def mock_features():
 
 def mock_segment():
     return TranscriptSegment(
-        id=MOCK_ID,
-        transcript_metadata_id=1,
+        id=VALID_ACCOUNT_ID,
+        transcript_metadata_id=VALID_ACCOUNT_ID,
         duration=64.0,
         offset=0,
         speaker="Speaker-1",
@@ -69,27 +69,26 @@ def mock_db(scalar_result=None):
     db.rollback = AsyncMock()
     return db
 
-# Testing the fetch all transcripts endpoints for status codes 200, 404, and 500
 class TestGetTranscripts:
     def test_transcripts_fetch_status_code_200(self):
         transcript = mock_transcript()
         features = mock_features()
 
+        profile_result = MagicMock()
+        profile_result.scalar_one_or_none.return_value = MagicMock()
+
+        list_result = MagicMock()
+        list_result.all.return_value = [(transcript, features)]
+
         db = AsyncMock()
-        profile = MagicMock()
-        profile.scalar_one_or_none.return_value = MagicMock()
-
-        rows = MagicMock()
-        rows.all.return_value = [(transcript, features)]
-
-        db.execute = AsyncMock(side_effect=[profile, rows])
+        db.execute = AsyncMock(side_effect=[profile_result, list_result])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get("/transcripts", params={"profile_id": MOCK_ID})
+        response = client.get("/transcripts", params={"profile_id": VALID_ACCOUNT_ID})
 
         assert response.status_code == 200
         data = response.json()
@@ -109,14 +108,39 @@ class TestGetTranscripts:
         assert data["transcripts"][0]["syntactic_simplification"] == 2
         assert data["transcripts"][0]["discourse_impairment"] == 2
 
-    def test_transcripts_fetch_status_code_404(self):
-        db = mock_db(scalar_result=None)
+    def test_transcripts_fetch_empty_list_status_code_200(self):
+        profile_result = MagicMock()
+        profile_result.scalar_one_or_none.return_value = MagicMock()
+
+        list_result = MagicMock()
+        list_result.all.return_value = []
+
+        db = AsyncMock()
+        db.execute = AsyncMock(side_effect=[profile_result, list_result])
+        db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get("/transcripts", params={"profile_id": 210})
+        response = client.get("/transcripts", params={"profile_id": VALID_ACCOUNT_ID})
+
+        assert response.status_code == 200
+        assert response.json() == {"transcripts": []}
+
+    def test_transcripts_fetch_status_code_404_profile_not_found(self):
+        profile_result = MagicMock()
+        profile_result.scalar_one_or_none.return_value = None
+
+        db = AsyncMock()
+        db.execute = AsyncMock(return_value=profile_result)
+        db.rollback = AsyncMock()
+
+        app.dependency_overrides[get_user_id] = mock_user_id
+        app.dependency_overrides[get_db] = lambda: db
+
+        client = TestClient(app)
+        response = client.get("/transcripts", params={"profile_id": VALID_ACCOUNT_ID})
 
         assert response.status_code == 404
         assert response.json()["detail"] == "Profile not found"
@@ -130,13 +154,12 @@ class TestGetTranscripts:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get("/transcripts", params={"profile_id": MOCK_ID})
+        response = client.get("/transcripts", params={"profile_id": VALID_ACCOUNT_ID})
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot fetch transcripts"
 
 
-# Testing the fetch transcript endpoints for status codes 200, 404, and 500
 class TestGetTranscript:
     def test_transcript_fetch_status_code_200(self):
         transcript = mock_transcript()
@@ -158,18 +181,18 @@ class TestGetTranscript:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get(f"/transcripts/{MOCK_ID}")
+        response = client.get(f"/transcripts/{VALID_ACCOUNT_ID}")
 
         assert response.status_code == 200
         data = response.json()
-        assert data["id"] == 1
-        assert data["profile_id"] == 1
-        assert data["created_at"] == datetime(2026, 3, 4, 12, 0, 0).isoformat()
-        assert data["total_duration"] == 210.0
-        assert data["segments"][0]["duration"] == 64.0
-        assert data["segments"][0]["offset"] == 0
-        assert data["segments"][0]["speaker"] == "Speaker-1"
-        assert data["segments"][0]["text"] == "Hello world!"
+        assert data["id"] == transcript.id
+        assert data["profile_id"] == transcript.profile_id
+        assert data["created_at"] == transcript.created_at.isoformat()
+        assert data["total_duration"] == transcript.total_duration
+        assert data["segments"][0]["duration"] == segment.duration
+        assert data["segments"][0]["offset"] == segment.offset
+        assert data["segments"][0]["speaker"] == segment.speaker
+        assert data["segments"][0]["text"] == segment.text
 
     def test_transcript_fetch_status_code_404(self):
         db = mock_db(scalar_result=None)
@@ -178,7 +201,7 @@ class TestGetTranscript:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get("/transcripts/210")
+        response = client.get(f"/transcripts/{INVALID_ACCOUNT_ID}")
 
         assert response.status_code == 404
         assert response.json()["detail"] == "Transcript not found"
@@ -192,13 +215,12 @@ class TestGetTranscript:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get(f"/transcripts/{MOCK_ID}")
+        response = client.get(f"/transcripts/{VALID_ACCOUNT_ID}")
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot fetch transcript"
 
 
-# Testing the transcript delete endpoints for status codes 200, 404, and 500
 class TestDeleteTranscript:
     def test_transcript_delete_status_code_200(self):
         transcript = mock_transcript()
@@ -214,7 +236,7 @@ class TestDeleteTranscript:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.delete(f"/transcripts/{MOCK_ID}")
+        response = client.delete(f"/transcripts/{VALID_ACCOUNT_ID}")
 
         assert response.status_code == 200
         assert response.json()["message"] == "Transcript deleted"
@@ -227,7 +249,7 @@ class TestDeleteTranscript:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.delete("/transcripts/210")
+        response = client.delete(f"/transcripts/{INVALID_ACCOUNT_ID}")
 
         assert response.status_code == 404
         assert response.json()["detail"] == "Transcript not found"
@@ -241,7 +263,7 @@ class TestDeleteTranscript:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.delete(f"/transcripts/{MOCK_ID}")
+        response = client.delete(f"/transcripts/{VALID_ACCOUNT_ID}")
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot delete transcript"
