@@ -9,6 +9,7 @@ from app.structures.schemas import Profile as ProfileSchema
 
 router = APIRouter(prefix="/profiles", tags=["profiles"])
 
+# Create a new profile for user
 @router.post("")
 async def create_profile(profile: ProfileSchema, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
@@ -31,6 +32,7 @@ async def create_profile(profile: ProfileSchema, user_id: str = Depends(get_user
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot create profile")
 
+# Get all profiles for user
 @router.get("")
 async def get_profiles(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
@@ -51,6 +53,7 @@ async def get_profiles(user_id: str = Depends(get_user_id), db: AsyncSession = D
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot fetch profiles")
 
+# Get a specific profile for user
 @router.get("/{profile_id}")
 async def get_profile(profile_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
@@ -68,6 +71,7 @@ async def get_profile(profile_id: int, user_id: str = Depends(get_user_id), db: 
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot get profile")
 
+# Update profile details
 @router.put("/{profile_id}")
 async def update_profile(profile_id: int, profile: ProfileSchema, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:

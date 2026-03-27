@@ -15,6 +15,7 @@ Examples of language-based interventions that support PCC can be found: https://
 
 router = APIRouter(prefix="/interventions", tags=["interventions"])
 
+# Create a new intervention for a profile
 @router.post("")
 async def create_intervention(intervention: InterventionSchema, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
@@ -57,7 +58,7 @@ async def create_intervention(intervention: InterventionSchema, user_id: str = D
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot create intervention")
 
-
+# Get all interventions for a profile
 @router.get("")
 async def get_interventions(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db), profile_id: int = Query(...)) -> JSONResponse:
     try:
@@ -92,7 +93,7 @@ async def get_interventions(user_id: str = Depends(get_user_id), db: AsyncSessio
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot fetch interventions")
 
-
+# Get an intervention for a profile
 @router.get("/{intervention_id}")
 async def get_intervention(intervention_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
@@ -119,7 +120,7 @@ async def get_intervention(intervention_id: int, user_id: str = Depends(get_user
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot fetch intervention")
 
-
+# Update an intervention for a profile
 @router.put("/{intervention_id}")
 async def update_intervention(intervention_id: int, intervention: InterventionSchema, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
@@ -164,6 +165,7 @@ async def update_intervention(intervention_id: int, intervention: InterventionSc
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot update intervention")
 
+# Delete an intervention for a profile
 @router.delete("/{intervention_id}")
 async def delete_intervention(intervention_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:

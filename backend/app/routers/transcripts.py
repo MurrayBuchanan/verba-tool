@@ -10,6 +10,7 @@ from app.structures.models import TranscriptMetadata, TranscriptFeatures, Transc
 
 router = APIRouter(prefix="/transcripts", tags=["transcripts"])
 
+# Get all transcripts for a profile
 @router.get("")
 async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db), profile_id: int = Query(...)) -> JSONResponse:
     try:
@@ -49,7 +50,7 @@ async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession 
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot fetch transcripts")
 
-# Endpoint to get a specific transcript with segments
+# Get a specific transcript with segments
 @router.get("/{transcript_id}")
 async def get_transcript(transcript_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
@@ -86,6 +87,7 @@ async def get_transcript(transcript_id: int, user_id: str = Depends(get_user_id)
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot fetch transcript")
 
+# Delete a transcript
 @router.delete("/{transcript_id}")
 async def delete_transcript(transcript_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:

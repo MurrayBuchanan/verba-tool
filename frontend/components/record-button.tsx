@@ -59,8 +59,9 @@ export const RecordButton = () => {
 			setIsProcessing(true);
 			await upload(profileId, recorder.uri, createdAt);
 			setCreatedAt(null);
-		} catch {
-			console.log("Failed to upload recording");
+		} catch (error: any) {
+			const errorMessage = error?.response?.data?.detail || "Failed to upload recording";
+			Alert.alert("Upload failed", errorMessage);
 		} finally {
 			setIsProcessing(false);
 		}

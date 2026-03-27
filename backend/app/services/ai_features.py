@@ -6,12 +6,11 @@ from app.structures.schemas import TranscriptSegment, AIFeatures
 
 """
 AI feature extraction using Azure's Enterprise OpenAI API
-Validated system prompt was adapted from: https://arxiv.org/pdf/2412.15772
-Structured output advice: https://developers.openai.com/api/docs/guides/structured-outputs/
-Prompt engineering advice: https://machinelearningmastery.com/mastering-json-prompting-for-llms/
+• Validated system prompt was adapted from: https://arxiv.org/pdf/2412.15772
+• Structured output advice: https://developers.openai.com/api/docs/guides/structured-outputs/
+• Prompt engineering advice: https://machinelearningmastery.com/mastering-json-prompting-for-llms/
 """
 
-# Create client with the OpenAI SDK for Azure
 client = AzureOpenAI(
     api_version=OPENAI_VERSION,
     azure_endpoint=OPENAI_ENDPOINT,
@@ -55,8 +54,8 @@ Rules:
 - Respond as a JSON object.
 """
 
+# Format transcript into a neat string for the user prompt
 def _format_transcript(segments: List[TranscriptSegment]) -> str:
-    # Format transcript into a neat string for the user prompt
     lines = []
 
     for segment in segments:
@@ -93,7 +92,7 @@ def extract_features(segments: List[TranscriptSegment]) -> AIFeatures:
                 )
             }
         ],
-        response_format = {"type": "json_object"}, # Formats the response as a JSON
+        response_format = {"type": "json_object"}, # Formats the response as a structured JSON
         temperature=0 # Sets the output to be deterministic
     )
 

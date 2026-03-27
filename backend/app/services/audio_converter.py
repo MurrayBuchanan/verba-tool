@@ -6,10 +6,10 @@ class AudioConverter:
     # ffmpeg repository: https://github.com/kkroening/ffmpeg-python
 
     # Expected format:
-    # - WAV file
-    # - 16kHz sample rate
-    # - Mono/single channel
-    # - 16-bit PCM encoding
+    # • WAV file
+    # • 16kHz sample rate
+    # • Mono/single channel
+    # • 16-bit PCM encoding
 
     def convert_to_wav(self, inputPath: str, outputPath: str) -> None:
         (

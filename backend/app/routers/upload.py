@@ -25,7 +25,7 @@ conversation_analytics = ConversationAnalytics()
 @router.post("")
 async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..., alias="Created-At"), profile_id: int = Header(..., alias="Profile-Id"), user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        # Convert creation date to UTC to avoid timezone issues
+        # Convert creation date to UTC as standard format for database
         created_at_datetime = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
         if created_at_datetime.tzinfo is not None:
             created_at_datetime = created_at_datetime.astimezone(timezone.utc).replace(tzinfo=None)
@@ -57,17 +57,18 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
             # Convert audio to WAV format
             audio_converter.convert_to_wav(temp_input, temp_wav)
 
-            # Perform speaker diarisation
+            # Perform transcription and speaker diarisation
             segments = speech_service.diarise_audio(temp_wav)
 
-            # Perform feature extraction
+            # Extract linguistic indicators from transcript
             analytics: Transcript = conversation_analytics.analyse(segments)
 
+        # Check if the audio meets sufficient quality criteria
         quality_error = check_quality_gate(analytics)
         if quality_error:
             raise HTTPException(status_code=400, detail=quality_error)
 
-        # Add the transcript metadata to the database
+        # Add the transcript to the database
         transcript_metadata = TranscriptMetadata(
             profile_id=profile.id,
             created_at=created_at,
@@ -75,8 +76,6 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
         )
         db.add(transcript_metadata)
         await db.flush()
-        
-        # TODO MOVE TO TRANSCRIPTS ENDPOINT
         
         # Add the transcript features to the database
         transcript_features = TranscriptFeatures(

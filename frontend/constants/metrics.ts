@@ -4,6 +4,10 @@ export type MetricDetails = {
 	description: string;
 };
 
+
+// Extracted features are from: 
+// These are referenced in an SLT context here: https://www.asha.org/practice-portal/clinical-topics/spoken-language-disorders/
+
 export const CHART_DEFINITION = "This chart shows changes in language indicators over time, using a center line representing the average score, and upper and lower control limits representing the expected range of normal variation. Scores may vary due to external factors, however, this chart helps identify normal fluctuation from meaningful change by highlighting results outside the expected range or that demonstrate trends of improvement or decline.";
 
 export const METRIC_DEFINITIONS: Record<string, MetricDetails> = {

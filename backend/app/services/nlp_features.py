@@ -29,7 +29,6 @@ class NLPFeatureExtraction:
             return 0
         return len(text.split())
 
-
     def _group_by_speaker(self, segments: List[TranscriptSegment]) -> Dict[str, List[TranscriptSegment]]:
         result: Dict[str, List[TranscriptSegment]] = {}
         for segment in segments:
@@ -40,8 +39,6 @@ class NLPFeatureExtraction:
         return result
 
     # Future work: potential to add more per speaker metrics here e.g. turn taking, mlu, num_of_x etc
-
-
 
     # Calculate words per minute using the formula: total words / (total seconds / 60)
     def calculate_wpm(self, segments: List[TranscriptSegment]) -> float:
@@ -67,8 +64,6 @@ class NLPFeatureExtraction:
 
         return result
 
-
-
     # Calculate average word length using the textstat library
     def calculate_avg_word_length(self, segments: List[TranscriptSegment]) -> float:
         text = self._combine_segments(segments)
@@ -84,8 +79,6 @@ class NLPFeatureExtraction:
 
         return result
     
-
-
     # Calculate adverb ratio using the formula: total adverbs / total words
     def calculate_adverb_ratio(self, segments: List[TranscriptSegment]) -> float:
         text = self._combine_segments(segments)
@@ -113,8 +106,6 @@ class NLPFeatureExtraction:
 
         return result
     
-
-
     # Calculate flesch-kincaid grade level using the textstat library
     def calculate_flesch_kincaid(self, segments: List[TranscriptSegment]) -> float:
         text = self._combine_segments(segments)
@@ -132,8 +123,6 @@ class NLPFeatureExtraction:
         
         return result
     
-
-
     # Calculate personal pronoun ratio using the formula: total pronouns / (total pronouns + total nouns)
     # Reference: https://pmc.ncbi.nlm.nih.gov/articles/PMC7959106/
     def calculate_prp_ratio(self, segments: List[TranscriptSegment]) -> float:
@@ -164,8 +153,6 @@ class NLPFeatureExtraction:
         
         return result
     
-
-
     # Calculate number of unique words using a set to count unique words by avoiding duplicates
     def calculate_n_unique_words(self, segments: List[TranscriptSegment]) -> int:
         text = self._combine_segments(segments)

@@ -5,7 +5,7 @@ from app.structures.schemas import TranscriptSegment, AIFeatures
 from app.services.ai_features import extract_features
 
 """
-Median aggregation of 3 LLMs to extract features from a transcript
+Median aggregation of LLMs reduce the variance of extracted features between runs
 """
 
 def _aggregate_metric(runs: List[AIFeatures], metric: str) -> dict:
@@ -16,25 +16,27 @@ def _aggregate_metric(runs: List[AIFeatures], metric: str) -> dict:
         if scores:
             speakers.update(scores.keys())
 
-    # Find the median score over all runs
     median_scores = {}
+    # Calculate the median score for each speaker
     for speaker in speakers:
         scores = []
+        # Get scores for each speaker from each run
         for run in runs:
             score = getattr(run, metric, {}).get(speaker)
             if score is not None:
                 scores.append(float(score))
+        # Calculate the median score for speaker
         if scores:
             median_scores[speaker] = int(round(median(scores)))
         else:
             median_scores[speaker] = 1
     return median_scores
 
-# Runs the feature extraction 3 times and aggregates the results
+# Factory to run the feature extractions and aggregate the results
 def extract_features_factory(segments: List[TranscriptSegment]) -> AIFeatures:
     results = []
 
-    with ThreadPoolExecutor(max_workers=5) as executor: # 5 significant improvement > 1
+    with ThreadPoolExecutor(max_workers=15) as executor: # Ensemble size of 15
         future_to_run = {executor.submit(extract_features, segments): n for n in range(3)}
         for future in as_completed(future_to_run):
             try:

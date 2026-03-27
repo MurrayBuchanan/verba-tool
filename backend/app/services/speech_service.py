@@ -4,8 +4,7 @@ import azure.cognitiveservices.speech as speechsdk
 from app.structures.schemas import TranscriptSegment
 
 """
-Azure Speech Service for speaker diarisation and transcription
-Adapted from: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/how-to-use-conversation-transcription?pivots=programming-language-python
+Azure Speech Service for transcription and speaker diarisation
 """
 
 class SpeechService:
@@ -16,7 +15,7 @@ class SpeechService:
         self.speech_key = speech_key
         self.speech_region = speech_region
 
-    # Transcribe and perform speaker diarisation on audio file using the Azure Speech Service API
+    # Transcribe and perform speaker diarisation on audio file using Azure Speech Service
     def diarise_audio(self, file_path: str) -> List[TranscriptSegment]:
         speech_config = speechsdk.SpeechConfig(subscription = self.speech_key, region = self.speech_region)
 
@@ -44,8 +43,8 @@ class SpeechService:
                 segments.append(TranscriptSegment(
                     speaker = result.speaker_id,
                     text = result.text,
-                    offset = result.offset / 10_000_000, # Convert to seconds
-                    duration = result.duration / 10_000_000, # Convert to seconds
+                    offset = result.offset / 10000000, # Convert to seconds
+                    duration = result.duration / 10000000, # Convert to seconds
                 ))
 
         # Event handler for stopping session
