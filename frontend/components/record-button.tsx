@@ -87,7 +87,7 @@ export const RecordButton = () => {
 		return accentColour;
 	};
 	
-	const buttonColour = getButtonColour();
+	const buttonColour = getButtonColour(); // Get colour based on the state
 
 	return <BlockButton onPress={onPress} title={getLabel()} lightColour={buttonColour} darkColour={buttonColour} />
 };

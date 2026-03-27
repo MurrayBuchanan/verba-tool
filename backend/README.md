@@ -88,4 +88,7 @@ The server manages audio processing, transcription, diarisation, NLP and LLM fea
 	```
 
 ## How to test
-```python -m pytest```
+1. Run the tests
+```bash
+	python -m pytest
+```

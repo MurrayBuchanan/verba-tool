@@ -7,8 +7,7 @@ from app.structures.schemas import TranscriptSegment, AIFeatures
 """
 AI feature extraction using Azure's Enterprise OpenAI API
 • Validated system prompt was adapted from: https://arxiv.org/pdf/2412.15772
-• Structured output advice: https://developers.openai.com/api/docs/guides/structured-outputs/
-• Prompt engineering advice: https://machinelearningmastery.com/mastering-json-prompting-for-llms/
+• Prompt engineering guidance: https://machinelearningmastery.com/mastering-json-prompting-for-llms/
 """
 
 client = AzureOpenAI(

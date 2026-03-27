@@ -95,3 +95,9 @@ Once you have configured the project you can run the application.
    ```bash
    npx expo start
    ```
+
+## How to test
+1. Run the tests
+```bash
+	npm run test
+```

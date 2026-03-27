@@ -7,10 +7,10 @@ Designing Technology-Enhanced Rehabilitation for People Living with Dementia
 ## Prerequisites
 
 - Requires mobile device and computer
-- [Download](https://www.python.org/downloads/) Python
-- [Download](https://nodejs.org/en) Node.js
-- [Download](https://www.postgresql.org/download/) PostgreSQL
-- [Visit](https://azure.microsoft.com/en-gb) Microsoft Azure Account with the Resources:
+- Python ([Download](https://www.python.org/downloads/))
+- Node.js ([Download](https://nodejs.org/en))
+- PostgreSQL ([Download](https://www.postgresql.org/download/))
+- Microsoft Azure Account with the Resources ([Visit](https://azure.microsoft.com/en-gb)):
     - Azure Speech Services
     - Azure OpenAI
     - Entra ID
