@@ -1,21 +1,9 @@
 import { TranscriptWithFeatures } from "@/constants/interfaces";
 
-/*
-* Helpers for the chart
-* • Groups data into date groupings for chart day-by-day, week-by-week and month-by-month displays
-* • Speaker 2 is the focus of analysis, if empty fallbacks to Speaker 1 (as if they are using it for themselves - unlikely edge case) 
-* • Places the data into array and pushes to chart
-* • Additional support functions for calculating the Upper Control Limit (UCL) and Lower Control Limit (LCL) for SDP
-*  • The neilsons rules are from the rehabilitation SPC paper which emphasises these three, more than this can lead to false alarms.
-* 
-* Additional supporting research
-* • Evidence of SDP in healthcare rehabiltiation (process): https://www.researchgate.net/profile/Charles-Callahan-3/publication/232583626_Statistical_process_control_and_rehabilitation_outcome_The_single-subject_design_reconsidered/links/5b81be844585151fd13328c3/Statistical-Process-Control-and-Rehabilitation-Outcome-The-Single-Subject-Design-Reconsidered.pdf
-* • Evidence of SDP in healthcare improvement (sub-reference): https://pmc.ncbi.nlm.nih.gov/articles/PMC1758030/
-*/
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// Enum for date groupings
+// Date groupings
 const DateGrouping = { 
     Day: "Day", 
     Week: "Week", 
@@ -36,6 +24,7 @@ type DateGroup = {
 	transcripts: TranscriptWithFeatures[];
 };
 
+// Determine the date category based on the start and end dates
 function dateCategory(startDate: Date, endDate: Date): string {
 	const difference = Math.abs(endDate.getTime() - startDate.getTime());
 	const days = Math.ceil(difference / 86400000);
@@ -177,25 +166,23 @@ export function calculateMean(values: number[]): number {
         return 0;
     }
     
-    let sum = 0;
+    let mean = 0;
     for (let i = 0; i < values.length; i++) {
-        sum += values[i];
+        mean += values[i];
     }
-    return sum / values.length;
+    return mean / values.length;
 }
 
-// Upper/Lower Control Limits
+// Control Limits
 export function calculateStandardDeviation(values: number[], mean: number): number {
     if (values.length < 2) {
         return 0;
     }
     
-    let sumSquaredDifferences = 0;
+    let standardDeviation = 0;
     for (let i = 0; i < values.length; i++) {
         const difference = values[i] - mean;
-        sumSquaredDifferences += difference * difference;
+        standardDeviation += difference * difference;
     }
-    
-    const variance = sumSquaredDifferences / values.length;
-    return Math.sqrt(variance);
+    return Math.sqrt(standardDeviation / values.length);
 }

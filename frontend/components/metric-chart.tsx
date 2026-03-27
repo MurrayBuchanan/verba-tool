@@ -11,17 +11,7 @@ import { Inter_500Medium } from "@expo-google-fonts/inter";
 import { Data, calculateMean, calculateStandardDeviation } from "@/utils/chart-grouping";
 import { nelsonRule1, nelsonRule2, nelsonRule3 } from "@/utils/chart-rules";
 
-// This is simplified SPC chart shows the baseline and control limits rather than rule-based quality 
-// controls as this is to visualise change in language for professional interpretation rather than an automated 
-// quality control system. Automated rule checks can lead to false-alarm considering the use of blackbox data.
-
-// The baseline is the mean of the data before the first intervention
-// The control limits are set at 3 standard deviations from the baseline as this is the traditional SPC rule
-
-// Documentation:
 // Victory Native Documentation: https://nearform.com/open-source/victory-native/docs/cartesian/cartesian-chart/
-// ToolTip: https://stackoverflow.com/questions/78615845/toolitips-with-victory-native-xl-cart
-// React Native Reanimated: https://docs.swmansion.com/react-native-reanimated/docs/2.x/fundamentals/shared-values/
 
 type Props = {
     data: Data[];
@@ -130,7 +120,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         left: state.x.position.value - 24,
         top: -24,
         width: 48,
-        opacity: state.isActive.value ? 1 : 0,
+        opacity: state.isActive.value ? 1 : 0
     }));
 
     const interventionPeriods = useMemo(() => {
@@ -203,14 +193,14 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                     chartPressState={state}
                     frame={{
                         lineWidth: { top: 0.5, right: 0, bottom: 0.5, left: 0 },
-                        lineColor: gridColour,
+                        lineColor: gridColour
                     }}
                     axisOptions={{
                         font: useFont(Inter_500Medium, 12),
                         labelColor: labelColour,
                         formatXLabel,
                         lineWidth: { grid: 0.5, frame: 0 },
-                        lineColor: { grid: gridColour, frame: gridColour },
+                        lineColor: { grid: gridColour, frame: gridColour }
                     }}>
                         
                     {({ points, chartBounds }) => {

@@ -1,5 +1,10 @@
 import { calculateMean, calculateStandardDeviation } from "@/utils/chart-grouping";
 
+/*
+* • Adapted from: https://github.com/michiel/nelsonrules-js/blob/master/src/rules.js
+* • The Nelson's rules 1, 2, 3 were selected as the more effective rules for identifying unnatural variation.
+*/
+
 const CONFIDENCE = 7;
 
 // Rule 1 (One): Any one point outside the UCL or LCL
@@ -37,7 +42,6 @@ export function nelsonRule1(values: number[]) {
         positions
     };
 }
-
 
 // Rule 2 (Run): Seven+ points all above or below the center line
 export function nelsonRule2(values: number[]) {

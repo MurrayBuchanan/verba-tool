@@ -219,10 +219,12 @@ export default function InterventionDetailScreen() {
 									<Divider />
 									<Text type="strong">What Does This Show?</Text>
 									<Text>{metricDetails.alias}</Text>
-									<Text>{CHART_DEFINITION}</Text>
 									<Divider />
-									<Text type="strong">Description</Text>
+									<Text type="strong">Indicator Description</Text>
 									<Text>{metricDetails.description}</Text>
+									<Divider />
+									<Text type="strong">How to Interpret the Chart</Text>
+									<Text>{CHART_DEFINITION}</Text>
 								</View>
 							)}
 						</View>

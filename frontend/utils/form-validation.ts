@@ -15,11 +15,11 @@ export function validateProfile(values: ProfileProps): ProfileErrors {
 	if (!values.name?.trim()) {
 		return { name: "Name is required" };
 	}
-	if (values.name.length > 30) {
-		return { name: "Name must be less than 30 characters." };
+	if (values.name.length > 100) {
+		return { name: "Name must be less than 100 characters." };
 	}
-	if (values.description && values.description.length > 500) {
-		return { description: "Description must be less than 500 characters." };
+	if (values.description && values.description.length > 1000) {
+		return { description: "Description must be less than 1000 characters." };
 	}
 	return {};
 }
