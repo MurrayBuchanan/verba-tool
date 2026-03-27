@@ -9,18 +9,22 @@ Designing Technology-Enhanced Rehabilitation for People Living with Dementia
 - Requires mobile device and computer
 - [Download](https://www.python.org/downloads/) Python
 - [Download](https://nodejs.org/en) Node.js
+- [Download](https://www.postgresql.org/download/) PostgreSQL
+- [Visit](https://azure.microsoft.com/en-gb) Microsoft Azure Account with the Resources:
+    - Azure Speech Services
+    - Azure OpenAI
+    - Entra ID
 
-## TestFlight or Development Access
+## Configuration, TestFlight or Development Access
 
-- Send me a message with your email address for development build access.
-- Download link should be available on [my website](https://murrayb.com/cs408/)
+- The configuration and build setup used in this project is available on request by contacting the researcher at [request@murrayb.com](mailto:request@murrayb.com)
 
-## Setup and running instructions
+## Setup and Running Instructions
 
 - [Backend](backend/README.md)
 - [Frontend](frontend/README.md)
 
-## Contact details
+## University Contact Details
 
 ### Email
 

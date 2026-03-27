@@ -2,58 +2,41 @@
 
 ## Description
 
-Content coming soon...
-
-### Feature Extraction
-
-Feature selection is derived from Research Paper by the [University of Zurich](https://aclanthology.org/2025.coling-main.126.pdf)
-
-**Established Features**
-- words per minute
-- mean utterance length
-- avg word length
-- adverb ratio
-- flesch kincaid
-- prp ratio
-- number of unique words
-
-**AI Features**
-
-- impoverished vocabulary
-- word finding difficulty
-- semantic paraphasias
-- syntactic simplification
-- discourse impairment
-
+The server manages audio processing, transcription, diarisation, NLP and LLM feature extraction, as well as communication with the database and external services.
 
 ## Project Structure
 
 - `app`
-	- `app/main.py`: Entry point
-	- `app/api`
-		- `...`: TODO: Separate endpoints
+	- `app/main.py`: Entry point & DB config
+	- `app/routers`
+		- `app/routers/interventions.py`: CRUD API endpoints for interventions
+		- `app/routers/profiles.py`: CRUD API endpoints for profiles
+		- `app/routers/transcripts.py`: Transcripts create and delete endpoints
+		- `app/routers/upload.py`: Audio processing (ASR and conversation analysis) endpoint
 	- `app/core`
 		- `app/core/config.py`: Configuration and environment variables
 		- `app/core/database.py`: Database connection and session management
 	- `app/services`
-		- `app/services/audio_converter.py`: Convert .mp3 to .wav
-		- `app/services/speech_service.py`: Azure Speech Service
-		- `app/services/nlp_feature_extraction.py`: NLP feature extraction
-		- `app/services/ai_feature_extraction.py`: AI feature extraction
-		- `app/services/conversation_analytics.py`: Combines features
+		- `app/services/audio_converter.py`: Adapter for Azure compatible format
+		- `app/services/speech_service.py`: Manage Speech Service
+		- `app/services/quality_gate.py`: Check audio quality
+		- `app/services/nlp_features.py`: NLP feature extraction
+		- `app/services/ai_features.py`: LLM feature extraction
+		- `app/services/ai_feature_factory.py`: LLM Ensemble
+		- `app/services/conversation_analytics.py`: Combines NLP and LLM features
 	- `app/schemas`
 		- `app/schemas/models.py`: SQLAlchemy database models
 		- `app/schemas/schemas.py`: Pydantic schemas
 	- `app/tests`
 		- `...`
-- `Dockerfile`: Docker container configuration
-- `requirements.txt`: Python dependencies
+- `Dockerfile`: Docker configuration
+- `requirements.txt`: Dependencies
 - `...`
 
 ## Configuration
 
 > [!NOTE]
-> If you do not own an Azure account, I can send you my environment variable configurations.
+> If you do not own an Azure account, you can request the original environment variable configurations by contacting the researcher.
 
 1. Create `.env file` in the backend directory to store environment variables:
 
@@ -71,11 +54,7 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 	<br>OPENAI_VERSION=
 
 	**PostgreSQL Database**
-	<br>DATABASE_USER=
-	<br>DATABASE_PASSWORD=
-	<br>DATABASE_HOST=
-	<br>DATABASE_PORT=
-	<br>DATABASE_NAME=
+	<br>DATABASE_URL=
 
 2. Create virutal environment
 	<br>macOs/Linux: `python -m venv .venv`
@@ -94,7 +73,7 @@ Feature selection is derived from Research Paper by the [University of Zurich](h
 
 5. Install PostgreSQL
     ```bash
-    brew install postgresql@14
+    brew install postgresql@18
     ```
 
 6. Create database 
