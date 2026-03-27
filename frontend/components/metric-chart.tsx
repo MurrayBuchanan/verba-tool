@@ -23,29 +23,34 @@ type Props = {
     showInterventions: boolean;
 };
 
-function findPointAtX<T extends { x: number }>(points: T[], x: number): T | null {
-    if (points.length === 0) {
-        return null;
-    } 
-    const exact = points.find((d) => d.x === x);
-    if (exact) {
-        return exact;
-    }
-    let closest = points[0];
-    for (let i = 1; i < points.length; i++) {
-        if (Math.abs(points[i].x - x) < Math.abs(closest.x - x)) closest = points[i];
-    }
-    return closest;
-}
-
-type ToolTipAxisProps = {
+type ToolTipProps = {
     xPosition: SharedValue<number>;
     top: number;
     bottom: number;
     colour: string;
 };
 
-function ToolTipLine({ xPosition, top, bottom, colour }: ToolTipAxisProps) {
+// Find the point closest to the X position for the tooltip
+function findPointAtX<T extends { x: number }>(points: T[], x: number): T | null {
+    if (points.length === 0) {
+        return null;
+    }
+
+    let closest = points[0];
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i];
+        if (point.x === x) {
+            return point;
+        }
+        if (Math.abs(point.x - x) < Math.abs(closest.x - x)) {
+            closest = point;
+        }
+    }
+    return closest;
+}
+
+// Tool tip
+function ToolTipLine({ xPosition, top, bottom, colour }: ToolTipProps) {
     const bottomPoint = useDerivedValue(() => vec(xPosition.value, bottom));
     const topPoint = useDerivedValue(() => vec(xPosition.value, top));
     return <LinePath p1={bottomPoint} p2={topPoint} color={colour} strokeWidth={1.5} />;
@@ -70,6 +75,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         y: { value: 0, mean: 0, upperBound: 0, lowerBound: 0 },
     });
 
+    // Get the X position of the press
     const [pressedX, setPressedX] = useState<number | null>(null);
     const syncPressToJs = useCallback((active: boolean | number, x: number | boolean) => { setPressedX(active ? (x as number) : null) }, []);
 
@@ -77,8 +83,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         () => [state.isActive.value, state.x.value.value],
         ([active, x]) => {
             runOnJS(syncPressToJs)(active, x);
-        },
-        []
+        }, []
     );
 
     const chartData = useMemo(() => {
@@ -86,7 +91,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
             return [];
         }
 
-        const values = data.map((d) => d.value);
+        const values = data.map((point) => point.value);
 
         // Baseline and control limits
         const mean = calculateMean(values);
@@ -99,40 +104,27 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         const rule2 = nelsonRule2(values);
         const rule3 = nelsonRule3(values);
 
-        return data.map((point, index) => {
+        return data.map((point) => {
             const ruleBreached =
-                rule1.positions.includes(index) ||
-                rule2.positions.includes(index) ||
-                rule3.positions.includes(index);
+                rule1.positions.includes(point.x) || rule2.positions.includes(point.x) || rule3.positions.includes(point.x);
 
             return {
                 ...point,
                 mean: mean,
                 upperBound: upperControlLimit,
                 lowerBound: lowerControlLimit,
-                ruleBreached,
+                ruleBreached
             };
         });
     }, [data]);
 
-    // Sort and remove x labels duplicates
-    const sortedXPositions = useMemo(() => {
-        if (chartData.length === 0) {
-            return undefined;
-        }
-        const XPositions: number[] = [];
-        for (let i = 0; i < chartData.length; i++) {
-            const row = chartData[i];
-            const positionOnX = row.x;
-            if (!XPositions.includes(positionOnX)) {
-                XPositions.push(positionOnX);
-            }
-        }
-        XPositions.sort((a, b) => a - b);
-        return XPositions;
-    }, [chartData]);
+    // Ensure only one axis label per point (Avoids duplicate labels)
+    const xAxisPoints = useMemo(
+        () => (chartData.length === 0 ? undefined : chartData.map((d) => d.x)),
+        [chartData]
+    );
 
-    const tooltipPoint = useMemo(() => (pressedX == null ? null : findPointAtX(chartData, pressedX)), [pressedX, chartData]);
+    const tooltip = useMemo(() => (pressedX == null ? null : findPointAtX(chartData, pressedX)), [pressedX, chartData]);
 
     const valueLabelStyle = useAnimatedStyle(() => ({
         position: "absolute",
@@ -201,8 +193,8 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
             <View style={styles.chart}>
 
                 <Animated.View style={valueLabelStyle} pointerEvents="none">
-                    { tooltipPoint != null && (
-                        <Text type="caption" align='center'>{tooltipPoint.value}</Text>
+                    { tooltip != null && (
+                        <Text type="caption" align='center'>{tooltip.value}</Text>
                     )}
                 </Animated.View>
 
@@ -223,7 +215,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                         lineWidth: 0.5,
                         lineColor: gridColour,
                         tickCount: 5,
-                        ...(sortedXPositions ? { tickValues: sortedXPositions } : {}),
+                        ...(xAxisPoints ? { tickValues: xAxisPoints } : {}),
                     }}
                     axisOptions={{
                         font: axisFont,

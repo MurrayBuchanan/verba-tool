@@ -13,7 +13,7 @@ import { useProfile } from "@/context/ProfileContext";
 import { getIntervention, deleteIntervention } from "@/services/intervention-service";
 import { getTranscripts } from "@/services/transcript-service";
 import { TranscriptWithFeatures } from "@/constants/interfaces";
-import { getMetricProgression } from "@/utils/chart-grouping";
+import { getChartData } from "@/utils/chart-grouping";
 import { CHART_DEFINITION, METRIC_DEFINITIONS } from "@/constants/metrics";
 import { formatDisplayDate } from "@/utils/datetime-formatting";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -117,7 +117,7 @@ export default function InterventionDetailScreen() {
 		if (!filteredTranscripts.length) {
 			return [];
 		}
-		return getMetricProgression(filteredTranscripts, selectedMetric);
+		return getChartData(filteredTranscripts, selectedMetric);
 	}, [filteredTranscripts, selectedMetric]);
 
 	const metricDetails = METRIC_DEFINITIONS[selectedMetric];

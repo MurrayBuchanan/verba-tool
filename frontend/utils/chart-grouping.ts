@@ -1,6 +1,5 @@
 import { TranscriptWithFeatures } from "@/constants/interfaces";
 
-
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 // Date groupings
@@ -50,12 +49,12 @@ function getWeekNumber(date: Date) {
 function getGroupKey(date: Date, grouping: string): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
-    
+	const week = String(getWeekNumber(date)).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
     if (grouping === DateGrouping.Day) {
-        const day = String(date.getDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
     } else if (grouping === DateGrouping.Week) {
-        const week = String(getWeekNumber(date)).padStart(2, "0");
         return `${year}-W${week}`;
     } else {
         return `${year}-${month}`;
@@ -132,7 +131,7 @@ function getDates(transcripts: TranscriptWithFeatures[]): Date[] {
 	return dates;
 }
 
-export function getMetricProgression(transcripts: TranscriptWithFeatures[], metricKey: string): Data[] {
+export function getChartData(transcripts: TranscriptWithFeatures[], metricKey: string): Data[] {
 	if (transcripts.length === 0) {
 		return [];
 	}
@@ -144,20 +143,17 @@ export function getMetricProgression(transcripts: TranscriptWithFeatures[], metr
 	const grouping = dateCategory(startDate, endDate);
 	const groups = groupByTimePeriod(transcripts, grouping);
 	
-	const result = [];
-	for (let i = 0; i < groups.length; i++) {
-		const group = groups[i];
+	return groups.map((group, index) => {
 		const transcript = group.transcripts[0];
-		result.push({
-			x: i + 1,
+		return {
+			x: index + 1,
 			value: getMetricValue(transcript, metricKey),
 			label: formatGroupLabel(group.date, grouping),
 			transcriptId: transcript.id,
 			date: group.date,
 			grouping
-		});
-	}
-	return result;
+		};
+	});
 }
 
 // Baseline

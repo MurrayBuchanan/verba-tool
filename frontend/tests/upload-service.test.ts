@@ -58,7 +58,7 @@ describe("upload", () => {
 		await upload(mockProfileId, mockAudio, mockCreatedAt);
 
 		const expectedConfig = {
-			timeout: 1000 * 60 * 10, // Note for regression testing, this test might fail when timeout is changed
+			timeout: 600000,
 			headers: {
 				"Profile-Id": mockProfileId.toString(),
 				"Created-At": mockCreatedAt.toISOString(),

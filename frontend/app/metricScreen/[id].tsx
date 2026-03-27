@@ -9,7 +9,7 @@ import { ChartToggle as Switch } from "@/components/chart-toggle";
 import { TranscriptWithFeatures, Intervention } from "@/constants/interfaces";
 import { getTranscripts } from "@/services/transcript-service";
 import { getInterventions } from "@/services/intervention-service";
-import { getMetricProgression, type Data } from "@/utils/chart-grouping";
+import { getChartData } from "@/utils/chart-grouping";
 import { METRIC_DEFINITIONS } from "@/constants/metrics";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";;
@@ -63,7 +63,7 @@ export default function MetricDisplayScreen() {
 		}, [profileId])
 	);
 
-	const chartData = useMemo(() => getMetricProgression(transcripts, selectedMetric), [transcripts, selectedMetric]);
+	const chartData = useMemo(() => getChartData(transcripts, selectedMetric), [transcripts, selectedMetric]);
 
 	const metricKeys = useMemo(() => {
 		return Object.keys(METRIC_DEFINITIONS).map((metricKey) => ({
