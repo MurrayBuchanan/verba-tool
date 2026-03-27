@@ -16,7 +16,7 @@ import { nelsonRule1, nelsonRule2, nelsonRule3 } from "@/utils/chart-rules";
 type Props = {
     data: Data[];
     xAxisLabel?: (value: number) => string;
-    title?: string;
+    title: string;
     interventions?: Intervention[];
     showMean: boolean;
     showRange: boolean;
@@ -111,7 +111,24 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                 ruleBreached,
             };
         });
-    }, [data, interventions]);
+    }, [data]);
+
+    // Sort and remove x labels duplicates
+    const sortedXPositions = useMemo(() => {
+        if (chartData.length === 0) {
+            return undefined;
+        }
+        const XPositions: number[] = [];
+        for (let i = 0; i < chartData.length; i++) {
+            const row = chartData[i];
+            const positionOnX = row.x;
+            if (!XPositions.includes(positionOnX)) {
+                XPositions.push(positionOnX);
+            }
+        }
+        XPositions.sort((a, b) => a - b);
+        return XPositions;
+    }, [chartData]);
 
     const tooltipPoint = useMemo(() => (pressedX == null ? null : findPointAtX(chartData, pressedX)), [pressedX, chartData]);
 
@@ -174,6 +191,8 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         [xAxisLabel, chartData]
     );
 
+    const axisFont = useFont(Inter_500Medium, 12);
+
     return (
         <View style={[styles.container, { borderColor: borderColour }]}>
             <Text type='strong' align='center' style={styles.title}>{title}</Text>
@@ -195,10 +214,18 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                         lineWidth: { top: 0.5, right: 0, bottom: 0.5, left: 0 },
                         lineColor: gridColour
                     }}
-                    axisOptions={{
-                        font: useFont(Inter_500Medium, 12),
-                        labelColor: labelColour,
+                    xAxis={{
+                        font: axisFont,
                         formatXLabel,
+                        labelColor: labelColour,
+                        lineWidth: 0.5,
+                        lineColor: gridColour,
+                        tickCount: 5,
+                        ...(sortedXPositions ? { tickValues: sortedXPositions } : {}),
+                    }}
+                    axisOptions={{
+                        font: axisFont,
+                        labelColor: labelColour,
                         lineWidth: { grid: 0.5, frame: 0 },
                         lineColor: { grid: gridColour, frame: gridColour }
                     }}>
@@ -329,7 +356,8 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
 }
 const styles = StyleSheet.create({
     title: {
-        marginVertical: 20,
+        marginTop: 30,
+        marginBottom: 30,
     },
     container: {
         flex: 1,

@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
-import { AlertCircle, Pencil, Trash } from "lucide-react-native";
+import { AlertCircle, ChartLine, Pencil, Trash } from "lucide-react-native";
 import { MetricChart as Chart } from "@/components/metric-chart";
 import { MetricSelector } from "@/components/metric-selector";
 import { InformationSelector } from "@/components/information-selector";
@@ -143,7 +143,7 @@ export default function InterventionDetailScreen() {
 				</View>
 			) : error ? (
 				<View style={styles.center}>
-					<AlertCircle size={36} color={warning} style={styles.placeholder} />
+					<AlertCircle size={36} color={warning} style={styles.placeholderIcon} />
 					<Text align="center" style={{ color: warning }}>{error}</Text>
 				</View>
 			) : (
@@ -164,7 +164,8 @@ export default function InterventionDetailScreen() {
 								/>
 							</View>
 						) : (
-							<View style={styles.center}>
+							<View style={[styles.center, styles.chartPlaceholder]}>
+								<ChartLine size={36} color={icon} style={styles.placeholderIcon} />
 								<Text align="center">No data available for this indicator within this intervention period.</Text>
 							</View>
 						)}
@@ -269,13 +270,16 @@ const styles = StyleSheet.create({
 	chart: {
 		marginHorizontal: 0,
 	},
+	chartPlaceholder: {
+		minHeight: 360,
+	},
 	center: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
 		padding: 40,
 	},
-	placeholder: {
+	placeholderIcon: {
 		marginBottom: 16,
 	},
 	row: {
