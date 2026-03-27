@@ -10,18 +10,18 @@ export type ProfileErrors = {
 	description?: string;
 };
 
-// Validate the profile has a name and the name and description are not too long
+// Input validation for the profile form
 export function validateProfile(values: ProfileProps): ProfileErrors {
+	const errors: ProfileErrors = {};
 	if (!values.name?.trim()) {
-		return { name: "Name is required" };
-	}
-	if (values.name.length > 100) {
-		return { name: "Name must be less than 100 characters." };
+		errors.name = "Name is required";
+	} else if (values.name.length > 100) {
+		errors.name = "Name must be less than 100 characters.";
 	}
 	if (values.description && values.description.length > 1000) {
-		return { description: "Description must be less than 1000 characters." };
+		errors.description = "Description must be less than 1000 characters.";
 	}
-	return {};
+	return errors;
 }
 
 type InterventionProps = {
@@ -40,31 +40,26 @@ export type InterventionErrors = {
 	endDate?: string;
 };
 
-// Validate the intervention has a name, the name and description are not too long and the end date is after the start date
+// Input validation for the intervention form
 export function validateIntervention(values: InterventionProps): InterventionErrors {
+	const errors: InterventionErrors = {};
 	if (!values.name?.trim()) {
-		return { name: "Name is required" };
-	}
-	if (values.name.length > 100) {
-		return { name: "Name must be less than 100 characters." };
+		errors.name = "Name is required";
+	} else if (values.name.length > 100) {
+		errors.name = "Name must be less than 100 characters.";
 	}
 	if (values.description && values.description.length > 1000) {
-		return { description: "Description must be less than 1000 characters." };
+		errors.description = "Description must be less than 1000 characters.";
 	}
 	if (values.goals && values.goals.length > 1000) {
-		return { goals: "Goals must be less than 1000 characters." };
+		errors.goals = "Goals must be less than 1000 characters.";
 	}
 	if (values.startDate && values.endDate && dateToMidnight(values.startDate).getTime() >= dateToMidnight(values.endDate).getTime()) {
-		return { endDate: "End date must be after start date" };
+		errors.endDate = "End date must be after start date";
 	}
-	return {};
+	return errors;
 }
 
 export function hasErrors(errors: Record<string, string | undefined>): boolean {
-	for (const key in errors) {
-		if (errors[key]) {
-			return true;
-		}
-	}
-	return false;
+	return Object.values(errors).some(Boolean);
 }

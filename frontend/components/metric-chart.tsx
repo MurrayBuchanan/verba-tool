@@ -88,11 +88,13 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
 
         const values = data.map((d) => d.value);
 
+        // Baseline and control limits
         const mean = calculateMean(values);
         const standardDeviation = calculateStandardDeviation(values, mean);
         const upperControlLimit = mean + 3 * standardDeviation;
         const lowerControlLimit = mean - 3 * standardDeviation;
 
+        // Identify rule breaches for alerts
         const rule1 = nelsonRule1(values);
         const rule2 = nelsonRule2(values);
         const rule3 = nelsonRule3(values);
@@ -332,19 +334,19 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                     <View style={[styles.labelLine, { backgroundColor: dataColour }]} />
                     <Text type="caption">Recorded Data</Text>
                 </View>
-                {showMean && (
+                { showMean && (
                     <View style={styles.labelItem}>
                         <View style={[styles.labelLine, { backgroundColor: meanColour }]} />
                         <Text type="caption">Baseline</Text>
                     </View>
                 )}
-                {showRange && (
+                { showRange && (
                     <View style={styles.labelItem}>
                         <View style={[styles.labelLine, { backgroundColor: standardDeviationColour }]} />
                         <Text type="caption">Control Limits (±3 SD)</Text>
                     </View>
                 )}
-                {showInterventions && interventionPeriods.length > 0 && (
+                { showInterventions && interventionPeriods.length > 0 && (
                     <View style={styles.labelItem}>
                         <View style={[styles.labelDot, { backgroundColor: interventionColour }]} />
                         <Text type="caption">Intervention Period</Text>

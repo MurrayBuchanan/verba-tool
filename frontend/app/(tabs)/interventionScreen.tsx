@@ -107,9 +107,9 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 	},
 	explainationContainer: {
-		borderRadius: 8,
-		paddingVertical: 12,
-		paddingHorizontal: 16,
+		borderRadius: 16,
+		paddingVertical: 16,
+		paddingHorizontal: 20,
 		marginBottom: 20,
 	},
 	explaination: {
