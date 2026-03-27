@@ -21,7 +21,7 @@ def create_transcript(total_duration=None, raw_segments=None):
         syntactic_simplification={},
         discourse_impairment={},
         total_duration=total_duration,
-        raw_segments=raw_segments,
+        raw_segments=raw_segments
     )
 
 def create_segment(text, duration = 0.0, speaker = None, offset = 0.0):

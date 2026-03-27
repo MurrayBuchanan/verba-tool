@@ -86,7 +86,7 @@ class TestGetProfiles:
 
     def test_profiles_fetch_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
@@ -97,7 +97,6 @@ class TestGetProfiles:
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot fetch profiles"
-
 
 class TestCreateProfile:
     def test_profile_create_status_code_200(self):
@@ -133,7 +132,7 @@ class TestCreateProfile:
 
     def test_profile_create_status_code_500(self):
         db = AsyncMock()
-        db.add = MagicMock(side_effect=Exception("DB error"))
+        db.add = MagicMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
@@ -144,7 +143,6 @@ class TestCreateProfile:
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot create profile"
-
 
 class TestUpdateProfile:
     def test_profile_update_status_code_200(self):
@@ -189,7 +187,7 @@ class TestUpdateProfile:
 
     def test_profile_update_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
@@ -200,7 +198,6 @@ class TestUpdateProfile:
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot update profile"
-
 
 class TestGetProfile:
     def test_profile_fetch_status_code_200(self):
@@ -250,7 +247,6 @@ class TestGetProfile:
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot get profile"
-
 
 class TestDeleteProfile:
     def test_profile_delete_status_code_200(self):

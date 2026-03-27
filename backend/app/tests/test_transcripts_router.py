@@ -46,7 +46,7 @@ def mock_features():
         word_finding_difficulties=json.dumps(7),
         semantic_paraphasias=json.dumps(3),
         syntactic_simplification=json.dumps(2),
-        discourse_impairment=json.dumps(2),
+        discourse_impairment=json.dumps(2)
     )
 
 def mock_segment():
@@ -81,7 +81,7 @@ class TestGetTranscripts:
         list_result.all.return_value = [(transcript, features)]
 
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=[profile_result, list_result])
+        db.execute = AsyncMock(side_effect = [profile_result, list_result])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id
@@ -116,7 +116,7 @@ class TestGetTranscripts:
         list_result.all.return_value = []
 
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=[profile_result, list_result])
+        db.execute = AsyncMock(side_effect = [profile_result, list_result])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id
@@ -133,7 +133,7 @@ class TestGetTranscripts:
         profile_result.scalar_one_or_none.return_value = None
 
         db = AsyncMock()
-        db.execute = AsyncMock(return_value=profile_result)
+        db.execute = AsyncMock(return_value = profile_result)
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id
@@ -147,7 +147,7 @@ class TestGetTranscripts:
 
     def test_transcripts_fetch_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id
@@ -174,7 +174,7 @@ class TestGetTranscript:
         segments_scalars.all.return_value = [segment]
         segments_result.scalars.return_value = segments_scalars
 
-        db.execute = AsyncMock(side_effect=[transcript_result, segments_result])
+        db.execute = AsyncMock(side_effect = [transcript_result, segments_result])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id
@@ -195,7 +195,7 @@ class TestGetTranscript:
         assert data["segments"][0]["text"] == segment.text
 
     def test_transcript_fetch_status_code_404(self):
-        db = mock_db(scalar_result=None)
+        db = mock_db(scalar_result = None)
 
         app.dependency_overrides[get_user_id] = mock_user_id
         app.dependency_overrides[get_db] = lambda: db
@@ -208,7 +208,7 @@ class TestGetTranscript:
 
     def test_transcript_fetch_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id
@@ -228,7 +228,7 @@ class TestDeleteTranscript:
         db = AsyncMock()
         transcript_result = MagicMock()
         transcript_result.scalar_one_or_none.return_value = transcript
-        db.execute = AsyncMock(return_value=transcript_result)
+        db.execute = AsyncMock(return_value = transcript_result)
         db.commit = AsyncMock()
         db.rollback = AsyncMock()
 
@@ -243,7 +243,7 @@ class TestDeleteTranscript:
         db.commit.assert_called_once()
 
     def test_transcript_delete_status_code_404(self):
-        db = mock_db(scalar_result=None)
+        db = mock_db(scalar_result = None)
 
         app.dependency_overrides[get_user_id] = mock_user_id
         app.dependency_overrides[get_db] = lambda: db
@@ -256,7 +256,7 @@ class TestDeleteTranscript:
 
     def test_transcript_delete_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_user_id

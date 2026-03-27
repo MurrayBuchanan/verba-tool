@@ -27,7 +27,7 @@ SAMPLE_INTERVENTION = {
     "goals": "Improve critical thinking and problem solving skills.",
     "success": True,
     "start_date": "2026-03-31",
-    "end_date": "2026-04-02",
+    "end_date": "2026-04-02"
 }
 
 def mock_profile_id():
@@ -42,7 +42,7 @@ def mock_intervention():
         goals="Improve critical thinking and problem solving skills.",
         success=True,
         start_date=datetime(2026, 3, 31),
-        end_date=datetime(2026, 4, 2),
+        end_date=datetime(2026, 4, 2)
     )
 
 def mock_db(scalar_result=None):
@@ -68,14 +68,14 @@ class TestGetInterventions:
         list_result.scalars.return_value = list_scalars
 
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=[profile_result, list_result])
+        db.execute = AsyncMock(side_effect = [profile_result, list_result])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get("/interventions", params={"profile_id": VALID_ACCOUNT_ID})
+        response = client.get("/interventions", params = {"profile_id": VALID_ACCOUNT_ID})
 
         assert response.status_code == 200
         data = response.json()
@@ -104,7 +104,7 @@ class TestGetInterventions:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get("/interventions", params={"profile_id": VALID_ACCOUNT_ID})
+        response = client.get("/interventions", params = {"profile_id": VALID_ACCOUNT_ID})
 
         assert response.status_code == 200
         assert response.json() == {"interventions": []}
@@ -114,32 +114,31 @@ class TestGetInterventions:
         profile_result.scalar_one_or_none.return_value = None
 
         db = AsyncMock()
-        db.execute = AsyncMock(return_value=profile_result)
+        db.execute = AsyncMock(return_value = profile_result)
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get("/interventions", params={"profile_id": VALID_ACCOUNT_ID})
+        response = client.get("/interventions", params = {"profile_id": VALID_ACCOUNT_ID})
 
         assert response.status_code == 404
         assert response.json()["detail"] == "Profile not found"
 
     def test_interventions_fetch_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.get("/interventions", params={"profile_id": VALID_ACCOUNT_ID})
+        response = client.get("/interventions", params = {"profile_id": VALID_ACCOUNT_ID})
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot fetch interventions"
-
 
 class TestCreateIntervention:
     def test_intervention_create_status_code_200(self):
@@ -156,9 +155,9 @@ class TestCreateIntervention:
         profile_result.scalar_one_or_none.return_value = MagicMock()
 
         db = AsyncMock()
-        db.execute = AsyncMock(return_value=profile_result)
-        db.add = MagicMock(side_effect=capture_add)
-        db.flush = AsyncMock(side_effect=flush_set_id)
+        db.execute = AsyncMock(return_value = profile_result)
+        db.add = MagicMock(side_effect = capture_add)
+        db.flush = AsyncMock(side_effect = flush_set_id)
         db.refresh = AsyncMock()
         db.commit = AsyncMock()
         db.rollback = AsyncMock()
@@ -167,7 +166,7 @@ class TestCreateIntervention:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.post("/interventions", json=SAMPLE_INTERVENTION)
+        response = client.post("/interventions", json = SAMPLE_INTERVENTION)
 
         assert response.status_code == 200
         data = response.json()
@@ -187,19 +186,18 @@ class TestCreateIntervention:
         profile_result.scalar_one_or_none.return_value = MagicMock()
 
         db = AsyncMock()
-        db.execute = AsyncMock(return_value=profile_result)
-        db.add = MagicMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(return_value = profile_result)
+        db.add = MagicMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.post("/interventions", json=SAMPLE_INTERVENTION)
+        response = client.post("/interventions", json = SAMPLE_INTERVENTION)
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot create intervention"
-
 
 class TestUpdateIntervention:
     def test_intervention_update_status_code_200(self):
@@ -216,7 +214,7 @@ class TestUpdateIntervention:
         profile_result.scalar_one_or_none.return_value = MagicMock()
 
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=[intervention_result, profile_result])
+        db.execute = AsyncMock(side_effect = [intervention_result, profile_result])
         db.commit = AsyncMock()
         db.refresh = AsyncMock()
         db.rollback = AsyncMock()
@@ -225,7 +223,7 @@ class TestUpdateIntervention:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.put(f"/interventions/{VALID_ACCOUNT_ID}", json=update_json)
+        response = client.put(f"/interventions/{VALID_ACCOUNT_ID}", json = update_json)
 
         assert response.status_code == 200
         data = response.json()
@@ -248,25 +246,24 @@ class TestUpdateIntervention:
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.put(f"/interventions/{INVALID_ACCOUNT_ID}", json=SAMPLE_INTERVENTION)
+        response = client.put(f"/interventions/{INVALID_ACCOUNT_ID}", json = SAMPLE_INTERVENTION)
 
         assert response.status_code == 404
         assert response.json()["detail"] == "Intervention not found"
 
     def test_intervention_update_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
         app.dependency_overrides[get_db] = lambda: db
 
         client = TestClient(app)
-        response = client.put(f"/interventions/{VALID_ACCOUNT_ID}", json=SAMPLE_INTERVENTION)
+        response = client.put(f"/interventions/{VALID_ACCOUNT_ID}", json = SAMPLE_INTERVENTION)
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot update intervention"
-
 
 class TestGetIntervention:
     def test_intervention_fetch_status_code_200(self):
@@ -276,7 +273,7 @@ class TestGetIntervention:
         intervention_result = MagicMock()
         intervention_result.scalar_one_or_none.return_value = intervention
 
-        db.execute = AsyncMock(return_value=intervention_result)
+        db.execute = AsyncMock(return_value = intervention_result)
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
@@ -305,7 +302,7 @@ class TestGetIntervention:
 
     def test_intervention_fetch_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
@@ -325,7 +322,7 @@ class TestDeleteIntervention:
         db = AsyncMock()
         intervention_result = MagicMock()
         intervention_result.scalar_one_or_none.return_value = intervention
-        db.execute = AsyncMock(return_value=intervention_result)
+        db.execute = AsyncMock(return_value = intervention_result)
         db.commit = AsyncMock()
         db.rollback = AsyncMock()
 
@@ -353,7 +350,7 @@ class TestDeleteIntervention:
 
     def test_intervention_delete_status_code_500(self):
         db = AsyncMock()
-        db.execute = AsyncMock(side_effect=Exception("DB error"))
+        db.execute = AsyncMock(side_effect = [Exception("DB error")])
         db.rollback = AsyncMock()
 
         app.dependency_overrides[get_user_id] = mock_profile_id
