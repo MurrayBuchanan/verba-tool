@@ -29,6 +29,7 @@ export default function EditInterventionModal() {
 	const [endDate, setEndDate] = useState(new Date());
 	const [errors, setErrors] = useState<InterventionErrors>({});
 
+	// Fetch the intervention when the screen is focused
 	useEffect(() => {
 		async function getData() {
 			try {
@@ -47,6 +48,7 @@ export default function EditInterventionModal() {
 		getData();
 	}, [id]);
 
+	// Update the intervention
 	const handleUpdateIntervention = useCallback(async () => {
 		const validationErrors = validateIntervention({ name, description, startDate, endDate });
 		setErrors(validationErrors);
@@ -70,6 +72,7 @@ export default function EditInterventionModal() {
 		}
 	}, [id, name, description, goals, success, startDate, endDate, profileId]);
 
+	// Save and cancel buttons
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerStyle: { backgroundColor: background },
@@ -146,5 +149,5 @@ const styles = StyleSheet.create({
 	center: {
 		justifyContent: "center",
 		alignItems: "center",
-	},
+	}
 });

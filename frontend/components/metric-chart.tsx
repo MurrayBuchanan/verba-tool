@@ -61,14 +61,14 @@ function ToolTip({ x, y, color = "black" }: { x: SharedValue<number>; y: SharedV
 }
 
 export function MetricChart({ data, xAxisLabel, title, interventions = [], showMean = true, showRange = true, showInterventions = true }: Props) {
-    const labelColour = useThemeColor({}, 'text');
-    const gridColour = useThemeColor({}, 'backgroundTertiary');
-    const dataColour = useThemeColor({}, 'accent');
-    const meanColour = useThemeColor({}, 'meanColour');
-    const standardDeviationColour = useThemeColor({}, 'standardDeviationColour');
-    const interventionColour = useThemeColor({}, 'interventionColour');
-    const borderColour = useThemeColor({}, 'backgroundTertiary');
-    const warning = useThemeColor({}, 'warning');
+    const labelColour = useThemeColor({}, "text");
+    const gridColour = useThemeColor({}, "backgroundTertiary");
+    const dataColour = useThemeColor({}, "accent");
+    const meanColour = useThemeColor({}, "meanColour");
+    const standardDeviationColour = useThemeColor({}, "standardDeviationColour");
+    const interventionColour = useThemeColor({}, "interventionColour");
+    const borderColour = useThemeColor({}, "backgroundTertiary");
+    const warning = useThemeColor({}, "warning");
 
     const { state, isActive } = useChartPressState({
         x: 0,
@@ -189,12 +189,12 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
 
     return (
         <View style={[styles.container, { borderColor: borderColour }]}>
-            <Text type='strong' align='center' style={styles.title}>{title}</Text>
+            <Text type="strong" align="center" style={styles.title}>{title}</Text>
             <View style={styles.chart}>
 
                 <Animated.View style={valueLabelStyle} pointerEvents="none">
                     { tooltip != null && (
-                        <Text type="caption" align='center'>{tooltip.value}</Text>
+                        <Text type="caption" align="center">{tooltip.value}</Text>
                     )}
                 </Animated.View>
 
@@ -320,7 +320,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                 </CartesianChart>
             </View>
 
-            <Text type="caption" style={styles.timeLabel} align='center'>Time</Text>
+            <Text type="caption" style={styles.timeLabel} align="center">Time</Text>
             <View style={styles.labelsContainer}>
                 <View style={styles.labelItem}>
                     <View style={[styles.labelLine, { backgroundColor: dataColour }]} />

@@ -23,6 +23,7 @@ export default function ProfilesScreen() {
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
 
+	// Fetch the profiles when the screen is focused
 	useFocusEffect(
 		useCallback(() => {
 			async function fetchProfiles() {
@@ -105,5 +106,5 @@ const styles = StyleSheet.create({
 	},
 	placeholder: {
 		marginBottom: 16,
-	},
+	}
 });

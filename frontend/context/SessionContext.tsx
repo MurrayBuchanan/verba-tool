@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { router } from "expo-router";
 import { getToken, signIn, signOut } from "@/services/authentication-service";
 
+// Shared state for authentication
+
 interface SessionContext {
 	signIn: () => Promise<void>;
 	signOut: () => Promise<void>;

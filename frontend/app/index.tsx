@@ -8,7 +8,7 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function Index() {
 	const { signIn } = useAuthentication();
-	const textColour = useThemeColor({}, 'textSecondary');
+	const textColour = useThemeColor({}, "textSecondary");
 
 	const handleSignIn = async () => {
 		try {
@@ -22,17 +22,17 @@ export default function Index() {
 		<View style={styles.container}>
 			<View style={styles.content}>
 				<Image
-					source={require('../assets/images/conversation-placeholder.png')}
+					source={require("../assets/images/conversation-placeholder.png")}
 					style={styles.image}
 					contentFit="contain"
 				/>
-				<Text type='title' align='center' style={styles.title}>More Insights</Text>
-				<Text align='center'>Monitor and understand changes in communication patterns over time in relation to rehabilitation progress.</Text>
+				<Text type="title" align="center" style={styles.title}>More Insights</Text>
+				<Text align="center">Monitor and understand changes in communication patterns over time in relation to rehabilitation progress.</Text>
 			</View>
 
 			<View style={styles.footer}>
 				<Button title="Get Started" onPress={handleSignIn} />
-				<Text align='center' type='caption' style={{color: textColour}}>Your data stays private and secure</Text>
+				<Text align="center" type="caption" style={{color: textColour}}>Your data stays private and secure</Text>
 			</View>
 		</View>
 	);
@@ -42,12 +42,12 @@ const styles = StyleSheet.create({
   	container: {
     	flex: 1,
 		padding: 20,
-		justifyContent: 'space-between',
+		justifyContent: "space-between",
 	},
 	content: {
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
+		alignItems: "center",
+		justifyContent: "center",
 		padding: 40,
 	},
 	title: {
@@ -57,11 +57,11 @@ const styles = StyleSheet.create({
 	image: {
 		width: 280,
 		height: 280,
-		objectFit: 'contain',
+		objectFit: "contain",
 	},
 	footer: {
-		width: '100%',
+		width: "100%",
 		paddingBottom: 20,
 		gap: 12,
-	},
+	}
 });

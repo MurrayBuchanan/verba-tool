@@ -3,6 +3,7 @@ import { apiService } from "@/services/api-service";
 import { TranscriptWithFeatures, TranscriptWithSegments } from "@/constants/interfaces";
 
 // Run: npm test -- transcript-service.test
+// These test the service logic rather than the API calls
 
 jest.mock("@/services/api-service", () => ({
 	apiService: { get: jest.fn(), post: jest.fn(), put: jest.fn(), delete: jest.fn() }
@@ -89,7 +90,7 @@ describe("getTranscripts", () => {
 });
 
 describe("getTranscript", () => {
-	it ("The transcript is returned when it is found", async () => {
+	it ("The transcript is returned when there is a transcript", async () => {
 		mockApiService.get.mockResolvedValueOnce({ data: mockTranscription });
 
 		const result = await getTranscript(1);
@@ -97,7 +98,7 @@ describe("getTranscript", () => {
 		expect(result).toEqual(mockTranscription);
 	});
 
-	it ("An error is thrown when the transcript is not found", async () => {
+	it ("An error is thrown when there is no transcript", async () => {
 		const error = new Error("Not found");
 		mockApiService.get.mockRejectedValueOnce(error);
 

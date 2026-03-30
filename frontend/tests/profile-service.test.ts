@@ -3,6 +3,7 @@ import { apiService } from "@/services/api-service";
 import { Profile } from "@/constants/interfaces";
 
 // Run: npm test -- profile-service.test
+// These test the service logic rather than the API calls
 
 jest.mock("@/services/api-service", () => ({ 
 	apiService: { get: jest.fn(), post: jest.fn(), put: jest.fn(), delete: jest.fn() } 
@@ -55,7 +56,7 @@ describe("getProfiles", () => {
 });
 
 describe("getProfile", () => {
-	it ("The profile is returned when it is found", async () => {
+	it ("The profile is returned when there is a profile", async () => {
 		mockApiService.get.mockResolvedValueOnce({ data: mockProfile });
 
 		const result = await getProfile(1);
@@ -63,7 +64,7 @@ describe("getProfile", () => {
 		expect(result).toEqual(mockProfile);
 	});
 
-	it ("An error is thrown when the profile is not found", async () => {
+	it ("An error is thrown when there is no profile", async () => {
 		const error = new Error("Not found");
 		mockApiService.get.mockRejectedValueOnce(error);
 
@@ -72,7 +73,7 @@ describe("getProfile", () => {
 });
 
 describe("createProfile", () => {
-	it ("The created profile is created", async () => {
+	it ("The profile is created", async () => {
 		mockApiService.post.mockResolvedValueOnce({ data: mockProfile });
 
 		const result = await createProfile(mockProfile);
@@ -81,15 +82,15 @@ describe("createProfile", () => {
 	});
 
 	it ("An error is thrown when profile creation fails", async () => {
-		const error = new Error("Validation error");
+		const error = new Error("Create failed");
 		mockApiService.post.mockRejectedValueOnce(error);
 
-		await expect(createProfile(mockProfile)).rejects.toThrow("Validation error");
+		await expect(createProfile(mockProfile)).rejects.toThrow("Create failed");
 	});
 });
 
 describe("updateProfile", () => {
-	it ("The updated profile is updated", async () => {
+	it ("The profile is updated", async () => {
 		const updatedProfile = { ...mockProfile, name: "Bob Marley" };
 		mockApiService.put.mockResolvedValueOnce({ data: updatedProfile });
 
@@ -98,7 +99,7 @@ describe("updateProfile", () => {
 		expect(result).toEqual(updatedProfile);
 	});
 
-	it ("An error is thrown when update fails", async () => {
+	it ("An error is thrown when profile update fails", async () => {
 		const error = new Error("Update failed");
 		mockApiService.put.mockRejectedValueOnce(error);
 

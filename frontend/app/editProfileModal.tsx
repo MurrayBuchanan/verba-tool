@@ -19,6 +19,7 @@ export default function EditProfileModal() {
 	const [description, setDescription] = useState("");
 	const [errors, setErrors] = useState<ProfileErrors>({});
 
+	// Fetch the profile when the screen is focused
 	useEffect(() => {
 		async function getData() {
 			try {
@@ -33,6 +34,7 @@ export default function EditProfileModal() {
 		getData();
 	}, [id]);
 
+	// Update the profile
 	const handleUpdateProfile = useCallback(async () => {
 		const validationErrors = validateProfile({ name, description });
 		setErrors(validationErrors);
@@ -48,6 +50,7 @@ export default function EditProfileModal() {
 		}
 	}, [id, name, description]);
 
+	// Delete the profile
 	const handleDeleteProfile = useCallback(() => {
 		Alert.alert("Delete profile", "Are you sure you want to delete this profile?", [
 			{ text: "Cancel", style: "cancel" },
@@ -62,11 +65,13 @@ export default function EditProfileModal() {
 		]);
 	}, [id]);
 
+	// Solves a nested navigation issue with the stacks when switching profiles
 	const handleSwitchProfile = useCallback(() => {
 		router.dismissTo("/profilesScreen");
 		router.push({ pathname: "/profilesScreen" });
 	}, [id]);
 
+	// Save and cancel buttons
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerStyle: { backgroundColor: background },
@@ -138,5 +143,5 @@ const styles = StyleSheet.create({
 		bottom: 20,
 		left: 20,
 		right: 20,
-	},
+	}
 });

@@ -39,6 +39,7 @@ export default function ConversationDisplayScreen() {
 		]);
 	}, [id]);
 
+	// Put the delete conversation button in the header
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
@@ -47,6 +48,7 @@ export default function ConversationDisplayScreen() {
 		});
 	}, [navigation, handleDelete, warning]);
 
+	// Fetch the transcript when the screen is focused
 	useFocusEffect(
 		useCallback(() => {
 			async function fetchTranscript() {
@@ -133,6 +135,6 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	button: {
-		marginRight: 10,
+		marginRight: 10
 	}
 });

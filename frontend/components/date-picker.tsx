@@ -42,6 +42,7 @@ export function DatePicker({ label, value, onDateChange, minimumDate, maximumDat
 		setShowPicker(!showPicker);
 	};
 
+	// Different date pickers for iOS and Android due to using the native component
 	return (
 		<View>
 			<Text type="strong">{label}</Text>

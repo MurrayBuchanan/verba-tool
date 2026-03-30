@@ -26,6 +26,7 @@ export default function InterventionModal() {
 	const [endDate, setEndDate] = useState(new Date());
 	const [errors, setErrors] = useState<InterventionErrors>({});
 
+	// Create the intervention
 	const handleCreateIntervention = useCallback(async () => {
 		const validationErrors = validateIntervention({ name, description, goals, startDate, endDate });
 		setErrors(validationErrors);
@@ -50,6 +51,7 @@ export default function InterventionModal() {
 		}
 	}, [name, description, goals, success, startDate, endDate, profileId]);
 
+	// Save and cancel buttons
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerStyle: { backgroundColor: background },

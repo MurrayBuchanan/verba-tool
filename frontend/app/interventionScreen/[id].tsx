@@ -20,6 +20,7 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 import { IconButton } from "@/components/icon-button";
 import { Divider } from "@/components/divider";
 
+// Only show data points for the intervention
 function filterByDate(transcripts: TranscriptWithFeatures[], startDate: string, endDate: string): TranscriptWithFeatures[] {
 	const start = new Date(startDate);
 	const end = new Date(endDate);
@@ -48,12 +49,12 @@ export default function InterventionDetailScreen() {
 	const [interventionView, setInterventionView] = useState<string>("intervention");
 	const [showMean, setShowMean] = useState<boolean>(true);
 	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
-	const warning = useThemeColor({}, 'warning');
-	const accent = useThemeColor({}, 'accent');
-	const icon = useThemeColor({}, 'icon');
-	const background = useThemeColor({}, 'background');
-	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
-	const border = useThemeColor({}, 'backgroundTertiary');
+	const warning = useThemeColor({}, "warning");
+	const accent = useThemeColor({}, "accent");
+	const icon = useThemeColor({}, "icon");
+	const background = useThemeColor({}, "background");
+	const secondaryBackground = useThemeColor({}, "backgroundSecondary");
+	const border = useThemeColor({}, "backgroundTertiary");
 
 	const handleDeleteIntervention = useCallback(() => {
 		Alert.alert("Delete Intervention", "Are you sure you want to delete this intervention?", [
@@ -77,12 +78,14 @@ export default function InterventionDetailScreen() {
 		router.push({ pathname: "/editInterventionModal", params: { id } });
 	}, [id]);
 
+	// Put the delete button in the header
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (<IconButton icon={<Trash size={22} color={warning} />} onPress={handleDeleteIntervention} accessibilityLabel="Delete Intervention" />),
 		});
 	}, [navigation, handleDeleteIntervention, warning]);
 
+	// Fetch the intervention when the screen is focused
 	useFocusEffect(
 		useCallback(() => {
 			async function fetchData() {

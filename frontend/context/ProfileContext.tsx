@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
+// Shared state for the active profile
+
 interface ProfileContext {
 	profileId: number;
 	setProfileId: (id: number) => void;

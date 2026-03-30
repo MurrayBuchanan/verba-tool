@@ -27,6 +27,7 @@ export default function InterventionScreen() {
 	const textSecondary = useThemeColor({}, "textSecondary");
 	const backgroundSecondary = useThemeColor({}, "backgroundSecondary");
 
+	// Refresh interventions when the screen is focused
 	useFocusEffect(
 		useCallback(() => {
 			async function fetchInterventions() {
@@ -130,6 +131,6 @@ const styles = StyleSheet.create({
 		padding: 40,
 	},
 	placeholder: {
-		marginBottom: 16,
+		marginBottom: 16
 	}
 });

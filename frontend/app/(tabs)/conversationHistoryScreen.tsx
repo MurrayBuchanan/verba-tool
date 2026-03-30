@@ -20,9 +20,10 @@ export default function ConversationHistoryScreen() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
-	const warning = useThemeColor({}, 'warning');
-	const icon = useThemeColor({}, 'icon');
+	const warning = useThemeColor({}, "warning");
+	const icon = useThemeColor({}, "icon");
 
+	// Refresh transcripts when the screen is focused
 	useFocusEffect(
 		useCallback(() => {
 			async function fetchTranscripts() {
@@ -97,6 +98,6 @@ const styles = StyleSheet.create({
 		padding: 40,
 	},
 	placeholder: {
-		marginBottom: 16,
+		marginBottom: 16
 	}
 });

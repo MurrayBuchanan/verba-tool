@@ -18,6 +18,7 @@ export default function ProfileModal() {
 	const [description, setDescription] = useState("");
 	const [errors, setErrors] = useState<ProfileErrors>({});
 
+	// Create the profile
 	const handleCreateProfile = useCallback(async () => {
 		const validationErrors = validateProfile({ name, description });
 		setErrors(validationErrors);
@@ -37,6 +38,7 @@ export default function ProfileModal() {
 		}
 	}, [name, description]);
 
+	// Save and cancel buttons
 	useLayoutEffect(() => {
 		navigation.setOptions({
 			headerStyle: { backgroundColor: background },
@@ -82,5 +84,5 @@ const styles = StyleSheet.create({
 	content: {
 		padding: 20,
 		gap: 24,
-	},
+	}
 });

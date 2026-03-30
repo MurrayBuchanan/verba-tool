@@ -29,11 +29,11 @@ export default function MetricDisplayScreen() {
 	const [showStandardDeviation, setShowStandardDeviation] = useState<boolean>(true);
 	const [showInterventions, setShowInterventions] = useState<boolean>(true);
 	const metricDetails = METRIC_DEFINITIONS[selectedMetric];
-	const warning = useThemeColor({}, 'warning');
-	const icon = useThemeColor({}, 'icon');
-	const background = useThemeColor({}, 'background');
-	const secondaryBackground = useThemeColor({}, 'backgroundSecondary');
-	const border = useThemeColor({}, 'backgroundTertiary');
+	const warning = useThemeColor({}, "warning");
+	const icon = useThemeColor({}, "icon");
+	const background = useThemeColor({}, "background");
+	const secondaryBackground = useThemeColor({}, "backgroundSecondary");
+	const border = useThemeColor({}, "backgroundTertiary");
 
 	useEffect(() => {
 		setSelectedMetric(id);
@@ -167,6 +167,6 @@ const styles = StyleSheet.create({
 		padding: 40,
 	},
 	placeholder: {
-		marginBottom: 16,
+		marginBottom: 16
 	}
 });

@@ -20,9 +20,10 @@ export default function MetricsScreen() {
 	const [hasConversations, setHasConversations] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const hasInitiallyLoaded = useRef(false);
-	const warning = useThemeColor({}, 'warning');
-	const icon = useThemeColor({}, 'icon');
+	const warning = useThemeColor({}, "warning");
+	const icon = useThemeColor({}, "icon");
 
+	// Refresh indicators when the screen is focused
 	useFocusEffect(
 		useCallback(() => {
 			async function checkConversations() {
@@ -135,6 +136,6 @@ const styles = StyleSheet.create({
 		marginBottom: 20,
 	},
 	categoryHeader: {
-		paddingVertical: 10,
+		paddingVertical: 10
 	}
 });

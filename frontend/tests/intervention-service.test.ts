@@ -3,6 +3,7 @@ import { apiService } from "@/services/api-service";
 import { Intervention } from "@/constants/interfaces";
 
 // Run: npm test -- intervention-service.test
+// These test the service logic rather than the API calls
 
 jest.mock("@/services/api-service", () => ({
 	apiService: { get: jest.fn(), post: jest.fn(), put: jest.fn(), delete: jest.fn() }
@@ -61,7 +62,7 @@ describe("getInterventions", () => {
 });
 
 describe("getIntervention", () => {
-	it ("The intervention is returned when it is found", async () => {
+	it ("The intervention is returned when there is an intervention", async () => {
 		mockApiService.get.mockResolvedValueOnce({ data: mockIntervention });
 
 		const result = await getIntervention(1);
@@ -69,7 +70,7 @@ describe("getIntervention", () => {
 		expect(result).toEqual(mockIntervention);
 	});
 
-	it ("An error is thrown when the intervention is not found", async () => {
+	it ("An error is thrown when there is no intervention", async () => {
 		const error = new Error("Not found");
 		mockApiService.get.mockRejectedValueOnce(error);
 
@@ -87,10 +88,10 @@ describe("createIntervention", () => {
 	});
 
 	it ("An error is thrown when intervention creation fails", async () => {
-		const error = new Error("Validation error");
+		const error = new Error("Create failed");
 		mockApiService.post.mockRejectedValueOnce(error);
 
-		await expect(createIntervention(mockIntervention)).rejects.toThrow("Validation error");
+		await expect(createIntervention(mockIntervention)).rejects.toThrow("Create failed");
 	});
 });
 
@@ -104,7 +105,7 @@ describe("updateIntervention", () => {
 		expect(result).toEqual(updatedIntervention);
 	});
 
-	it ("An error is thrown when update fails", async () => {
+	it ("An error is thrown when intervention update fails", async () => {
 		const error = new Error("Update failed");
 		mockApiService.put.mockRejectedValueOnce(error);
 
