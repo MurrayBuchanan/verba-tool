@@ -10,7 +10,7 @@ app = FastAPI()
 # CORS to allow requests from Expo Client
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # TODO: Restrict if productionised
+    allow_origins=["*"], # Restrict if productionised
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

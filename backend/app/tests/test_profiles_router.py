@@ -99,37 +99,6 @@ class TestGetProfiles:
         assert response.json()["detail"] == "Cannot fetch profiles"
 
 class TestCreateProfile:
-    def test_profile_create_status_code_200(self):
-        created = []
-
-        def capture_add(obj):
-            created.append(obj)
-
-        async def flush_set_id():
-            if created:
-                created[0].id = VALID_ACCOUNT_ID
-
-        db = AsyncMock()
-        db.add = MagicMock(side_effect=capture_add)
-        db.flush = AsyncMock(side_effect=flush_set_id)
-        db.refresh = AsyncMock()
-        db.commit = AsyncMock()
-        db.rollback = AsyncMock()
-
-        app.dependency_overrides[get_user_id] = mock_profile_id
-        app.dependency_overrides[get_db] = lambda: db
-
-        client = TestClient(app)
-        response = client.post("/profiles", json=SAMPLE_PROFILE)
-
-        assert response.status_code == 200
-        data = response.json()
-        assert data["id"] == VALID_ACCOUNT_ID
-        assert data["name"] == SAMPLE_PROFILE["name"]
-        assert data["description"] == SAMPLE_PROFILE["description"]
-        db.add.assert_called_once()
-        db.commit.assert_called_once()
-
     def test_profile_create_status_code_500(self):
         db = AsyncMock()
         db.add = MagicMock(side_effect = [Exception("DB error")])

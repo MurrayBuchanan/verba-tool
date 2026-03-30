@@ -66,6 +66,6 @@ def test_when_speech_is_detected():
         raw_segments=[
             create_segment("Hello World!", duration = 1.2),
             create_segment("This is a test", duration = 3.0),
-        ],
+        ]
     )
     assert check_quality_gate(transcript) is None

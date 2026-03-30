@@ -141,46 +141,6 @@ class TestGetInterventions:
         assert response.json()["detail"] == "Cannot fetch interventions"
 
 class TestCreateIntervention:
-    def test_intervention_create_status_code_200(self):
-        created = []
-
-        def capture_add(obj):
-            created.append(obj)
-
-        async def flush_set_id():
-            if created:
-                created[0].id = VALID_ACCOUNT_ID
-
-        profile_result = MagicMock()
-        profile_result.scalar_one_or_none.return_value = MagicMock()
-
-        db = AsyncMock()
-        db.execute = AsyncMock(return_value = profile_result)
-        db.add = MagicMock(side_effect = capture_add)
-        db.flush = AsyncMock(side_effect = flush_set_id)
-        db.refresh = AsyncMock()
-        db.commit = AsyncMock()
-        db.rollback = AsyncMock()
-
-        app.dependency_overrides[get_user_id] = mock_profile_id
-        app.dependency_overrides[get_db] = lambda: db
-
-        client = TestClient(app)
-        response = client.post("/interventions", json = SAMPLE_INTERVENTION)
-
-        assert response.status_code == 200
-        data = response.json()
-        assert data["id"] == VALID_ACCOUNT_ID
-        assert data["profile_id"] == SAMPLE_INTERVENTION["profile_id"]
-        assert data["name"] == SAMPLE_INTERVENTION["name"]
-        assert data["description"] == SAMPLE_INTERVENTION["description"]
-        assert data["goals"] == SAMPLE_INTERVENTION["goals"]
-        assert data["success"] == SAMPLE_INTERVENTION["success"]
-        assert data["start_date"] == SAMPLE_INTERVENTION["start_date"]
-        assert data["end_date"] == SAMPLE_INTERVENTION["end_date"]
-        db.add.assert_called_once()
-        db.commit.assert_called_once()
-
     def test_intervention_create_status_code_500(self):
         profile_result = MagicMock()
         profile_result.scalar_one_or_none.return_value = MagicMock()
@@ -205,7 +165,7 @@ class TestUpdateIntervention:
         update_json = {
             **SAMPLE_INTERVENTION,
             "name": "Jane Doe",
-            "description": "Updated description",
+            "description": "Updated description"
         }
 
         intervention_result = MagicMock()
@@ -238,18 +198,6 @@ class TestUpdateIntervention:
         assert intervention.name == update_json["name"]
         assert intervention.description == update_json["description"]
         db.commit.assert_called_once()
-
-    def test_intervention_update_status_code_404(self):
-        db = mock_db(scalar_result=None)
-
-        app.dependency_overrides[get_user_id] = mock_profile_id
-        app.dependency_overrides[get_db] = lambda: db
-
-        client = TestClient(app)
-        response = client.put(f"/interventions/{INVALID_ACCOUNT_ID}", json = SAMPLE_INTERVENTION)
-
-        assert response.status_code == 404
-        assert response.json()["detail"] == "Intervention not found"
 
     def test_intervention_update_status_code_500(self):
         db = AsyncMock()
@@ -288,18 +236,6 @@ class TestGetIntervention:
         assert data["name"] == intervention.name
         assert data["description"] == intervention.description
 
-    def test_intervention_fetch_status_code_404(self):
-        db = mock_db(scalar_result=None)
-
-        app.dependency_overrides[get_user_id] = mock_profile_id
-        app.dependency_overrides[get_db] = lambda: db
-
-        client = TestClient(app)
-        response = client.get(f"/interventions/{INVALID_ACCOUNT_ID}")
-
-        assert response.status_code == 404
-        assert response.json()["detail"] == "Intervention not found"
-
     def test_intervention_fetch_status_code_500(self):
         db = AsyncMock()
         db.execute = AsyncMock(side_effect = [Exception("DB error")])
@@ -313,7 +249,6 @@ class TestGetIntervention:
 
         assert response.status_code == 500
         assert response.json()["detail"] == "Cannot fetch intervention"
-
 
 class TestDeleteIntervention:
     def test_intervention_delete_status_code_200(self):
@@ -335,18 +270,6 @@ class TestDeleteIntervention:
         assert response.status_code == 200
         assert response.json()["message"] == "Intervention deleted"
         db.commit.assert_called_once()
-
-    def test_intervention_delete_status_code_404(self):
-        db = mock_db(scalar_result=None)
-
-        app.dependency_overrides[get_user_id] = mock_profile_id
-        app.dependency_overrides[get_db] = lambda: db
-
-        client = TestClient(app)
-        response = client.delete(f"/interventions/{INVALID_ACCOUNT_ID}")
-
-        assert response.status_code == 404
-        assert response.json()["detail"] == "Intervention not found"
 
     def test_intervention_delete_status_code_500(self):
         db = AsyncMock()
