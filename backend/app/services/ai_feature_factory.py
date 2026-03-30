@@ -5,7 +5,8 @@ from app.structures.schemas import TranscriptSegment, AIFeatures
 from app.services.ai_features import extract_features
 
 """
-Median aggregation of LLMs reduce the variance of extracted features between runs
+LLM Ensemble to extract linguistic indicators from transcript
+• Uses median aggregation to reduce variance
 """
 
 def _aggregate_metric(runs: List[AIFeatures], metric: str) -> dict:
@@ -20,11 +21,13 @@ def _aggregate_metric(runs: List[AIFeatures], metric: str) -> dict:
     # Calculate the median score for each speaker
     for speaker in speakers:
         scores = []
+
         # Get scores for each speaker from each run
         for run in runs:
             score = getattr(run, metric, {}).get(speaker)
             if score is not None:
                 scores.append(float(score))
+                
         # Calculate the median score for speaker
         if scores:
             median_scores[speaker] = int(round(median(scores)))

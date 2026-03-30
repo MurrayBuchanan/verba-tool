@@ -4,7 +4,7 @@ from app.services.ai_feature_factory import extract_features_factory
 from app.structures.schemas import NLPFeatures, TranscriptSegment, Transcript, AIFeatures
 
 """
-Conversation analytics to combine established and AI features into a single transcript
+Conversation analytics to combine NLP and LLM features into a single transcript
 """
 
 class ConversationAnalytics:

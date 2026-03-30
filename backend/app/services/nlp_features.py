@@ -4,7 +4,7 @@ import textstat
 from app.structures.schemas import Feature, TranscriptSegment
 
 """
-NLP flow for feature extraction
+NLP feature calculations
 """
 
 try:
@@ -19,7 +19,6 @@ def _combine_segments(segments: List[TranscriptSegment]) -> str:
         texts.append(segment.text)
     return " ".join(texts)
 
-# Count words in text
 def _count_words(text: str) -> int:
     if not text:
         return 0
