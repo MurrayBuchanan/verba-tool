@@ -84,7 +84,9 @@ The client handles user interaction, audio recording, data visualisation and pro
    3. Create development build (Select one)
       
       Production Builds ```eas build --platform all```
+
       iOS Development Build ```eas build --platform ios --profile development```
+      
       Android Development Build ```eas build --platform android --profile development```
 
 ## How to run

@@ -1,5 +1,5 @@
 from typing import List
-from app.services.nlp_features import NLPFeatureExtraction
+from app.services import nlp_features as extract_nlp_features
 from app.services.ai_feature_factory import extract_features_factory
 from app.structures.schemas import NLPFeatures, TranscriptSegment, Transcript, AIFeatures
 
@@ -8,9 +8,6 @@ Conversation analytics to combine established and AI features into a single tran
 """
 
 class ConversationAnalytics:
-    def __init__(self):
-        self.nlp_feature_extraction = NLPFeatureExtraction()
-
     def _calculate_total_duration(self, segments: List[TranscriptSegment]) -> float:
         total_duration = 0.0
         for segment in segments:
@@ -24,12 +21,12 @@ class ConversationAnalytics:
         ai_features = extract_features_factory(segments) # Run an ensemble of LLMs
 
         nlp_features = NLPFeatures(
-            words_per_minute = self.nlp_feature_extraction.wpm_per_speaker(segments),
-            average_word_length = self.nlp_feature_extraction.avg_word_length_per_speaker(segments),
-            adverb_ratio = self.nlp_feature_extraction.adverb_ratio_per_speaker(segments),
-            flesch_kincaid_grade = self.nlp_feature_extraction.flesch_kincaid_per_speaker(segments),
-            personal_pronoun_ratio = self.nlp_feature_extraction.prp_ratio_per_speaker(segments),
-            number_of_unique_words = self.nlp_feature_extraction.n_unique_words_per_speaker(segments)
+            words_per_minute=extract_nlp_features.wpm_per_speaker(segments),
+            average_word_length=extract_nlp_features.avg_word_length_per_speaker(segments),
+            adverb_ratio=extract_nlp_features.adverb_ratio_per_speaker(segments),
+            flesch_kincaid_grade=extract_nlp_features.flesch_kincaid_per_speaker(segments),
+            personal_pronoun_ratio=extract_nlp_features.prp_ratio_per_speaker(segments),
+            number_of_unique_words=extract_nlp_features.n_unique_words_per_speaker(segments)
         )
 
         # Combine all features
