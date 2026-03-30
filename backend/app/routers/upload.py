@@ -37,10 +37,10 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
     # Check if profile exists
     result = await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))
     profile = result.scalar_one_or_none()
+
     if profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
 
-    # Verify uploaded file is an audio file
     if not file.content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Invalid audio format")
 
@@ -54,48 +54,47 @@ async def upload_audio(file: UploadFile = File(...), created_at: str = Header(..
             with open(temp_input, "wb") as temp_file:
                 temp_file.write(contents)
 
-            # Convert audio to WAV format
+            # Convert audio to Azure Speech Service compatible format
             audio_converter.convert_to_wav(temp_input, temp_wav)
 
             # Perform transcription and speaker diarisation
             segments = speech_service.diarise_audio(temp_wav)
 
-            # Extract linguistic indicators from transcript
+            # Extract indicators from transcript
             analytics: Transcript = conversation_analytics.analyse(segments)
 
-        # Check if the audio meets sufficient quality criteria
+        # Check if the audio meets quality criteria
         quality_error = check_quality_gate(analytics)
         if quality_error:
             raise HTTPException(status_code=400, detail=quality_error)
 
         # Add the transcript to the database
         transcript_metadata = TranscriptMetadata(
-            profile_id=profile.id,
-            created_at=created_at,
-            total_duration=analytics.total_duration or 0.0,
+            profile_id = profile.id,
+            created_at = created_at,
+            total_duration = analytics.total_duration or 0.0,
         )
         db.add(transcript_metadata)
         await db.flush()
         
         # Add the transcript features to the database
         transcript_features = TranscriptFeatures(
-            transcript_metadata_id=transcript_metadata.id,
-            words_per_minute=json.dumps(analytics.words_per_minute or {}),
-            average_word_length=json.dumps(analytics.average_word_length or {}),
-            adverb_ratio=json.dumps(analytics.adverb_ratio or {}),
-            flesch_kincaid_grade=json.dumps(analytics.flesch_kincaid_grade or {}),
-            personal_pronoun_ratio=json.dumps(analytics.personal_pronoun_ratio or {}),
-            number_of_unique_words=json.dumps(analytics.number_of_unique_words or {}),
-            impoverished_vocabulary=json.dumps(analytics.impoverished_vocabulary or {}),
-            word_finding_difficulties=json.dumps(analytics.word_finding_difficulties or {}),
-            semantic_paraphasias=json.dumps(analytics.semantic_paraphasias or {}),
-            syntactic_simplification=json.dumps(analytics.syntactic_simplification or {}),
-            discourse_impairment=json.dumps(analytics.discourse_impairment or {})
+            transcript_metadata_id = transcript_metadata.id,
+            words_per_minute = json.dumps(analytics.words_per_minute or {}),
+            average_word_length = json.dumps(analytics.average_word_length or {}),
+            adverb_ratio = json.dumps(analytics.adverb_ratio or {}),
+            flesch_kincaid_grade = json.dumps(analytics.flesch_kincaid_grade or {}),
+            personal_pronoun_ratio = json.dumps(analytics.personal_pronoun_ratio or {}),
+            number_of_unique_words = json.dumps(analytics.number_of_unique_words or {}),
+            impoverished_vocabulary = json.dumps(analytics.impoverished_vocabulary or {}),
+            word_finding_difficulties = json.dumps(analytics.word_finding_difficulties or {}),
+            semantic_paraphasias = json.dumps(analytics.semantic_paraphasias or {}),
+            syntactic_simplification = json.dumps(analytics.syntactic_simplification or {}),
+            discourse_impairment = json.dumps(analytics.discourse_impairment or {})
         )
         db.add(transcript_features)
         await db.flush()
         
-        # Add the segments to the database
         for segment in segments:
             transcript_segment = TranscriptSegment(
                 transcript_metadata_id=transcript_metadata.id,

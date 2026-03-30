@@ -6,7 +6,7 @@ from app.core.config import API_TOKEN
 from app.structures.models import User
 
 """
-Authenticate user if they have a valid API token, and if they have a valid user ID.
+Authenticate user if they have a valid API token and user ID.
 """
 
 async def get_current_user(authorisation: Optional[str] = Header(None, alias="Authorisation"), user: Optional[str] = Header(None, alias="UserID"), db: AsyncSession = Depends(get_db)) -> User:
@@ -17,11 +17,11 @@ async def get_current_user(authorisation: Optional[str] = Header(None, alias="Au
     if not user:
         raise HTTPException(status_code=401, detail="No user ID provided")
         
-    # Get or create user
+    # Get user from database
     user_id = user
     user = await db.get(User, user_id)
-    if user is None:
-        user = User(id=user_id)
+    if user is None: # Create if new
+        user = User(id = user_id)
         db.add(user)
         await db.flush()
         await db.commit()

@@ -10,16 +10,14 @@ from app.structures.models import TranscriptMetadata, TranscriptFeatures, Transc
 
 router = APIRouter(prefix="/transcripts", tags=["transcripts"])
 
-# Get all transcripts for a profile
+# Get all transcripts for a profile for chart
 @router.get("")
 async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db), profile_id: int = Query(...)) -> JSONResponse:
     try:
-        # Check if profile exists
         profile = (await db.execute(select(ProfileModel).where(ProfileModel.id == profile_id, ProfileModel.user_id == user_id))).scalar_one_or_none()
         if profile is None:
             raise HTTPException(status_code=404, detail="Profile not found")
 
-        # Get all transcripts metadata and features for a profile
         result = await db.execute(select(TranscriptMetadata, TranscriptFeatures).join(TranscriptFeatures, TranscriptMetadata.id == TranscriptFeatures.transcript_metadata_id).where(TranscriptMetadata.profile_id == profile_id).order_by(TranscriptMetadata.created_at.desc()))
         rows = result.all()
 
@@ -50,18 +48,16 @@ async def get_transcripts(user_id: str = Depends(get_user_id), db: AsyncSession 
         await db.rollback()
         raise HTTPException(status_code=500, detail="Cannot fetch transcripts")
 
-# Get a specific transcript with segments
+# Get a specific transcript with segments for chat
 @router.get("/{transcript_id}")
 async def get_transcript(transcript_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        # Check if transcript exists
         result = await db.execute(select(TranscriptMetadata).join(ProfileModel, TranscriptMetadata.profile_id == ProfileModel.id).where(TranscriptMetadata.id == transcript_id, ProfileModel.user_id == user_id))
         transcript = result.scalar_one_or_none()
 
         if transcript is None:
             raise HTTPException(status_code=404, detail="Transcript not found")
         
-        # Get all segments for transcript in order of creation
         segments = await db.execute(select(TranscriptSegment).where(TranscriptSegment.transcript_metadata_id == transcript.id).order_by(TranscriptSegment.offset))
         segments = segments.scalars().all()
 
@@ -91,14 +87,13 @@ async def get_transcript(transcript_id: int, user_id: str = Depends(get_user_id)
 @router.delete("/{transcript_id}")
 async def delete_transcript(transcript_id: int, user_id: str = Depends(get_user_id), db: AsyncSession = Depends(get_db)) -> JSONResponse:
     try:
-        # Check if transcript exists
         result = await db.execute(select(TranscriptMetadata).join(ProfileModel, TranscriptMetadata.profile_id == ProfileModel.id).where(TranscriptMetadata.id == transcript_id, ProfileModel.user_id == user_id))
         transcript = result.scalar_one_or_none()
 
         if transcript is None:
             raise HTTPException(status_code=404, detail="Transcript not found")
         
-        # Delete all metadata, segments, and features for a transcript
+        # Delete transcript parts (dependencies too)
         await db.execute(delete(TranscriptSegment).where(TranscriptSegment.transcript_metadata_id == transcript.id))
         await db.execute(delete(TranscriptFeatures).where(TranscriptFeatures.transcript_metadata_id == transcript.id))
         await db.execute(delete(TranscriptMetadata).where(TranscriptMetadata.id == transcript.id))
