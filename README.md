@@ -33,5 +33,5 @@ Student: [Murray Buchanan](mailto:murray.buchanan.2022@uni.strath.ac.uk)
 
 ### Location
 
-Univeristy of Strathclyde
+University of Strathclyde
 <br>16 Richmond St, Glasgow G1 1XQ

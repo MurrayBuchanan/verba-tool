@@ -49,7 +49,7 @@ def test_when_audio_is_at_the_duration_limit():
 def test_when_audio_exceeds_duration_limit():
     transcript = create_transcript(
         total_duration=1200.1,
-        raw_segments=[create_segment("This must be a very very slow sentence!", duration = 1200.1)],
+        raw_segments=[create_segment("This must be a very very slow sentence!", duration = 1200.1)]
     )
     assert check_quality_gate(transcript) == "Audio must be less than 20 minutes."
 

@@ -23,7 +23,7 @@ def create_ai_features(**metric):
         "word_finding_difficulties": {},
         "semantic_paraphasias": {},
         "syntactic_simplification": {},
-        "discourse_impairment": {},
+        "discourse_impairment": {}
     }
     fields.update(metric)
     return AIFeatures(**fields)
@@ -66,7 +66,7 @@ def test_aggregate_metric_single_run():
     aggregated_indicator = _aggregate_metric(runs, "semantic_paraphasias")
     assert aggregated_indicator["Speaker-1"] == 4
 
-def test_aggragate_metric_no_recording():
+def test_aggregate_metric_no_recording():
     runs = [create_ai_features(syntactic_simplification={})]
     aggregated_indicator = _aggregate_metric(runs, "syntactic_simplification")
     assert aggregated_indicator == {}

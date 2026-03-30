@@ -66,7 +66,7 @@ The server manages audio processing, transcription, diarisation, NLP and LLM fea
 	
 	To deactivate: `deactivate`
 
-4. Install dependancies 
+4. Install dependencies 
 	```bash
 	python -m pip install -r requirements.txt
 	```
