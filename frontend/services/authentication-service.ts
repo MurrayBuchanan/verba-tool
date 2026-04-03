@@ -59,13 +59,25 @@ export async function getToken(): Promise<string | null> {
 	return token;
 }
 
-export async function getUserId(): Promise<string | null> {
+export type IdTokenClaims = {
+	sub?: string;
+	name?: string;
+	email?: string;
+	emails?: string[];
+	preferred_username?: string;
+};
+
+export async function getIdTokenClaims(): Promise<IdTokenClaims | null> {
 	const token = await getToken();
 	if (!token) {
 		return null;
 	}
-	const decoded = jwtDecode<{ sub?: string }>(token);
-	return decoded.sub ?? null;
+	return jwtDecode<IdTokenClaims>(token);
+}
+
+export async function getUserId(): Promise<string | null> {
+	const claims = await getIdTokenClaims();
+	return claims?.sub ?? null;
 }
 
 export async function signOut() {

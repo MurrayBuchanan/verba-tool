@@ -1,6 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { ChartLine, ClipboardList, History, Mic } from "lucide-react-native";
+import { ChartLine, ClipboardList, History, Mic, User } from "lucide-react-native";
 import { HapticFeedback } from "@/components/haptic-feedback";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { ToProfileButton, EditProfileButton } from "@/components/account-buttons";
@@ -44,6 +44,10 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name="conversationHistoryScreen"
 				options={{ title: "Chat History", tabBarIcon: ({ color }) => <History size={22} color={color} /> }}
+			/>
+			<Tabs.Screen
+				name="profileScreen"
+				options={{ title: "Profile", tabBarIcon: ({ color }) => <User size={22} color={color} /> }}
 			/>
 		</Tabs>
 	);
