@@ -1,22 +1,29 @@
 import { dateToMidnight } from "@/utils/datetime-formatting";
 
 type ProfileProps = {
-	name?: string;
+	firstName?: string;
+	lastName?: string;
 	description?: string;
 };
 
 export type ProfileErrors = {
-	name?: string;
+	firstName?: string;
+	lastName?: string;
 	description?: string;
 };
 
 // Input validation for the profile form
 export function validateProfile(values: ProfileProps): ProfileErrors {
 	const errors: ProfileErrors = {};
-	if (!values.name?.trim()) {
-		errors.name = "Name is required";
-	} else if (values.name.length > 100) {
-		errors.name = "Name must be less than 100 characters.";
+	if (!values.firstName?.trim()) {
+		errors.firstName = "First name is required";
+	} else if (values.firstName.length > 100) {
+		errors.firstName = "First name must be less than 100 characters.";
+	}
+	if (!values.lastName?.trim()) {
+		errors.lastName = "Last name is required";
+	} else if (values.lastName.length > 100) {
+		errors.lastName = "Last name must be less than 100 characters.";
 	}
 	if (values.description && values.description.length > 1000) {
 		errors.description = "Description must be less than 1000 characters.";

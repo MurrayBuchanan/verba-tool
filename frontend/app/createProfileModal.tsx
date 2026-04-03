@@ -3,7 +3,8 @@ import { StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Alert } from "r
 import { router, useNavigation } from "expo-router";
 import { ThemedView as View } from "@/components/themed-view";
 import { TextField as TextField } from "@/components/textfield";
-import { createProfile } from "@/services/profile-service";
+import { createProfile, uploadProfilePicture } from "@/services/profile-service";
+import { ProfilePhotoField } from "@/components/profile-photo-field";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { validateProfile, hasErrors, type ProfileErrors } from "@/utils/form-validation";
 import { X, Check } from "lucide-react-native";
@@ -14,29 +15,34 @@ export default function ProfileModal() {
 	const warningColour = useThemeColor({}, "warning");
 	const accentColour = useThemeColor({}, "accent");
 	const background = useThemeColor({}, "background");
-	const [name, setName] = useState("");
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
 	const [description, setDescription] = useState("");
 	const [errors, setErrors] = useState<ProfileErrors>({});
+	const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
 
 	// Create the profile
 	const handleCreateProfile = useCallback(async () => {
-		const validationErrors = validateProfile({ name, description });
+		const validationErrors = validateProfile({ firstName, lastName, description });
 		setErrors(validationErrors);
 		if (hasErrors(validationErrors)) {
 			return;
 		}
 
 		try {
-			await createProfile({
-				name: name.trim(),
+			const created = await createProfile({
+				first_name: firstName.trim(),
+				last_name: lastName.trim(),
 				description: description.trim() || null,
 			});
-			
+			if (pendingImageUri && created.id != null) {
+				await uploadProfilePicture(created.id, pendingImageUri);
+			}
 			router.back();
 		} catch {
 			Alert.alert("Cannot create profile", "Please try again");
 		}
-	}, [name, description]);
+	}, [firstName, lastName, description, pendingImageUri]);
 
 	// Save and cancel buttons
 	useLayoutEffect(() => {
@@ -55,12 +61,25 @@ export default function ProfileModal() {
 		<View style={[styles.container, { backgroundColor: background }]}>
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+					<ProfilePhotoField
+						displayUri={pendingImageUri}
+						onPick={setPendingImageUri}
+						onRemove={() => setPendingImageUri(null)}
+						canRemove={!!pendingImageUri}
+					/>
 					<TextField
-						label="Name"
-						value={name}
-						onChangeText={setName}
-						placeholder="Enter profile name"
-						error={errors.name}
+						label="First name"
+						value={firstName}
+						onChangeText={setFirstName}
+						placeholder="Enter first name"
+						error={errors.firstName}
+					/>
+					<TextField
+						label="Last name"
+						value={lastName}
+						onChangeText={setLastName}
+						placeholder="Enter last name"
+						error={errors.lastName}
 					/>
 
 					<TextField

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
-import { ThemedText as Text } from "@/components/themed-text";;
+import { ThemedText as Text } from "@/components/themed-text";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 type Props = {

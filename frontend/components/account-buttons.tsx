@@ -2,9 +2,8 @@ import { Alert, View, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 import { useAuthentication } from "@/context/SessionContext";
-import { useProfile } from "@/context/ProfileContext";
 import { IconButton } from "@/components/icon-button";
-import { ArrowLeft, LogOut, User } from "lucide-react-native";
+import { ArrowLeft, LogOut } from "lucide-react-native";
 import { useRouter } from "expo-router";
 
 export function ToProfileButton() {
@@ -14,22 +13,6 @@ export function ToProfileButton() {
 	return (
 		<View style={styles.container}>
 			<IconButton icon={<ArrowLeft size={22} color={icon} />} onPress={() => router.dismissTo("/profilesScreen")} accessibilityLabel="Back to Profiles Button" />
-		</View>
-	);
-}
-
-export function EditProfileButton() {
-	const icon = useThemeColor({}, "icon");
-	const router = useRouter();
-	const { profileId } = useProfile();
-
-	const handlePress = () => {
-		router.push({ pathname: "/editProfileModal", params: { id: String(profileId) } });
-	};
-
-	return (
-		<View style={styles.container}>
-			<IconButton icon={<User size={22} color={icon} />} onPress={handlePress} accessibilityLabel="Edit profile" />
 		</View>
 	);
 }

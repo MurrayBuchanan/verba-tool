@@ -35,6 +35,13 @@
     "plugins": [
       "expo-router",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow access to your photos to set a profile picture.",
+          "cameraPermission": "Allow the camera to take a profile picture."
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {

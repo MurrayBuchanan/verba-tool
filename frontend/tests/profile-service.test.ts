@@ -12,12 +12,13 @@ jest.mock("@/services/api-service", () => ({
 const mockApiService = apiService as jest.Mocked<typeof apiService>;
 
 const mockProfile: Profile = {
-    id: 1,
-	name: "John Doe",
-	description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+	id: 1,
+	first_name: "John",
+	last_name: "Doe",
+	description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 };
 
-const mockProfiles: Profile[] = [mockProfile, { ...mockProfile, id: 2, name: "Jane Doe" }];
+const mockProfiles: Profile[] = [mockProfile, { ...mockProfile, id: 2, first_name: "Jane", last_name: "Doe" }];
 
 beforeEach(() => {
 	jest.clearAllMocks();
@@ -91,7 +92,7 @@ describe("createProfile", () => {
 
 describe("updateProfile", () => {
 	it ("The profile is updated", async () => {
-		const updatedProfile = { ...mockProfile, name: "Bob Marley" };
+		const updatedProfile = { ...mockProfile, first_name: "Bob", last_name: "Marley" };
 		mockApiService.put.mockResolvedValueOnce({ data: updatedProfile });
 
 		const result = await updateProfile(1, updatedProfile);

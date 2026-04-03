@@ -13,8 +13,10 @@ class Profile(Base):
     __tablename__ = "profiles"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("users.id"), nullable=False)
-    name = Column(String, nullable=False)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
     description = Column(String)
+    picture_path = Column(Text, nullable=True)
 
 class TranscriptMetadata(Base):
     __tablename__ = "transcript_metadata"

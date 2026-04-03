@@ -1,7 +1,9 @@
 export interface Profile {
 	id?: number;
-	name: string;
+	first_name: string;
+	last_name: string;
 	description: string | null;
+	picture_url?: string | null;
 }
 
 export interface TranscriptMetadata {

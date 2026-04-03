@@ -6,6 +6,7 @@ import { ThemedView as View } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { SpeakerSegment } from "@/components/speaker-segment";
 import { getProfile } from "@/services/profile-service";
+import { profileDisplayName } from "@/utils/profile-name";
 import { TranscriptWithSegments } from "@/constants/interfaces";
 import { getTranscript, deleteTranscript } from "@/services/transcript-service";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -66,7 +67,7 @@ export default function ConversationDisplayScreen() {
 
 					try {
 						const profile = await getProfile(data.profile_id);
-						setProfileName(profile.name);
+						setProfileName(profileDisplayName(profile));
 					} catch {
 						setProfileName(null);
 					}

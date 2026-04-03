@@ -16,7 +16,7 @@ export const RecordButton = () => {
 	const [createdAt, setCreatedAt] = useState<Date | null>(null);
 	const accentColour = useThemeColor({}, "accent");
 	const warningColour = useThemeColor({}, "warning");
-	const meanColour = useThemeColor({}, "meanColour");
+	const processingColour = useThemeColor({}, "tabIconDefault");
 
 	// Request microphone permission
 	useEffect(() => {
@@ -79,7 +79,7 @@ export const RecordButton = () => {
 
 	const getButtonColour = () => {
 		if (isProcessing) {
-			return meanColour;
+			return processingColour;
 		}
 		if (recorderState.isRecording) {
 			return warningColour;

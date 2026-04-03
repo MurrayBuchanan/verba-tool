@@ -12,6 +12,8 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 import { useProfile } from "@/context/ProfileContext";
 import { getProfiles } from "@/services/profile-service";
 import { Profile } from "@/constants/interfaces";
+import { resolveProfilePictureUrl } from "@/utils/profile-picture";
+import { profileDisplayName } from "@/utils/profile-name";
 
 export default function ProfilesScreen() {
 	const router = useRouter();
@@ -67,8 +69,9 @@ export default function ProfilesScreen() {
 						{profiles.map((profile) => (
 							<Item
 								key={profile.id}
-								name={profile.name}
+								name={profileDisplayName(profile)}
 								subtitle={profile.description || undefined}
+								avatarUri={resolveProfilePictureUrl(profile.picture_url)}
 								onPress={() => {setProfileId(profile.id!); router.push("/(tabs)/recordAudioScreen")}}
 							/>
 						))}

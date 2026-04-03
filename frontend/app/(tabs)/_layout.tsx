@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ChartLine, ClipboardList, History, Mic, User } from "lucide-react-native";
 import { HapticFeedback } from "@/components/haptic-feedback";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { ToProfileButton, EditProfileButton } from "@/components/account-buttons";
+import { ToProfileButton } from "@/components/account-buttons";
 
 export default function TabLayout() {
 	const insets = useSafeAreaInsets();
@@ -28,7 +28,6 @@ export default function TabLayout() {
 				headerTintColor: text,
 				tabBarButton: HapticFeedback,
 				headerLeft: () => (<ToProfileButton />),
-				headerRight: () => (<EditProfileButton />),
 				headerShadowVisible: false,
 				tabBarShowLabel: false,
 				tabBarHideOnKeyboard: true,

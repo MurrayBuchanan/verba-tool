@@ -2,7 +2,9 @@ import { useState, useLayoutEffect, useCallback, useEffect } from "react";
 import { StyleSheet, View, Platform, ScrollView, KeyboardAvoidingView, Alert } from "react-native";
 import { router, useNavigation, useLocalSearchParams } from "expo-router";
 import { TextField as TextField } from "@/components/textfield";
-import { getProfile, updateProfile, deleteProfile } from "@/services/profile-service";
+import { getProfile, updateProfile, deleteProfile, uploadProfilePicture, deleteProfilePicture } from "@/services/profile-service";
+import { ProfilePhotoField } from "@/components/profile-photo-field";
+import { resolveProfilePictureUrl } from "@/utils/profile-picture";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { validateProfile, hasErrors, ProfileErrors } from "@/utils/form-validation";
 import { X, Check } from "lucide-react-native";
@@ -15,17 +17,25 @@ export default function EditProfileModal() {
 	const warningColour = useThemeColor({}, "warning");
 	const accentColour = useThemeColor({}, "accent");
 	const background = useThemeColor({}, "background");
-	const [name, setName] = useState("");
+	const [firstName, setFirstName] = useState("");
+	const [lastName, setLastName] = useState("");
 	const [description, setDescription] = useState("");
 	const [errors, setErrors] = useState<ProfileErrors>({});
+	const [remotePictureUrl, setRemotePictureUrl] = useState<string | null>(null);
+	const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
+	const [removePictureRequested, setRemovePictureRequested] = useState(false);
 
 	// Fetch the profile when the screen is focused
 	useEffect(() => {
 		async function getData() {
 			try {
 				const data = await getProfile(parseInt(id, 10));
-				setName(data.name ?? "");
+				setFirstName(data.first_name ?? "");
+				setLastName(data.last_name ?? "");
 				setDescription(data.description ?? "");
+				setRemotePictureUrl(data.picture_url ?? null);
+				setPendingImageUri(null);
+				setRemovePictureRequested(false);
 			} catch {
 				Alert.alert("Failed to load profile", "Please try again");
 				router.back();
@@ -36,19 +46,29 @@ export default function EditProfileModal() {
 
 	// Update the profile
 	const handleUpdateProfile = useCallback(async () => {
-		const validationErrors = validateProfile({ name, description });
+		const validationErrors = validateProfile({ firstName, lastName, description });
 		setErrors(validationErrors);
 		if (hasErrors(validationErrors)) {
 			return null;
 		}
 
 		try {
-			await updateProfile(parseInt(id, 10), { name: name.trim(), description: description.trim() || null });
+			const pid = parseInt(id, 10);
+			await updateProfile(pid, {
+				first_name: firstName.trim(),
+				last_name: lastName.trim(),
+				description: description.trim() || null,
+			});
+			if (pendingImageUri) {
+				await uploadProfilePicture(pid, pendingImageUri);
+			} else if (removePictureRequested && remotePictureUrl) {
+				await deleteProfilePicture(pid);
+			}
 			router.back();
 		} catch {
 			Alert.alert("Cannot update profile", "Please try again");
 		}
-	}, [id, name, description]);
+	}, [id, firstName, lastName, description, pendingImageUri, removePictureRequested, remotePictureUrl]);
 
 	// Delete the profile
 	const handleDeleteProfile = useCallback(() => {
@@ -63,12 +83,6 @@ export default function EditProfileModal() {
 				}
 			}},
 		]);
-	}, [id]);
-
-	// Solves a nested navigation issue with the stacks when switching profiles
-	const handleSwitchProfile = useCallback(() => {
-		router.dismissTo("/profilesScreen");
-		router.push({ pathname: "/profilesScreen" });
 	}, [id]);
 
 	// Save and cancel buttons
@@ -88,12 +102,31 @@ export default function EditProfileModal() {
 		<View style={[styles.container, { backgroundColor: background }]}>
 			<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
 				<ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+					<ProfilePhotoField
+						displayUri={pendingImageUri ?? (removePictureRequested ? null : resolveProfilePictureUrl(remotePictureUrl))}
+						onPick={(uri) => {
+							setPendingImageUri(uri);
+							setRemovePictureRequested(false);
+						}}
+						onRemove={() => {
+							setPendingImageUri(null);
+							setRemovePictureRequested(true);
+						}}
+						canRemove={!!pendingImageUri || (!removePictureRequested && !!resolveProfilePictureUrl(remotePictureUrl))}
+					/>
 					<TextField
-						label="Name"
-						value={name}
-						onChangeText={setName}
-						placeholder="Enter profile name"
-						error={errors.name}
+						label="First name"
+						value={firstName}
+						onChangeText={setFirstName}
+						placeholder="Enter first name"
+						error={errors.firstName}
+					/>
+					<TextField
+						label="Last name"
+						value={lastName}
+						onChangeText={setLastName}
+						placeholder="Enter last name"
+						error={errors.lastName}
 					/>
 
 					<TextField
@@ -106,12 +139,6 @@ export default function EditProfileModal() {
 					/>
 				</ScrollView>
 				<View style={styles.bottomButton}>
-					<BlockButton
-						title="Switch Profile"
-						onPress={handleSwitchProfile}
-						lightColour={accentColour}
-						darkColour={accentColour}
-					/>
 					<BlockButton
 						title="Delete profile"
 						onPress={handleDeleteProfile}

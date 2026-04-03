@@ -1,11 +1,18 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.database import engine
+from app.core.config import UPLOADS_ROOT
 from app.structures.models import Base
 from app.routers import upload, transcripts, interventions, profiles
 
 app = FastAPI()
+
+os.makedirs(UPLOADS_ROOT, exist_ok=True)
+app.mount("/static", StaticFiles(directory=UPLOADS_ROOT), name="static")
 
 # CORS to allow requests from Expo Client
 app.add_middleware(

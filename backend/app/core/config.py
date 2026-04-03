@@ -22,3 +22,6 @@ OPENAI_VERSION = os.getenv("OPENAI_VERSION")
 
 # PostgreSQL Database Configuration
 DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Local uploads (profile pictures served under /static/...)
+UPLOADS_ROOT = os.getenv("UPLOADS_ROOT", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads"))

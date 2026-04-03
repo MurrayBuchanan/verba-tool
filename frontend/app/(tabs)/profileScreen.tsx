@@ -1,15 +1,18 @@
-import { StyleSheet, ScrollView, ActivityIndicator, Pressable } from "react-native";
+import { StyleSheet, ScrollView, ActivityIndicator, Pressable, View } from "react-native";
+import { Image } from "expo-image";
 import { useState, useCallback, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { ThemedView as View } from "@/components/themed-view";
+import { ThemedView } from "@/components/themed-view";
 import { ThemedText as Text } from "@/components/themed-text";
 import { useProfile } from "@/context/ProfileContext";
 import { getProfile } from "@/services/profile-service";
 import { Profile } from "@/constants/interfaces";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Theme } from "@/constants/theme";
-import { AlertCircle, User } from "lucide-react-native";
+import { AlertCircle, Pencil, User } from "lucide-react-native";
+import { resolveProfilePictureUrl } from "@/utils/profile-picture";
+import { IconButton } from "@/components/icon-button";
 
 export default function ProfileScreen() {
 	const router = useRouter();
@@ -22,6 +25,8 @@ export default function ProfileScreen() {
 	const warning = useThemeColor({}, "warning");
 	const accent = useThemeColor({}, "accent");
 	const textSecondary = useThemeColor({}, "textSecondary");
+	const backgroundSecondary = useThemeColor({}, "backgroundSecondary");
+	const border = useThemeColor({}, "backgroundTertiary");
 
 	useFocusEffect(
 		useCallback(() => {
@@ -54,44 +59,66 @@ export default function ProfileScreen() {
 		}, [profileId])
 	);
 
+	const detailPhotoUri = profile ? resolveProfilePictureUrl(profile.picture_url) : null;
+
 	if (!profileId || profileId <= 0) {
 		return (
-			<View style={styles.container}>
-				<View style={styles.center}>
+			<ThemedView style={styles.container}>
+				<ThemedView style={styles.center}>
 					<User size={36} color={icon} style={styles.placeholder} />
 					<Text align="center">Select a profile from the list to see details here.</Text>
 					<Pressable onPress={() => router.push("/profilesScreen")} style={styles.linkWrap} accessibilityRole="button" accessibilityLabel="Go to profiles list">
 						<Text type="strong" style={{ color: accent }}>Go to profiles</Text>
 					</Pressable>
-				</View>
-			</View>
+				</ThemedView>
+			</ThemedView>
 		);
 	}
 
 	return (
-		<View style={styles.container}>
+		<ThemedView style={styles.container}>
 			{loading ? (
-				<View style={styles.center}>
+				<ThemedView style={styles.center}>
 					<ActivityIndicator size="small" color={icon} />
-				</View>
+				</ThemedView>
 			) : error ? (
-				<View style={styles.center}>
+				<ThemedView style={styles.center}>
 					<AlertCircle size={36} color={warning} style={styles.placeholder} />
 					<Text align="center" style={{ color: warning }}>{error}</Text>
-				</View>
+				</ThemedView>
 			) : profile ? (
 				<ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-					<View style={styles.card} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
-						<Text type="caption" style={styles.detailLabel}>Name</Text>
-						<Text type="title" style={styles.detailValue}>{profile.name}</Text>
+					<ThemedView style={styles.card} lightColour={Theme.light.backgroundSecondary} darkColour={Theme.dark.backgroundSecondary}>
+						<View style={styles.cardEditAnchor} pointerEvents="box-none">
+							<IconButton
+								icon={<Pencil size={22} color={icon} />}
+								onPress={() =>
+									router.push({ pathname: "/editProfileModal", params: { id: String(profileId) } })
+								}
+								accessibilityLabel="Edit profile"
+							/>
+						</View>
+						<View style={styles.avatarWrap}>
+							{detailPhotoUri ? (
+								<Image source={{ uri: detailPhotoUri }} style={styles.avatarLarge} contentFit="cover" transition={200} />
+							) : (
+								<View style={[styles.avatarLarge, styles.avatarPlaceholder, { backgroundColor: backgroundSecondary, borderColor: border }]}>
+									<User size={40} color={icon} />
+								</View>
+							)}
+						</View>
+						<Text type="caption" style={styles.detailLabel}>First name</Text>
+						<Text type="title" style={styles.detailValue}>{profile.first_name}</Text>
+						<Text type="caption" style={styles.detailLabel}>Last name</Text>
+						<Text type="title" style={styles.detailValue}>{profile.last_name}</Text>
 						<Text type="caption" style={styles.descriptionLabel}>Description</Text>
 						<Text style={{ color: textSecondary }}>
 							{profile.description?.trim() ? profile.description : "No description"}
 						</Text>
-					</View>
+					</ThemedView>
 				</ScrollView>
 			) : null}
-		</View>
+		</ThemedView>
 	);
 }
 
@@ -109,14 +136,36 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 		paddingVertical: 20,
 		paddingHorizontal: 20,
+		position: "relative",
+	},
+	cardEditAnchor: {
+		position: "absolute",
+		top: 8,
+		right: 8,
+		zIndex: 1,
+	},
+	avatarWrap: {
+		alignItems: "center",
+		marginBottom: 20,
+	},
+	avatarLarge: {
+		width: 112,
+		height: 112,
+		borderRadius: 56,
+	},
+	avatarPlaceholder: {
+		borderWidth: StyleSheet.hairlineWidth,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	detailLabel: {
 		marginBottom: 4,
 	},
 	detailValue: {
-		marginBottom: 20,
+		marginBottom: 12,
 	},
 	descriptionLabel: {
+		marginTop: 8,
 		marginBottom: 8,
 	},
 	center: {

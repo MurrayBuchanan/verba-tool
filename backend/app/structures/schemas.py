@@ -10,7 +10,8 @@ Feature = Dict[str, Any]
 
 class Profile(BaseModel):
     id: Optional[int] = None
-    name: str
+    first_name: str
+    last_name: str
     description: Optional[str] = None
 
 class TranscriptSegment(BaseModel):
