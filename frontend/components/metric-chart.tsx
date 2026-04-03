@@ -104,9 +104,9 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         const rule2 = nelsonRule2(values);
         const rule3 = nelsonRule3(values);
 
-        return data.map((point) => {
+        return data.map((point, index) => {
             const ruleBreached =
-                rule1.positions.includes(point.x) || rule2.positions.includes(point.x) || rule3.positions.includes(point.x);
+                rule1.positions.includes(index) || rule2.positions.includes(index) || rule3.positions.includes(index);
 
             return {
                 ...point,
@@ -221,7 +221,8 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
                         font: axisFont,
                         labelColor: labelColour,
                         lineWidth: { grid: 0.5, frame: 0 },
-                        lineColor: { grid: gridColour, frame: gridColour }
+                        lineColor: { grid: gridColour, frame: gridColour },
+                        formatYLabel: (label: number) => parseFloat(label.toFixed(2)).toString()
                     }}>
                         
                     {({ points, chartBounds }) => {
