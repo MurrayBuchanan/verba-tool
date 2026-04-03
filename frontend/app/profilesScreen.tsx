@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
 	button: {
 		position: "absolute",
 		right: 20,
-		bottom: 20,
+		bottom: 40,
 	},
 	center: {
 		flex: 1,
