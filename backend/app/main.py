@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from app.core.database import engine
 from app.core.config import UPLOADS_ROOT
 from app.structures.models import Base
-from app.routers import upload, transcripts, interventions, profiles
+from app.routers import upload, transcripts, interventions, profiles, account
 
 app = FastAPI()
 
@@ -34,3 +34,4 @@ app.include_router(upload.router)
 app.include_router(transcripts.router)
 app.include_router(interventions.router)
 app.include_router(profiles.router)
+app.include_router(account.router)

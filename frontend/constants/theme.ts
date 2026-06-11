@@ -1,3 +1,26 @@
+/** @deprecated Prefer `LaunchScreen[scheme].background` for theme-aware launch/onboarding. */
+export const launchScreenBackground = "#EBECF5";
+
+/** @deprecated Prefer `LaunchScreen[scheme].heroCircle`. */
+export const launchScreenHeroCircleFill = "rgba(79, 70, 229, 0.12)";
+
+export const LaunchScreen = {
+	light: {
+		background: "#EBECF5",
+		heroCircle: "rgba(79, 70, 229, 0.11)",
+		ctaBackground: "#2A2433",
+		footerBorder: "rgba(38, 36, 43, 0.1)",
+		footerScrim: "rgba(235, 236, 245, 0.92)",
+	},
+	dark: {
+		background: "#100E14",
+		heroCircle: "rgba(167, 139, 250, 0.1)",
+		ctaBackground: "#6E5FA1",
+		footerBorder: "rgba(230, 225, 229, 0.12)",
+		footerScrim: "rgba(16, 14, 20, 0.94)",
+	},
+} as const;
+
 const tintColourLight = "#6FB6E9";
 const tintColourDark = "#6FB6E9";
 
@@ -38,8 +61,10 @@ export const Theme = {
 };
 
 export const Fonts = {
-	sans: "Inter_400Regular",
-	sansMedium: "Inter_500Medium",
-	sansSemiBold: "Inter_600SemiBold",
-	sansBold: "Inter_700Bold"
+	body: "SourceSerif4_400Regular",
+	bodyMedium: "SourceSerif4_500Medium",
+	ui: "InterTight_400Regular",
+	uiMedium: "InterTight_500Medium",
+	uiSemiBold: "InterTight_600SemiBold",
+	uiBold: "InterTight_700Bold"
 };

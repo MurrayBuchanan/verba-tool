@@ -4,7 +4,7 @@
     "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/conversation-placeholder.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "cs408project",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -55,9 +55,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#EBECF5",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#100E14"
           }
         }
       ],

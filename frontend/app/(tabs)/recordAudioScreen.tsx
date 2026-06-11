@@ -1,10 +1,21 @@
+import { useLayoutEffect } from "react";
 import { Image } from "react-native";
 import { StyleSheet } from "react-native";
+import { useNavigation } from "expo-router";
 import { RecordButton } from "@/components/record-button";
+import { RecordScreenDropdown } from "@/components/record-screen-dropdown";
 import { ThemedText as Text } from "@/components/themed-text";
 import { ThemedView as View } from "@/components/themed-view";
 
 export default function RecordAudioScreen() {
+	const navigation = useNavigation();
+
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			headerRight: () => <RecordScreenDropdown />,
+		});
+	}, [navigation]);
+
   	return (
    	<View style={styles.container}>
 		<Image 
@@ -14,7 +25,7 @@ export default function RecordAudioScreen() {
 		/>	
 		<View style={styles.tutorialTextContainer}>
 			<Text type="title" align="center">How to use</Text>
-			<Text align="center">The person asking questions should speak first and the person who"s language is being analysed should speak second.</Text>
+			<Text align="center">The person asking questions should speak first and the person whose language is being analysed should speak second.</Text>
 		</View>
 	
 		<View style={styles.button}>

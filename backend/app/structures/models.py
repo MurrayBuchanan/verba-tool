@@ -8,6 +8,7 @@ Database models/tables
 class User(Base):
     __tablename__ = "users"
     id = Column(String, primary_key=True, index=True)
+    focus_area_id = Column(String, nullable=True)
 
 class Profile(Base):
     __tablename__ = "profiles"

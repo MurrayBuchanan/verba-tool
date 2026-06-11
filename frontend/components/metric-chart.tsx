@@ -7,7 +7,7 @@ import { Intervention } from "@/constants/interfaces";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { useFont, Circle, Line as LinePath, Rect, vec } from "@shopify/react-native-skia";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { Inter_500Medium } from "@expo-google-fonts/inter";
+import { InterTight_500Medium } from "@expo-google-fonts/inter-tight";
 import { Data, calculateMean, calculateStandardDeviation } from "@/utils/chart-grouping";
 import { nelsonRule1, nelsonRule2, nelsonRule3 } from "@/utils/chart-rules";
 
@@ -185,7 +185,7 @@ export function MetricChart({ data, xAxisLabel, title, interventions = [], showM
         [xAxisLabel, chartData]
     );
 
-    const axisFont = useFont(Inter_500Medium, 12);
+    const axisFont = useFont(InterTight_500Medium, 12);
 
     return (
         <View style={[styles.container, { borderColor: borderColour }]}>

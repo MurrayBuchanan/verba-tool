@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { ActivityIndicator, StyleSheet, View, TouchableOpacity, type StyleProp, type ViewStyle } from "react-native";
 import { ThemedText as Text } from "@/components/themed-text";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
@@ -8,15 +8,28 @@ type Props = {
     title?: string;
     lightColour?: string;
     darkColour?: string;
+    loading?: boolean;
+    style?: StyleProp<ViewStyle>;
+    contentStyle?: StyleProp<ViewStyle>;
 };
 
-export function BlockButton({ onPress, title, lightColour, darkColour }: Props) {
+export function BlockButton({ onPress, title, lightColour, darkColour, loading = false, style, contentStyle }: Props) {
     const background = useThemeColor({ light: lightColour, dark: darkColour }, "accent");
 
     return (
-        <TouchableOpacity onPress={onPress}>
-            <View style={[ styles.container, { backgroundColor: background }]}>
-                <Text type="button" align="center" lightColour="#FFF" darkColour="#FFF">{title}</Text>
+        <TouchableOpacity
+            onPress={onPress}
+            activeOpacity={0.88}
+            style={style}
+            disabled={loading}
+            accessibilityState={{ busy: loading, disabled: loading }}
+        >
+            <View style={[ styles.container, styles.content, { backgroundColor: background }, contentStyle ]}>
+                {loading ? (
+                    <ActivityIndicator color="#FFF" />
+                ) : (
+                    <Text type="button" align="center" lightColour="#FFF" darkColour="#FFF">{title}</Text>
+                )}
             </View>
         </TouchableOpacity>
     );
@@ -24,14 +37,14 @@ export function BlockButton({ onPress, title, lightColour, darkColour }: Props) 
 
 const styles = StyleSheet.create({
     container: {
-        minHeight: 40,
-        borderRadius: 16,
-        paddingVertical: 16,
+        minHeight: 48,
+        borderRadius: 12,
+        paddingVertical: 15,
         paddingHorizontal: 24,
     },
     content: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-    }
+    },
 });

@@ -1,40 +1,77 @@
 import { useEffect } from "react";
+import { isRunningInExpoGo } from "expo";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
-import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold } from "@expo-google-fonts/inter";
+import {
+	useFonts,
+	InterTight_400Regular,
+	InterTight_500Medium,
+	InterTight_600SemiBold,
+	InterTight_700Bold,
+} from "@expo-google-fonts/inter-tight";
+import { SourceSerif4_400Regular, SourceSerif4_500Medium } from "@expo-google-fonts/source-serif-4";
 import { IconButton } from "@/components/icon-button";
 import { LogoutButton } from "@/components/account-buttons";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { SessionProvider, useAuthentication } from "@/context/SessionContext";
 import { ProfileProvider } from "@/context/ProfileContext";
+import { FocusAreaProvider, useFocusArea } from "@/context/FocusAreaContext";
+import { FocusAreaSelectionScreen } from "@/components/focus-area-selection-screen";
+import { LaunchScreen } from "@/constants/theme";
 
 SplashScreen.preventAutoHideAsync();
+if (!isRunningInExpoGo()) {
+	SplashScreen.setOptions({ fade: true, duration: 380 });
+}
 
 export const unstable_settings = {
   	anchor: "index",
 };
 
 function RootNavigator() {
-	const { session, isLoading } = useAuthentication();
+	const { session, isLoading: authLoading } = useAuthentication();
+	const { focusAreaId, isLoading: focusLoading } = useFocusArea();
 	const theme = useColorScheme() === "dark" ? "dark" : "light";
 	const background = useThemeColor({}, "background");
 	const text = useThemeColor({}, "text");
 	const icon = useThemeColor({}, "icon");
 
-	// Show loading/splash screen until authentication is checked
-	useEffect(() => {
-		if (!isLoading) {
-			SplashScreen.hideAsync();
-		}
-	}, [isLoading]);
+	const bootLoading = authLoading || focusLoading;
 
-	if (isLoading) {
+	useEffect(() => {
+		if (bootLoading) {
+			return;
+		}
+		let cancelled = false;
+		const frame = requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				if (!cancelled) {
+					void SplashScreen.hideAsync();
+				}
+			});
+		});
+		return () => {
+			cancelled = true;
+			cancelAnimationFrame(frame);
+		};
+	}, [bootLoading]);
+
+	if (bootLoading) {
 		return null;
+	}
+
+	if (session && !focusAreaId) {
+		return (
+			<ThemeProvider value={theme === "dark" ? DarkTheme : DefaultTheme}>
+				<FocusAreaSelectionScreen />
+				<StatusBar style="auto" />
+			</ThemeProvider>
+		);
 	}
 
 	return (
@@ -55,7 +92,14 @@ function RootNavigator() {
 
 				{/* Unauthenticated routes (launch screen) */}
 				<Stack.Protected guard={!session}>
-					<Stack.Screen name="index" options={{ headerShown: false, animation: "none" }} />
+					<Stack.Screen
+						name="index"
+						options={{
+							headerShown: false,
+							animation: "none",
+							contentStyle: { backgroundColor: LaunchScreen[theme].background },
+						}}
+					/>
 				</Stack.Protected>
 			</Stack>
 			<StatusBar style="auto" />
@@ -65,10 +109,12 @@ function RootNavigator() {
 
 export default function RootLayout() {
 	const [fontsLoaded] = useFonts({
-		Inter_400Regular,
-		Inter_500Medium,
-		Inter_600SemiBold,
-		Inter_700Bold,
+		InterTight_400Regular,
+		InterTight_500Medium,
+		InterTight_600SemiBold,
+		InterTight_700Bold,
+		SourceSerif4_400Regular,
+		SourceSerif4_500Medium,
 	});
 
 	if (!fontsLoaded) {
@@ -78,7 +124,9 @@ export default function RootLayout() {
 	return (
 		<SessionProvider>
 			<ProfileProvider>
-				<RootNavigator />
+				<FocusAreaProvider>
+					<RootNavigator />
+				</FocusAreaProvider>
 			</ProfileProvider>
 		</SessionProvider>
 	);

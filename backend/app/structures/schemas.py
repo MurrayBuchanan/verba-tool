@@ -8,6 +8,12 @@ Type definitions
 
 Feature = Dict[str, Any]
 
+class AccountOut(BaseModel):
+    focus_area_id: Optional[str] = None
+
+class AccountUpdate(BaseModel):
+    focus_area_id: str
+
 class Profile(BaseModel):
     id: Optional[int] = None
     first_name: str

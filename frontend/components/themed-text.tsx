@@ -37,32 +37,32 @@ export function ThemedText({style, lightColour, darkColour, type = "default", al
 // Typography inspired by: https://m3.material.io/styles/typography/overview
 const styles = StyleSheet.create({
 	default: {
-		fontFamily: Fonts.sans,
+		fontFamily: Fonts.body,
 		fontSize: 16,
 		lineHeight: 24,
 	},
 	caption: {
-		fontFamily: Fonts.sans,
+		fontFamily: Fonts.body,
 		fontSize: 14,
 		lineHeight: 16,
 	},
 	strong: {
-		fontFamily: Fonts.sansMedium,
+		fontFamily: Fonts.uiMedium,
 		fontSize: 16,
 		lineHeight: 24,
 	},
 	heading: {
-		fontFamily: Fonts.sansSemiBold,
+		fontFamily: Fonts.uiSemiBold,
 		fontSize: 20,
 		lineHeight: 26,
 	},
 	title: {
-		fontFamily: Fonts.sansSemiBold,
+		fontFamily: Fonts.uiSemiBold,
 		fontSize: 28,
 		lineHeight: 36,
 	},
 	button: {
-		fontFamily: Fonts.sansMedium,
+		fontFamily: Fonts.uiMedium,
 		fontSize: 16,
 		lineHeight: 22,
 		color: "#fff"
